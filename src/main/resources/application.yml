@@ -1,0 +1,40 @@
+spring:
+  application:
+    name: Automatron
+  messages:
+    basename: i18n
+  datasource:
+    url: jdbc:h2:file:./h2/automatron
+    driverClassName: org.h2.Driver
+    username: admin
+    password:
+  jpa:
+    open-in-view: false
+    database-platform: org.hibernate.dialect.H2Dialect
+    defer-datasource-initialization: false
+    show-sql: true
+    hibernate:
+      ddl-auto: update
+  h2:
+    console:
+      path: /h2
+      enabled: true
+      settings:
+        web-allow-others: true
+
+server:
+  port : 8080
+
+springdoc:
+  api-docs:
+    groups:
+      enabled: true
+  swagger-ui:
+    path: "/"
+    display-request-duration: true
+    groups-order: DESC
+    operationsSorter: alpha
+    tagsSorter: alpha
+    show-extensions: true
+    show-common-extensions: true
+

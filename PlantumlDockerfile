@@ -1,0 +1,6 @@
+FROM miy4/plantuml
+
+WORKDIR /app
+COPY
+ADD https://repo1.maven.org/maven2/net/sourceforge/plantuml/plantuml/1.2022.2/plantuml-1.2022.2.jar /app
+RUN java -jar plantuml-1.2022.2.jar -o svg -tsvg schemas

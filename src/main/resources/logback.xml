@@ -1,0 +1,19 @@
+<configuration>
+
+    <appender name="stdout" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>
+                %d{HH:mm:ss.SSS} %highlight(%-5level) %X{request-id} - %msg %n
+            </pattern>
+        </encoder>
+    </appender>
+
+    <logger name="org.touchbit.qa.automatron" level="debug" additivity="false">
+        <appender-ref ref="stdout"/>
+    </logger>
+
+    <root level="info" additivity="false">
+        <appender-ref ref="stdout"/>
+    </root>
+
+</configuration>

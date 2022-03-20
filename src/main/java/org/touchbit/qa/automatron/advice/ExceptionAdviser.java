@@ -1,0 +1,89 @@
+/*
+ * Copyright (c) 2022 Shaburov Oleg
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+ * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
+ * OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
+ * IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR
+ * ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
+ * TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
+ * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+ */
+
+package org.touchbit.qa.automatron.advice;
+
+import lombok.extern.slf4j.Slf4j;
+import org.slf4j.MDC;
+import org.springframework.context.MessageSourceResolvable;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
+import org.springframework.validation.BindException;
+import org.springframework.validation.ObjectError;
+import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.touchbit.qa.automatron.pojo.error.ErrorDTO;
+import org.touchbit.qa.automatron.util.AutomatronException;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
+import static org.touchbit.qa.automatron.constant.ResourceConstants.RID;
+import static org.touchbit.qa.automatron.pojo.error.ErrorType.CONTRACT;
+import static org.touchbit.qa.automatron.pojo.error.ErrorType.SYSTEM;
+
+@Slf4j
+@RestControllerAdvice
+public class ExceptionAdviser {
+    // ResponseEntityExceptionHandler
+
+    @ExceptionHandler({BindException.class})
+    public ResponseEntity<List<ErrorDTO>> handleValidationExceptions(BindException exception) {
+        List<ErrorDTO> errors = new ArrayList<>();
+        for (ObjectError error : exception.getAllErrors()) {
+            String source = "";
+            final Object[] arguments = error.getArguments();
+            if (arguments != null) {
+                for (Object argument : arguments) {
+                    if (argument instanceof MessageSourceResolvable messageSourceResolvable) {
+                        final String[] codes = messageSourceResolvable.getCodes();
+                        if (codes != null && codes.length > 0) {
+                            source = messageSourceResolvable.getCodes()[0];
+                        }
+                    }
+                }
+            }
+            errors.add(new ErrorDTO().type(CONTRACT).source(source).reason(error.getDefaultMessage()));
+        }
+        log.error("Bad Request: contract violation", exception);
+        return buildResponseEntity(errors, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler({Exception.class, RuntimeException.class})
+    public ResponseEntity<List<ErrorDTO>> internalServerErrorException(Exception exception) {
+        List<ErrorDTO> errors = new ArrayList<>();
+        errors.add(new ErrorDTO().type(SYSTEM).source(exception.getClass().getSimpleName()).reason(exception.getMessage()));
+        log.error("Internal Server Error", exception);
+        return buildResponseEntity(errors, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+
+    @ExceptionHandler({AutomatronException.class})
+    public ResponseEntity<List<ErrorDTO>> automatronException(AutomatronException e) {
+        final ErrorDTO error = new ErrorDTO().type(e.type()).source(e.source()).reason(e.reason());
+        final List<ErrorDTO> errors = Collections.singletonList(error);
+        return buildResponseEntity(errors, e.status());
+    }
+
+    private <B> ResponseEntity<B> buildResponseEntity(final B body, final HttpStatus status) {
+        final HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        final String xRequestIdValue = MDC.get(RID);
+        if (xRequestIdValue != null && !xRequestIdValue.isBlank()) {
+            headers.add(RID, xRequestIdValue);
+        }
+        return new ResponseEntity<>(body, headers, status);
+    }
+
+}
