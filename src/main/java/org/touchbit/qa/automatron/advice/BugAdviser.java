@@ -20,7 +20,6 @@ import org.springframework.http.converter.HttpMessageConverter;
 import org.springframework.http.server.ServerHttpRequest;
 import org.springframework.http.server.ServerHttpResponse;
 import org.springframework.web.bind.annotation.ControllerAdvice;
-import org.springframework.web.servlet.mvc.method.annotation.ResponseBodyAdvice;
 import org.touchbit.qa.automatron.constant.Bug;
 
 import java.util.ArrayList;
@@ -33,7 +32,7 @@ import static org.touchbit.qa.automatron.constant.ResourceConstants.RID;
 
 @Slf4j
 @ControllerAdvice
-public class BugAdviser implements ResponseBodyAdvice<Object> {
+public class BugAdviser implements BodyAdvice {
 
     public static final ConcurrentMap<String, List<Bug>> BUGS = new ConcurrentHashMap<>();
 
@@ -45,11 +44,6 @@ public class BugAdviser implements ResponseBodyAdvice<Object> {
         }
         BUGS.computeIfAbsent(rid, i -> new ArrayList<>()).add(bug);
         log.warn("Bug registered: {}", bug.id());
-    }
-
-    @Override
-    public boolean supports(MethodParameter returnType, Class<? extends HttpMessageConverter<?>> converterType) {
-        return true;
     }
 
     @Override

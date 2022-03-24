@@ -14,36 +14,83 @@ package org.touchbit.qa.automatron.constant;
 
 public class APIExamples {
 
-    public static final String API_ACCOUNTING_LOGIN_404 = """
+    public static final String EX_ACCOUNTING_LOGIN_400 = """
             [
               {
                 "type": "CONTRACT",
-                "source": "loginDTO.password",
+                "source": "authentication.password",
                 "reason": "must not be null"
               }
             ]
             """;
 
-    public static final String EX_API_500 = """
+    public static final String EX_CODE_401_001 = """
+            [
+              {
+                "type": "ACCESS",
+                "source": "login/password",
+                "reason": "i18n_error_401_001_message"
+              }
+            ]
+            """;
+
+    public static final String EX_CODE_403_001 = """
+            [
+              {
+                "type": "ACCESS",
+                "source": "User{type=MEMBER}",
+                "reason": "i18n_error_403_001_message"
+              }
+            ]
+            """;
+
+    public static final String EX_CODE_403_002 = """
+            [
+              {
+                "type": "ACCESS",
+                "source": "User{status=BLOCKED}",
+                "reason": "i18n_error_403_001_message"
+              }
+            ]
+            """;
+
+    public static final String API_LOGICAL_ERR_500 = """
+            [
+              {
+                "type": "LOGICAL",
+                "source": "User{id=1, status=null}",
+                "reason": "i18n_error_500_001_message"
+              }
+            ]
+            """;
+
+    public static final String API_NETWORK_ERR_500 = """
+            [
+              {
+                "type": "NETWORK",
+                "source": "JdbcSQLException",
+                "reason": "i18n_error_500_002_message"
+              }
+            ]
+            """;
+
+    public static final String API_SYSTEM_ERR_500 = """
             [
               {
                 "type": "SYSTEM",
-                "source": "IllegalArgumentException",
-                "reason": "Invalid UUID string: bae8b1a6-26c9-4b3a-9de3"
+                "source": "TransactionSystemException",
+                "reason": "i18n_error_500_003_message"
               }
             ]
             """;
 
     public static final String AUTH_DTO = """
             {
-              "access_token": "bae8b1a6-26c9-4b3a-9de3-dcdb368a207d",
-              "refresh_token": "8ea9f275-9314-48cb-bf25-2bb6d8141e91",
-              "expires_in": 86400,
+              "access_token": "d0b8b863-3f47-4881-96b8-68c4b4e4f892",
+              "access_expires_in": 86400,
               "refresh_expires_in": 86400,
-              "token_type": "bearer",
-              "not-before-policy": 0,
-              "session_state": "273bada6-2f11-4e7e-ac40-b74305e57314",
-              "scope": "profile email"
+              "refresh_token": "bfb35bf5-311b-4e77-8b04-82582cc5a5f2",
+              "token_type": "bearer"
             }
             """;
 

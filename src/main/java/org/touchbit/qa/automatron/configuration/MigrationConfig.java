@@ -19,6 +19,7 @@ import org.touchbit.qa.automatron.db.entity.User;
 import org.touchbit.qa.automatron.db.repository.UserRepository;
 
 import static org.touchbit.qa.automatron.db.entity.UserStatus.ACTIVE;
+import static org.touchbit.qa.automatron.db.entity.UserType.ADMIN;
 import static org.touchbit.qa.automatron.db.entity.UserType.OWNER;
 
 @Slf4j
@@ -28,9 +29,10 @@ public class MigrationConfig {
     // looks like a piece of shit
     // but for this solution it's easier than 'flyway'
     @Bean
-    public Void migrate(UserRepository userRepository) {
+    public Void migrateUsers(UserRepository userRepository) {
         log.info("DB migrations");
-        userRepository.save(new User().login("admin").password("IDDQD").status(ACTIVE).type(OWNER));
+        userRepository.save(new User().login("automatron").password("IDDQD").status(ACTIVE).type(OWNER));
+        userRepository.save(new User().login("admin").password("admin").status(ACTIVE).type(ADMIN));
         return null;
     }
 

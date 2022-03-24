@@ -27,7 +27,9 @@ public class LocaleBundleProperties {
     public static final String HEADER_LOCALE_DESCRIPTION = "header_locale_description";
     public static final String CONTROLLER_ACCOUNTING_DESCRIPTION = "controller_accounting_description";
     public static final String CONTROLLER_BUG_DESCRIPTION = "controller_bug_description";
-    public static final String RESOURCE_ACCOUNTING_POST_LOGIN_DESCRIPTION = "resource_accounting_post_login_description";
+    public static final String RESOURCE_ACCOUNTING_POST_LOGIN_DESCRIPTION = "resource_accounting_get_login_description";
+    public static final String RESOURCE_ACCOUNTING_GET_LOGIN_200_DESCRIPTION = "resource_accounting_get_login_200_description";
+    public static final String RESOURCE_ACCOUNTING_GET_LOGIN_400_DESCRIPTION = "resource_accounting_get_login_400_description";
     public static final String RESOURCE_GET_BUGS_DESCRIPTION = "resource_get_bugs_description";
     public static final String RESOURCE_GET_BUG_DESCRIPTION = "resource_get_bug_description";
     public static final String OPENAPI_DESCRIPTION = "openapi_description";
@@ -49,8 +51,19 @@ public class LocaleBundleProperties {
     public static final String BUG_003_INFO = "0003_info";
     public static final String BUG_003_DESCRIPTION = "0003_description";
 
-    public static final String ERROR_401_001 = "error_401_001";
-    public static final String ERROR_500_001 = "error_500_001";
+    public static final String I18N_ERROR_4XX_DESCRIPTION = "i18n_error_4xx_description";
+    public static final String I18N_ERROR_400_DESCRIPTION = "i18n_error_400_description";
+    public static final String I18N_ERROR_401_DESCRIPTION = "i18n_error_401_description";
+    public static final String I18N_ERROR_401_001_MESSAGE = "i18n_error_401_001_message";
+    public static final String I18N_ERROR_403_DESCRIPTION = "i18n_error_403_description";
+    public static final String I18N_ERROR_403_001_MESSAGE = "i18n_error_403_001_message";
+    public static final String I18N_ERROR_5XX_DESCRIPTION = "i18n_error_5xx_description";
+    public static final String I18N_ERROR_500_SYSTEM_DESCRIPTION = "i18n_error_500_system_description";
+    public static final String I18N_ERROR_500_LOGIC_DESCRIPTION = "i18n_error_500_logic_description";
+    public static final String I18N_ERROR_500_NETWORK_DESCRIPTION = "i18n_error_500_network_description";
+    public static final String I18N_ERROR_500_001_MESSAGE = "i18n_error_500_001_message";
+    public static final String I18N_ERROR_500_002_MESSAGE = "i18n_error_500_002_message";
+    public static final String I18N_ERROR_500_003_MESSAGE = "i18n_error_500_003_message";
 
     public static List<String> getKeys() {
         return FieldUtils.getAllFieldsList(LocaleBundleProperties.class).stream()

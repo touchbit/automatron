@@ -19,5 +19,8 @@ public class ResourceConstants {
     public static final String RID = "request-id";
     public static final String LOCALE = "Locale";
     public static final String BID = "bug-id";
+    public static final String EX_400_BAD_REQUEST_SUMMARY = "400 Bad Request";
+    public static final String EX_401_UNAUTHORIZED_SUMMARY = "401 Unauthorized";
+    public static final String EX_403_FORBIDDEN_SUMMARY = "403 Forbidden";
 
 }

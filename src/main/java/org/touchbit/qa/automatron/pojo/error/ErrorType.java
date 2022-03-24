@@ -16,7 +16,7 @@ public enum ErrorType {
 
     ACCESS,
     FUNCTIONAL,
-    LOGICAL,
+    LOGIC,
     CONTRACT,
     SYSTEM,
     NETWORK,

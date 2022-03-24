@@ -41,13 +41,13 @@ public class AuthDTO extends POJO {
     @NotNull
     private Long accessExpiresIn;
 
-    @JsonProperty("refresh_expires_in")
-    @NotNull
-    private Long refreshExpiresIn;
-
     @JsonProperty("refresh_token")
     @NotNull
     private String refreshToken;
+
+    @JsonProperty("refresh_expires_in")
+    @NotNull
+    private Long refreshExpiresIn;
 
     @JsonProperty("token_type")
     @NotNull

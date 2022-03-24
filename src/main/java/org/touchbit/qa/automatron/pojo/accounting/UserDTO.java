@@ -12,37 +12,46 @@
 
 package org.touchbit.qa.automatron.pojo.accounting;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.enums.ParameterStyle;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Getter;
 import lombok.Setter;
-import lombok.ToString;
 import lombok.experimental.Accessors;
+import org.touchbit.qa.automatron.db.entity.PhoneNumber;
+import org.touchbit.qa.automatron.db.entity.UserStatus;
+import org.touchbit.qa.automatron.db.entity.UserType;
 
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
+import java.util.Set;
 
+import static io.swagger.v3.oas.annotations.media.Schema.AccessMode.READ_ONLY;
 import static org.touchbit.qa.automatron.constant.LocaleBundleProperties.LOGIN_DTO_ADMIN_DESCRIPTION;
 import static org.touchbit.qa.automatron.constant.LocaleBundleProperties.LOGIN_DTO_PASSWORD_DESCRIPTION;
 
-@Setter
 @Getter
+@Setter
 @Accessors(chain = true, fluent = true)
-@ToString
-public class LoginDTO {
+public class UserDTO {
 
-    @Parameter(name = "login",
-            style = ParameterStyle.FORM,
-            required = true,
-            schema = @Schema(description = LOGIN_DTO_ADMIN_DESCRIPTION, example = "admin"))
-    private @NotNull @Size(min = 2, max = 20) String login;
+    @JsonProperty("id")
+    @Schema(description = "TODO", required = true, example = "1", accessMode = READ_ONLY)
+    private long id;
+
+    @Parameter(name = "login", schema =
+    @Schema(required = true, description = LOGIN_DTO_ADMIN_DESCRIPTION, example = "admin"))
+    private String login;
 
     @Parameter(
             name = "password",
-            style = ParameterStyle.FORM,
             required = true,
-            schema = @Schema(description = LOGIN_DTO_PASSWORD_DESCRIPTION, example = "IDDQD"))
-    private @NotNull @Size(min = 5, max = 36) String password;
+            schema = @Schema(description = LOGIN_DTO_PASSWORD_DESCRIPTION, example = "example_password"))
+    private String password;
+
+    private UserStatus status;
+
+    private UserType type;
+
+    private Set<PhoneNumber> phones;
 
 }

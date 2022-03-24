@@ -17,6 +17,7 @@ import io.swagger.v3.oas.models.Operation;
 import io.swagger.v3.oas.models.info.Info;
 import io.swagger.v3.oas.models.media.StringSchema;
 import io.swagger.v3.oas.models.parameters.Parameter;
+import io.swagger.v3.oas.models.responses.ApiResponses;
 import lombok.extern.slf4j.Slf4j;
 import org.springdoc.core.GroupedOpenApi;
 import org.springdoc.core.customizers.OpenApiCustomiser;
@@ -31,6 +32,9 @@ import org.springframework.web.servlet.i18n.FixedLocaleResolver;
 import org.touchbit.qa.automatron.Application;
 import org.touchbit.qa.automatron.interceptor.LocaleInterceptor;
 import org.touchbit.qa.automatron.interceptor.XRequestIdInterceptor;
+
+import java.util.Set;
+import java.util.TreeSet;
 
 import static org.touchbit.qa.automatron.constant.LocaleBundleProperties.*;
 import static org.touchbit.qa.automatron.constant.ResourceConstants.*;
@@ -77,6 +81,7 @@ public class WebMvcConfig implements WebMvcConfigurer {
                 .group(group)
                 .addOperationCustomizer(xRequestIdGlobalHeader())
                 .addOperationCustomizer(acceptLocaleHeader())
+                .addOperationCustomizer(sortResponses())
                 .addOpenApiCustomiser(openApiCustomiser())
                 .pathsToMatch(PATHS)
                 .build();
@@ -101,6 +106,17 @@ public class WebMvcConfig implements WebMvcConfigurer {
                     .description(HEADER_REQUEST_ID_DESCRIPTION)
                     .required(false);
             operation.addParametersItem(xRequestId);
+            return operation;
+        };
+    }
+
+    private OperationCustomizer sortResponses() {
+        return (Operation operation, HandlerMethod handlerMethod) -> {
+            final ApiResponses responses = operation.getResponses();
+            final Set<String> keys = new TreeSet<>(responses.keySet());
+            final ApiResponses sortedApiResponses = new ApiResponses();
+            keys.forEach(key -> sortedApiResponses.put(key, responses.get(key)));
+            operation.setResponses(sortedApiResponses);
             return operation;
         };
     }

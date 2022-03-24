@@ -13,8 +13,10 @@
 package org.touchbit.qa.automatron.db.repository;
 
 import org.springframework.data.repository.CrudRepository;
+import org.springframework.transaction.annotation.Transactional;
 import org.touchbit.qa.automatron.db.entity.User;
 
+@Transactional
 public interface UserRepository extends CrudRepository<User, Long> {
 
     User findByLogin(String login);

@@ -13,8 +13,10 @@
 package org.touchbit.qa.automatron.db.repository;
 
 import org.springframework.data.repository.CrudRepository;
+import org.springframework.transaction.annotation.Transactional;
 import org.touchbit.qa.automatron.db.entity.Session;
 
+@Transactional
 public interface SessionRepository extends CrudRepository<Session, Long> {
 
 

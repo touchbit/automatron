@@ -23,13 +23,12 @@ import org.touchbit.qa.automatron.db.entity.UserStatus;
 import org.touchbit.qa.automatron.db.repository.SessionRepository;
 import org.touchbit.qa.automatron.db.repository.UserRepository;
 import org.touchbit.qa.automatron.pojo.accounting.AuthDTO;
-import org.touchbit.qa.automatron.pojo.accounting.LoginDTO;
 import org.touchbit.qa.automatron.util.AutomatronException;
 
 import java.util.Objects;
 import java.util.UUID;
 
-import static org.touchbit.qa.automatron.constant.LocaleBundleProperties.ERROR_500_001;
+import static org.touchbit.qa.automatron.constant.LocaleBundleProperties.I18N_ERROR_500_001_MESSAGE;
 
 @Slf4j
 @Service
@@ -40,17 +39,17 @@ public class AccountingService {
     private SessionRepository sessionRepository;
 
     @SuppressWarnings("unused")
-    public AuthDTO authenticate(LoginDTO login) {
+    public AuthDTO authenticate(final String login, final String password) {
         log.info("Authentication Request Received");
-        final User user = userRepository.findByLogin(login.login());
+        final User user = userRepository.findByLogin(login);
         if (user == null ||
-            !Objects.equals(login.password(), user.password()) ||
+            !Objects.equals(password, user.password()) ||
             user.status().equals(UserStatus.DELETED)) {
             throw AutomatronException.http401("login/password");
         }
         if (user.status().equals(UserStatus.BLOCKED)) {
             BugAdviser.addBug(Bug.BUG_0003);
-            throw AutomatronException.http401("login/password");
+            throw AutomatronException.http401(user.getClass().getSimpleName() + "{status=" + user.status() + "}");
         }
         if (user.status().equals(UserStatus.ACTIVE)) {
             final Session session = getSession(user);
@@ -62,7 +61,7 @@ public class AccountingService {
                     .refreshExpiresIn(session.refreshExpiresIn())
                     .tokenType("bearer");
         }
-        throw AutomatronException.http500(user.getClass().getSimpleName(), ERROR_500_001);
+        throw AutomatronException.http500(user.getClass().getSimpleName() + ".id=" + user.id(), I18N_ERROR_500_001_MESSAGE);
     }
 
     private Session getSession(final User user) {

@@ -20,34 +20,16 @@ import org.springframework.http.converter.HttpMessageConverter;
 import org.springframework.http.server.ServerHttpRequest;
 import org.springframework.http.server.ServerHttpResponse;
 import org.springframework.web.bind.annotation.ControllerAdvice;
-import org.springframework.web.servlet.mvc.method.annotation.RequestBodyAdvice;
-import org.springframework.web.servlet.mvc.method.annotation.ResponseBodyAdvice;
-import org.touchbit.qa.automatron.pojo.accounting.LoginDTO;
+import org.touchbit.qa.automatron.pojo.accounting.UserDTO;
 import org.touchbit.qa.automatron.util.AutomatronUtils;
 
-import java.lang.reflect.Method;
 import java.lang.reflect.Type;
 
 import static org.touchbit.qa.automatron.constant.Bug.BUG_0001;
 
 @Slf4j
 @ControllerAdvice
-public class LoggerAdviser implements ResponseBodyAdvice<Object>, RequestBodyAdvice {
-
-    @Override
-    public boolean supports(MethodParameter methodParameter,
-                            Type targetType,
-                            Class<? extends HttpMessageConverter<?>> converterType) {
-        return true;
-    }
-
-    @Override
-    public HttpInputMessage beforeBodyRead(HttpInputMessage inputMessage,
-                                           MethodParameter parameter,
-                                           Type targetType,
-                                           Class<? extends HttpMessageConverter<?>> converterType) {
-        return inputMessage;
-    }
+public class LoggerAdviser implements BodyAdvice {
 
     @Override
     public Object afterBodyRead(Object body,
@@ -56,25 +38,10 @@ public class LoggerAdviser implements ResponseBodyAdvice<Object>, RequestBodyAdv
                                 Type targetType,
                                 Class<? extends HttpMessageConverter<?>> converterType) {
         log.debug("Request body:\n{}", body);
-        if (body instanceof LoginDTO) {
+        if (body instanceof UserDTO userDTO && userDTO.password() != null) {
             BugAdviser.addBug(BUG_0001);
         }
         return body;
-    }
-
-    @Override
-    public Object handleEmptyBody(Object body,
-                                  HttpInputMessage inputMessage,
-                                  MethodParameter parameter,
-                                  Type targetType,
-                                  Class<? extends HttpMessageConverter<?>> converterType) {
-        return body;
-    }
-
-    @Override
-    public boolean supports(MethodParameter returnType, Class<? extends HttpMessageConverter<?>> converterType) {
-        final Method method = returnType.getMethod();
-        return method != null && method.getName().equals("openapiJson");
     }
 
     @Override
@@ -86,6 +53,9 @@ public class LoggerAdviser implements ResponseBodyAdvice<Object>, RequestBodyAdv
                                   ServerHttpResponse response) {
         if (AutomatronUtils.isNotSwaggerRequest(request)) {
             log.debug("Response body:\n{}", body);
+        }
+        if (body instanceof UserDTO userDTO && userDTO.password() != null) {
+            BugAdviser.addBug(BUG_0001);
         }
         return body;
     }

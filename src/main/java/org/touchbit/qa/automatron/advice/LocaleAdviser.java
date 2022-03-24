@@ -21,7 +21,6 @@ import org.springframework.http.converter.HttpMessageConverter;
 import org.springframework.http.server.ServerHttpRequest;
 import org.springframework.http.server.ServerHttpResponse;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
-import org.springframework.web.servlet.mvc.method.annotation.ResponseBodyAdvice;
 import org.touchbit.qa.automatron.pojo.bug.BugDTO;
 import org.touchbit.qa.automatron.pojo.error.ErrorDTO;
 import org.touchbit.qa.automatron.util.AutomatronUtils;
@@ -39,24 +38,19 @@ import static org.touchbit.qa.automatron.constant.ResourceConstants.LOCALE;
 
 @Slf4j
 @RestControllerAdvice
-public class LocaleAdviser implements ResponseBodyAdvice<Object> {
+public class LocaleAdviser implements BodyAdvice {
 
     private static final ResourceBundleMessageSource MESSAGE_SOURCE = new ResourceBundleMessageSource();
 
     static {
         MESSAGE_SOURCE.setDefaultEncoding("UTF-8");
-        MESSAGE_SOURCE.setBasenames("i18n/api", "i18n/bug", "i18n/message", "i18n/pojo");
+        MESSAGE_SOURCE.setBasenames("i18n/api", "i18n/bug", "i18n/pojo");
         MESSAGE_SOURCE.setUseCodeAsDefaultMessage(true);
     }
 
     // Port via annotation
     @Value("${server.port}")
     private int port;
-
-    @Override
-    public boolean supports(MethodParameter returnType, Class<? extends HttpMessageConverter<?>> converterType) {
-        return true;
-    }
 
     @Override
     public Object beforeBodyWrite(final Object body, MethodParameter returnType,
@@ -185,10 +179,14 @@ public class LocaleAdviser implements ResponseBodyAdvice<Object> {
 
     private Object localizeErrorDTO(final ErrorDTO errorDTO, Locale locale) {
         final String rawSource = errorDTO.source();
+        if (rawSource != null) {
+            errorDTO.source(MESSAGE_SOURCE.getMessage(rawSource, null, locale));
+        }
         final String rawReason = errorDTO.reason();
-        final String source = MESSAGE_SOURCE.getMessage(rawSource, null, locale);
-        final String reason = MESSAGE_SOURCE.getMessage(rawReason, null, locale);
-        return errorDTO.source(source).reason(reason);
+        if (rawReason != null) {
+            errorDTO.reason(MESSAGE_SOURCE.getMessage(rawReason, null, locale));
+        }
+        return errorDTO;
     }
 
     private String localizeString(final String source, Locale locale) {

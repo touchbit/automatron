@@ -1,0 +1,65 @@
+/*
+ * Copyright (c) 2022 Shaburov Oleg
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+ * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
+ * OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
+ * IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR
+ * ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
+ * TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
+ * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+ */
+
+package org.touchbit.qa.automatron.resource;
+
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.ArraySchema;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.ExampleObject;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ResponseStatus;
+import org.springframework.web.bind.annotation.RestController;
+import org.touchbit.qa.automatron.pojo.accounting.AuthDTO;
+import org.touchbit.qa.automatron.pojo.error.ErrorDTO;
+import org.touchbit.qa.automatron.service.AccountingService;
+
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
+
+import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
+import static org.touchbit.qa.automatron.constant.APIExamples.*;
+import static org.touchbit.qa.automatron.constant.LocaleBundleProperties.*;
+import static org.touchbit.qa.automatron.constant.ResourceConstants.*;
+
+@Validated
+@RestController
+@RequiredArgsConstructor
+@Tag(name = ACCOUNTING_TAG, description = CONTROLLER_ACCOUNTING_DESCRIPTION)
+public class AccountingApiController {
+
+    private final AccountingService accountingService;
+
+    @ResponseStatus(HttpStatus.OK)
+    @GetMapping(path = "/api/accounting/login", produces = MediaType.APPLICATION_JSON_VALUE)
+    @Operation(tags = ACCOUNTING_TAG, summary = RESOURCE_ACCOUNTING_POST_LOGIN_DESCRIPTION, responses = {
+            @ApiResponse(responseCode = "200", content = {@Content(mediaType = APPLICATION_JSON_VALUE, schema = @Schema(implementation = AuthDTO.class), examples = {@ExampleObject(AUTH_DTO)})}),
+            @ApiResponse(responseCode = "4xx", description = I18N_ERROR_4XX_DESCRIPTION, content = {@Content(mediaType = APPLICATION_JSON_VALUE, array = @ArraySchema(schema = @Schema(implementation = ErrorDTO.class)), examples = {
+                    @ExampleObject(summary = EX_400_BAD_REQUEST_SUMMARY, value = EX_ACCOUNTING_LOGIN_400, name = I18N_ERROR_400_DESCRIPTION),
+                    @ExampleObject(summary = EX_401_UNAUTHORIZED_SUMMARY, value = EX_CODE_401_001, name = I18N_ERROR_401_DESCRIPTION),
+                    @ExampleObject(summary = EX_403_FORBIDDEN_SUMMARY, value = EX_CODE_403_002, name = I18N_ERROR_403_DESCRIPTION),
+            })})})
+    public AuthDTO authentication(
+            @Parameter(description = LOGIN_DTO_ADMIN_DESCRIPTION, example = "admin") @NotNull @Size(min = 5, max = 25) String login,
+            @Parameter(description = LOGIN_DTO_PASSWORD_DESCRIPTION, example = "admin") @NotNull @Size(min = 5, max = 25) String password) {
+        return accountingService.authenticate(login, password);
+    }
+
+}
