@@ -1,6 +1,7 @@
 # Automatron
 
 Service for training API autotest development skills.   
+See [GitHub repository](https://github.com/touchbit/automatron) for more documentation.
 
 ## Docker run
 
@@ -12,7 +13,10 @@ docker run -p 8080:8080 -p 9092:9092 touchbit/automatron:latest
 
 ## Docker-compose run
 
-Create a `docker-compose.yml` file with the following content:
+[Download](https://raw.githubusercontent.com/touchbit/automatron/docker_push_by_tag/docker-compose.yml) `docker-compose.yml`
+file or create
+<details>
+<summary>with the following content</summary>
 
 ```yaml
 version: "3.9"
@@ -23,6 +27,8 @@ services:
       - "8080:8080"
       - "9092:9092"
 ```
+
+</details>
 
 Service start
 
@@ -46,3 +52,5 @@ The service database is available by default on port 9092.
 
 ## Example
 
+![](https://github.com/touchbit/automatron/blob/docker_push_by_tag/.doc/swaggerExample.png)
+![](https://github.com/touchbit/automatron/blob/main/.doc/swaggerExample.png)
