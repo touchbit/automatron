@@ -12,8 +12,8 @@
 
 package org.touchbit.qa.automatron.advice;
 
+import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.support.ResourceBundleMessageSource;
 import org.springframework.core.MethodParameter;
 import org.springframework.http.MediaType;
@@ -26,33 +26,26 @@ import org.touchbit.qa.automatron.pojo.error.ErrorDTO;
 import org.touchbit.qa.automatron.util.AutomatronUtils;
 
 import java.io.IOException;
-import java.net.InetAddress;
+import java.net.URL;
 import java.util.Collection;
 import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
-import static org.touchbit.qa.automatron.constant.I18N.*;
+import static org.touchbit.qa.automatron.constant.I18N.getKeys;
 import static org.touchbit.qa.automatron.constant.ResourceConstants.LOCALE;
 
 @Slf4j
 @RestControllerAdvice
+@AllArgsConstructor
 public class LocaleAdviser implements BodyAdvice {
 
     private static final String CURRENT_HOST_PORT = "current_host_port";
     private static final String OPENAPI_DESCRIPTION_LICENCE = "openapi_description_licence";
-    private static final ResourceBundleMessageSource MESSAGE_SOURCE = new ResourceBundleMessageSource();
 
-    static {
-        MESSAGE_SOURCE.setDefaultEncoding("UTF-8");
-        MESSAGE_SOURCE.setBasenames("i18n/msg", "i18n/bug");
-        MESSAGE_SOURCE.setUseCodeAsDefaultMessage(true);
-    }
-
-    // Port via annotation
-    @Value("${server.port}")
-    private int port;
+    private ResourceBundleMessageSource messageSource;
+    private URL serverAddress;
 
     @Override
     public Object beforeBodyWrite(final Object body, MethodParameter returnType,
@@ -144,7 +137,7 @@ public class LocaleAdviser implements BodyAdvice {
                     throw new RuntimeException("Unable to get license file", e);
                 }
             }
-            result = result.replaceAll(CURRENT_HOST_PORT, getHost());
+            result = result.replaceAll(CURRENT_HOST_PORT, String.valueOf(serverAddress));
             return result;
         } else {
             log.debug("Locale of the openapi document has not been done. " +
@@ -175,18 +168,18 @@ public class LocaleAdviser implements BodyAdvice {
 
     private Object localizeBugDTO(final BugDTO bugDTO, Locale locale) {
         final String info = bugDTO.info();
-        final String message = MESSAGE_SOURCE.getMessage(info, null, locale);
+        final String message = messageSource.getMessage(info, null, locale);
         return bugDTO.info(message);
     }
 
     private Object localizeErrorDTO(final ErrorDTO errorDTO, Locale locale) {
         final String rawSource = errorDTO.source();
         if (rawSource != null) {
-            errorDTO.source(MESSAGE_SOURCE.getMessage(rawSource, null, locale));
+            errorDTO.source(messageSource.getMessage(rawSource, null, locale));
         }
         final String rawReason = errorDTO.reason();
         if (rawReason != null) {
-            errorDTO.reason(MESSAGE_SOURCE.getMessage(rawReason, null, locale));
+            errorDTO.reason(messageSource.getMessage(rawReason, null, locale));
         }
         return errorDTO;
     }
@@ -194,7 +187,7 @@ public class LocaleAdviser implements BodyAdvice {
     private String localizeString(final String source, Locale locale) {
         String result = source;
         for (String key : getKeys()) {
-            final String rawValue = MESSAGE_SOURCE.getMessage(key, null, locale);
+            final String rawValue = messageSource.getMessage(key, null, locale);
             final String value = rawValue.replaceAll("\"", "'");
             result = result.replaceAll(key, value);
         }
@@ -237,10 +230,6 @@ public class LocaleAdviser implements BodyAdvice {
             log.debug("The default language tag is used.");
             return Locale.getDefault();
         }
-    }
-
-    public String getHost() {
-        return "http://" + InetAddress.getLoopbackAddress().getHostName() + ":" + port;
     }
 
 }

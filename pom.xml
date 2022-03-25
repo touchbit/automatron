@@ -12,7 +12,7 @@
 
     <groupId>org.touchbit.qa</groupId>
     <artifactId>automatron</artifactId>
-    <version>0.0.1</version>
+    <version>0.0.0</version>
     <name>Automatron</name>
     <description>Trainer for beginner autotesters</description>
 
