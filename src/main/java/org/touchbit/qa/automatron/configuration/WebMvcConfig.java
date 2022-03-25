@@ -22,8 +22,11 @@ import lombok.extern.slf4j.Slf4j;
 import org.springdoc.core.GroupedOpenApi;
 import org.springdoc.core.customizers.OpenApiCustomiser;
 import org.springdoc.core.customizers.OperationCustomizer;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.DependsOn;
+import org.springframework.context.support.ResourceBundleMessageSource;
 import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.LocaleResolver;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
@@ -33,6 +36,9 @@ import org.touchbit.qa.automatron.Application;
 import org.touchbit.qa.automatron.interceptor.LocaleInterceptor;
 import org.touchbit.qa.automatron.interceptor.XRequestIdInterceptor;
 
+import java.net.InetAddress;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.Set;
 import java.util.TreeSet;
 
@@ -48,17 +54,24 @@ public class WebMvcConfig implements WebMvcConfigurer {
 
     private static final String[] PATHS = {"/**/*"};
 
-
-    @Bean
-    public GroupedOpenApi initRussianOpenApiDefinition() {
-        log.info("Initializing russian open api definition.");
-        return initOpenApiDefinition("Russian");
+    @Bean("appVersion")
+    public String appVersion() {
+        String version = Application.class.getPackage().getImplementationVersion();
+        return version == null || version.isBlank() ? "0.0.0" : version;
     }
 
     @Bean
-    public GroupedOpenApi initEnglishOpenApiDefinition() {
+    @DependsOn({"appVersion"})
+    public GroupedOpenApi initRussianOpenApiDefinition(final String appVersion) {
+        log.info("Initializing russian open api definition.");
+        return initOpenApiDefinition("Russian", appVersion);
+    }
+
+    @Bean
+    @DependsOn({"appVersion"})
+    public GroupedOpenApi initEnglishOpenApiDefinition(final String appVersion) {
         log.info("Initializing english openapi definition.");
-        return initOpenApiDefinition("English");
+        return initOpenApiDefinition("English", appVersion);
     }
 
     @Bean
@@ -66,6 +79,22 @@ public class WebMvcConfig implements WebMvcConfigurer {
         final FixedLocaleResolver fixedLocaleResolver = new FixedLocaleResolver();
         fixedLocaleResolver.setDefaultLocale(null);
         return fixedLocaleResolver;
+    }
+
+    @Bean
+    public ResourceBundleMessageSource resourceBundleMessageSource() {
+        final ResourceBundleMessageSource messageSource = new ResourceBundleMessageSource();
+        messageSource.setDefaultEncoding("UTF-8");
+        messageSource.setBasenames("i18n/msg", "i18n/bug");
+        messageSource.setUseCodeAsDefaultMessage(true);
+        return messageSource;
+    }
+
+    @Bean
+    @SuppressWarnings("HttpUrlsUsage")
+    public URL serverAddress(@Value("${server.port}") int port) throws MalformedURLException {
+        final String url = "http://" + InetAddress.getLoopbackAddress().getHostName() + ":" + port;
+        return new URL(url);
     }
 
     @Override
@@ -76,21 +105,21 @@ public class WebMvcConfig implements WebMvcConfigurer {
         registry.addInterceptor(new LocaleInterceptor());
     }
 
-    private GroupedOpenApi initOpenApiDefinition(String group) {
+    private GroupedOpenApi initOpenApiDefinition(String group, String appVersion) {
         return GroupedOpenApi.builder()
                 .group(group)
                 .addOperationCustomizer(xRequestIdGlobalHeader())
                 .addOperationCustomizer(acceptLocaleHeader())
                 .addOperationCustomizer(sortResponses())
-                .addOpenApiCustomiser(openApiCustomiser())
+                .addOpenApiCustomiser(openApiCustomiser(appVersion))
                 .pathsToMatch(PATHS)
                 .build();
     }
 
-    private OpenApiCustomiser openApiCustomiser() {
+    private OpenApiCustomiser openApiCustomiser(String appVersion) {
         return openApi -> openApi.info(new Info()
                 .title("Automatron")
-                .version(Application.class.getPackage().getImplementationVersion())
+                .version(appVersion)
                 .description(I18N_1648167967145));
     }
 
