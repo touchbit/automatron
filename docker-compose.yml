@@ -1,0 +1,7 @@
+version: "3.9"
+services:
+  automatron:
+    image: touchbit/automatron:latest
+    ports:
+      - "8080:8080"
+      - "9092:9092"

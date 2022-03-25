@@ -32,18 +32,10 @@ jobs:
         with:
           username: touchbit
           password: ${{ secrets.DOCKER_PASSWORD }}
-      - name: Extract metadata for Docker
-        id: meta
-        uses: docker/metadata-action@v3
-        with:
-          images: touchbit/automatron
       - name: Build and push Docker image
-        uses: docker/build-push-action@v2
-        with:
-          context: .
-          push: true
-          tags: ${{ steps.meta.outputs.tags }}
-          labels: ${{ steps.meta.outputs.labels }}
+        run: |
+          docker build -t touchbit/automatron:latest -t touchbit/automatron:${GITHUB_REF##*/} -f Dockerfile .
+          docker push --all-tags touchbit/automatron
       - name: Update DockerHub Description
         uses: peter-evans/dockerhub-description@v3
         with:
