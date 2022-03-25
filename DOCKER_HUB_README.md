@@ -13,7 +13,7 @@ docker run -p 8080:8080 -p 9092:9092 touchbit/automatron:latest
 
 ## Docker-compose run
 
-[Download](https://raw.githubusercontent.com/touchbit/automatron/docker_push_by_tag/docker-compose.yml) `docker-compose.yml`
+[Download](https://raw.githubusercontent.com/touchbit/automatron/main/docker-compose.yml) `docker-compose.yml`
 file or create
 <details>
 <summary>with the following content</summary>
@@ -42,7 +42,7 @@ docker-compose up # run automatron
 
 The service is available by default on port 8080.  
 The service database is available by default on port 9092.   
-
+After starting the docker container, the following will be available:   
 - Swagger documentation is available at:
     - http://localhost:8080/
     - http://localhost:8080/swagger-ui/index.html
@@ -52,5 +52,4 @@ The service database is available by default on port 9092.
 
 ## Example
 
-![](https://github.com/touchbit/automatron/blob/docker_push_by_tag/.doc/swaggerExample.png)
-![](https://github.com/touchbit/automatron/blob/main/.doc/swaggerExample.png)
+![](https://raw.githubusercontent.com/touchbit/automatron/main/.doc/swaggerExample.png)
