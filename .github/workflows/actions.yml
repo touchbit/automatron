@@ -34,7 +34,7 @@ jobs:
           password: ${{ secrets.DOCKER_PASSWORD }}
       - name: Extract metadata for Docker
         id: meta
-        uses: docker/metadata-action@V3
+        uses: docker/metadata-action@v3
         with:
           images: touchbit/automatron
       - name: Build and push
