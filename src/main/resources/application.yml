@@ -26,6 +26,7 @@ server:
   port : 8080
 
 springdoc:
+  writer-with-default-pretty-printer: true
   api-docs:
     groups:
       enabled: true
@@ -37,5 +38,6 @@ springdoc:
     tagsSorter: alpha
     show-extensions: true
     show-common-extensions: true
+    csrf.enabled: false
 
 
