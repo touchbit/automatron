@@ -63,5 +63,5 @@ jobs:
           username: touchbit
           password: ${{ secrets.DOCKER_PASSWORD }}
           repository: touchbit/automatron
-          short-description: TODO short-description
+          short-description: Service for training API autotest development skills.
           readme-filepath: ./DOCKER_HUB_README.md
