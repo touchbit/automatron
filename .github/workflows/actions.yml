@@ -25,6 +25,7 @@ jobs:
         run: |
           mvn versions:set -DnewVersion=${GITHUB_REF##*/}
           mvn clean package
+          ls -lah
       - name: Log in to Docker Hub
         uses: docker/login-action@v1
         with:
@@ -34,11 +35,11 @@ jobs:
         id: meta
         uses: docker/metadata-action@v3
         with:
-          images: automatron
+          images: touchbit/automatron
       - name: Build and push Docker image
         uses: docker/build-push-action@v2
         with:
           context: .
           push: true
-          tags: latest,${{ steps.meta.outputs.tags }}
+          tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
