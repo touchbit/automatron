@@ -34,7 +34,7 @@ jobs:
         id: meta
         uses: docker/metadata-action@v3
         with:
-          images: touchbit/automatron
+          images: automatron
       - name: Build and push Docker image
         uses: docker/build-push-action@v2
         with:
