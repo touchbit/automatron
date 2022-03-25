@@ -21,13 +21,13 @@ jobs:
           mvn versions:set -DnewVersion=${{ steps.meta.outputs.tags }}
           mvn clean package
       - name: Log in to Docker Hub
-        uses: docker/login-action@V1
+        uses: docker/login-action@v1
         with:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
       - name: Extract metadata for Docker
         id: meta
-        uses: docker/metadata-action@V3
+        uses: docker/metadata-action@v3
         with:
           images: touchbit/automatron
       - name: Build and push Docker image
