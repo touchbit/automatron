@@ -36,29 +36,28 @@ import javax.validation.constraints.Size;
 
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 import static org.touchbit.qa.automatron.constant.APIExamples.*;
-import static org.touchbit.qa.automatron.constant.LocaleBundleProperties.*;
+import static org.touchbit.qa.automatron.constant.I18N.*;
 import static org.touchbit.qa.automatron.constant.ResourceConstants.*;
 
 @Validated
 @RestController
 @RequiredArgsConstructor
-@Tag(name = ACCOUNTING_TAG, description = CONTROLLER_ACCOUNTING_DESCRIPTION)
+@Tag(name = ACCOUNTING_TAG, description = I18N_1648168206689)
 public class AccountingApiController {
 
     private final AccountingService accountingService;
 
     @ResponseStatus(HttpStatus.OK)
     @GetMapping(path = "/api/accounting/login", produces = MediaType.APPLICATION_JSON_VALUE)
-    @Operation(tags = ACCOUNTING_TAG, summary = RESOURCE_ACCOUNTING_POST_LOGIN_DESCRIPTION, responses = {
-            @ApiResponse(responseCode = "200", content = {@Content(mediaType = APPLICATION_JSON_VALUE, schema = @Schema(implementation = AuthDTO.class), examples = {@ExampleObject(AUTH_DTO)})}),
-            @ApiResponse(responseCode = "4xx", description = I18N_ERROR_4XX_DESCRIPTION, content = {@Content(mediaType = APPLICATION_JSON_VALUE, array = @ArraySchema(schema = @Schema(implementation = ErrorDTO.class)), examples = {
-                    @ExampleObject(summary = EX_400_BAD_REQUEST_SUMMARY, value = EX_ACCOUNTING_LOGIN_400, name = I18N_ERROR_400_DESCRIPTION),
-                    @ExampleObject(summary = EX_401_UNAUTHORIZED_SUMMARY, value = EX_CODE_401_001, name = I18N_ERROR_401_DESCRIPTION),
-                    @ExampleObject(summary = EX_403_FORBIDDEN_SUMMARY, value = EX_CODE_403_002, name = I18N_ERROR_403_DESCRIPTION),
-            })})})
+    @Operation(tags = ACCOUNTING_TAG, summary = I18N_1648168212897, responses = {
+            @ApiResponse(responseCode = "200", description = I18N_1648168229890, content = {@Content(mediaType = APPLICATION_JSON_VALUE, schema = @Schema(implementation = AuthDTO.class), examples = {@ExampleObject(AUTH_DTO)})}),
+            @ApiResponse(responseCode = "4xx", description = I18N_1648168086907, content = {@Content(mediaType = APPLICATION_JSON_VALUE, array = @ArraySchema(schema = @Schema(implementation = ErrorDTO.class)), examples = {
+                    @ExampleObject(summary = EX_400_BAD_REQUEST_SUMMARY, value = EX_ACCOUNTING_LOGIN_400, name = I18N_1648168095253),
+                    @ExampleObject(summary = EX_401_UNAUTHORIZED_SUMMARY, value = EX_CODE_401_001, name = I18N_1648168104107),
+                    @ExampleObject(summary = EX_403_FORBIDDEN_SUMMARY, value = EX_CODE_403_002, name = I18N_1648168125864),})})})
     public AuthDTO authentication(
-            @Parameter(description = LOGIN_DTO_ADMIN_DESCRIPTION, example = "admin") @NotNull @Size(min = 5, max = 25) String login,
-            @Parameter(description = LOGIN_DTO_PASSWORD_DESCRIPTION, example = "admin") @NotNull @Size(min = 5, max = 25) String password) {
+            @Parameter(description = I18N_1648168739660, example = "admin") @NotNull @Size(min = 5, max = 25) String login,
+            @Parameter(description = I18N_1648168744616, example = "admin") @NotNull @Size(min = 5, max = 25) String password) {
         return accountingService.authenticate(login, password);
     }
 

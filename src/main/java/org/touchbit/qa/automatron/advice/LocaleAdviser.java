@@ -33,18 +33,20 @@ import java.util.Locale;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
-import static org.touchbit.qa.automatron.constant.LocaleBundleProperties.*;
+import static org.touchbit.qa.automatron.constant.I18N.*;
 import static org.touchbit.qa.automatron.constant.ResourceConstants.LOCALE;
 
 @Slf4j
 @RestControllerAdvice
 public class LocaleAdviser implements BodyAdvice {
 
+    private static final String CURRENT_HOST_PORT = "current_host_port";
+    private static final String OPENAPI_DESCRIPTION_LICENCE = "openapi_description_licence";
     private static final ResourceBundleMessageSource MESSAGE_SOURCE = new ResourceBundleMessageSource();
 
     static {
         MESSAGE_SOURCE.setDefaultEncoding("UTF-8");
-        MESSAGE_SOURCE.setBasenames("i18n/api", "i18n/bug", "i18n/pojo");
+        MESSAGE_SOURCE.setBasenames("i18n/msg", "i18n/bug");
         MESSAGE_SOURCE.setUseCodeAsDefaultMessage(true);
     }
 

@@ -22,7 +22,7 @@ import lombok.experimental.Accessors;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 
-import static org.touchbit.qa.automatron.constant.LocaleBundleProperties.*;
+import static org.touchbit.qa.automatron.constant.I18N.*;
 
 @Setter
 @Getter
@@ -33,16 +33,16 @@ public class ErrorDTO {
     @JsonProperty("type")
     @Min(1)
     @NotNull
-    @Schema(description = ERROR_DTO_CODE_DESCRIPTION)
+    @Schema(description = I18N_1648168710928)
     private ErrorType type;
 
     @JsonProperty("source")
     @NotNull
-    @Schema(description = ERROR_DTO_SOURCE_DESCRIPTION)
+    @Schema(description = I18N_1648168716654)
     private String source;
 
     @JsonProperty("reason")
-    @Schema(description = ERROR_DTO_REASON_DESCRIPTION)
+    @Schema(description = I18N_1648168723241)
     @NotNull
     private String reason;
 

@@ -28,7 +28,7 @@ import org.touchbit.qa.automatron.util.AutomatronException;
 import java.util.Objects;
 import java.util.UUID;
 
-import static org.touchbit.qa.automatron.constant.LocaleBundleProperties.I18N_ERROR_500_001_MESSAGE;
+import static org.touchbit.qa.automatron.constant.I18N.I18N_1648168178176;
 
 @Slf4j
 @Service
@@ -61,7 +61,7 @@ public class AccountingService {
                     .refreshExpiresIn(session.refreshExpiresIn())
                     .tokenType("bearer");
         }
-        throw AutomatronException.http500(user.getClass().getSimpleName() + ".id=" + user.id(), I18N_ERROR_500_001_MESSAGE);
+        throw AutomatronException.http500(user.getClass().getSimpleName() + ".id=" + user.id(), I18N_1648168178176);
     }
 
     private Session getSession(final User user) {

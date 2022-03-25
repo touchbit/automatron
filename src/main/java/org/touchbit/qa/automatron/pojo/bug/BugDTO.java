@@ -21,7 +21,7 @@ import org.touchbit.qa.automatron.constant.Bug;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Positive;
 
-import static org.touchbit.qa.automatron.constant.LocaleBundleProperties.*;
+import static org.touchbit.qa.automatron.constant.I18N.*;
 
 @Setter
 @Getter
@@ -32,18 +32,18 @@ import static org.touchbit.qa.automatron.constant.LocaleBundleProperties.*;
 public class BugDTO {
 
     @JsonProperty("id")
-    @Schema(description = BUG_DTO_ID_DESCRIPTION)
+    @Schema(description = I18N_1648168751163)
     @NotNull
     @Positive
     private Integer id;
 
     @JsonProperty("type")
-    @Schema(description = BUG_DTO_TYPE_DESCRIPTION)
+    @Schema(description = I18N_1648168758028)
     @NotNull
     private Bug.BugType type;
 
     @JsonProperty("info")
-    @Schema(description = BUG_DTO_INFO_DESCRIPTION)
+    @Schema(description = I18N_1648168762498)
     @NotNull
     private String info;
 

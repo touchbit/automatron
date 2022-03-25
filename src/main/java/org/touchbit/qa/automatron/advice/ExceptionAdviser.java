@@ -30,7 +30,6 @@ import org.touchbit.qa.automatron.util.AutomatronException;
 
 import javax.validation.ConstraintViolation;
 import javax.validation.ConstraintViolationException;
-import javax.validation.Path;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -38,7 +37,7 @@ import java.util.List;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 import static org.touchbit.qa.automatron.constant.APIExamples.*;
-import static org.touchbit.qa.automatron.constant.LocaleBundleProperties.*;
+import static org.touchbit.qa.automatron.constant.I18N.*;
 import static org.touchbit.qa.automatron.constant.ResourceConstants.RID;
 import static org.touchbit.qa.automatron.pojo.error.ErrorType.CONTRACT;
 import static org.touchbit.qa.automatron.pojo.error.ErrorType.SYSTEM;
@@ -48,11 +47,11 @@ import static org.touchbit.qa.automatron.pojo.error.ErrorType.SYSTEM;
 public class ExceptionAdviser {
     // ResponseEntityExceptionHandler
 
-    @ApiResponse(responseCode = "5xx", description = I18N_ERROR_5XX_DESCRIPTION, content =
+    @ApiResponse(responseCode = "5xx", description = I18N_1648168141132, content =
     @Content(mediaType = APPLICATION_JSON_VALUE, examples = {
-            @ExampleObject(name = "500 (SYSTEM)", value = API_SYSTEM_ERR_500, description = I18N_ERROR_500_SYSTEM_DESCRIPTION),
-            @ExampleObject(name = "500 (LOGIC)", value = API_LOGICAL_ERR_500, description = I18N_ERROR_500_LOGIC_DESCRIPTION),
-            @ExampleObject(name = "500 (NETWORK)", value = API_NETWORK_ERR_500, description = I18N_ERROR_500_NETWORK_DESCRIPTION),
+            @ExampleObject(name = "500 (SYSTEM)", value = API_SYSTEM_ERR_500, description = I18N_1648168152659),
+            @ExampleObject(name = "500 (LOGIC)", value = API_LOGICAL_ERR_500, description = I18N_1648168162035),
+            @ExampleObject(name = "500 (NETWORK)", value = API_NETWORK_ERR_500, description = I18N_1648168167873),
     }))
     @ExceptionHandler({Exception.class, RuntimeException.class})
     public ResponseEntity<List<ErrorDTO>> internalServerErrorException(Exception exception) {

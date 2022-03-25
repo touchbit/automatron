@@ -16,15 +16,15 @@ import lombok.Getter;
 import lombok.experimental.Accessors;
 
 import static org.touchbit.qa.automatron.constant.Bug.BugType.*;
-import static org.touchbit.qa.automatron.constant.LocaleBundleProperties.*;
+import static org.touchbit.qa.automatron.constant.I18N.*;
 
 @Getter
 @Accessors(chain = true, fluent = true)
 public enum Bug {
 
-    BUG_0001(1, SECURITY, BUG_001_INFO, BUG_001_DESCRIPTION),
-    BUG_0002(2, SPECIFICATION, BUG_002_INFO, BUG_002_DESCRIPTION),
-    BUG_0003(3, IMPLEMENTATION, BUG_003_INFO, BUG_003_DESCRIPTION),
+    BUG_0001(1, SECURITY, I18N_1648168652178, I18N_1648168660813),
+    BUG_0002(2, SPECIFICATION, I18N_1648168667369, I18N_1648168674474),
+    BUG_0003(3, IMPLEMENTATION, I18N_1648169003925, I18N_1648169012151),
     ;
 
     private final int id;

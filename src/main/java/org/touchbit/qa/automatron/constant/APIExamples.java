@@ -29,7 +29,7 @@ public class APIExamples {
               {
                 "type": "ACCESS",
                 "source": "login/password",
-                "reason": "i18n_error_401_001_message"
+                "reason": "I18N_1648168111078"
               }
             ]
             """;
@@ -39,7 +39,7 @@ public class APIExamples {
               {
                 "type": "ACCESS",
                 "source": "User{type=MEMBER}",
-                "reason": "i18n_error_403_001_message"
+                "reason": "I18N_1648168132812"
               }
             ]
             """;
@@ -49,7 +49,7 @@ public class APIExamples {
               {
                 "type": "ACCESS",
                 "source": "User{status=BLOCKED}",
-                "reason": "i18n_error_403_001_message"
+                "reason": "I18N_1648168132812"
               }
             ]
             """;
@@ -69,7 +69,7 @@ public class APIExamples {
               {
                 "type": "NETWORK",
                 "source": "JdbcSQLException",
-                "reason": "i18n_error_500_002_message"
+                "reason": "I18N_1648168186580"
               }
             ]
             """;
@@ -79,7 +79,7 @@ public class APIExamples {
               {
                 "type": "SYSTEM",
                 "source": "TransactionSystemException",
-                "reason": "i18n_error_500_003_message"
+                "reason": "I18N_1648168193476"
               }
             ]
             """;

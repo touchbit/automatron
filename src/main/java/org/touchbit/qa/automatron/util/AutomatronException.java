@@ -19,7 +19,7 @@ import org.touchbit.qa.automatron.pojo.error.ErrorType;
 
 import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
 import static org.springframework.http.HttpStatus.UNAUTHORIZED;
-import static org.touchbit.qa.automatron.constant.LocaleBundleProperties.I18N_ERROR_401_001_MESSAGE;
+import static org.touchbit.qa.automatron.constant.I18N.I18N_1648168111078;
 import static org.touchbit.qa.automatron.pojo.error.ErrorType.ACCESS;
 import static org.touchbit.qa.automatron.pojo.error.ErrorType.SYSTEM;
 
@@ -40,7 +40,7 @@ public class AutomatronException extends RuntimeException {
     }
 
     public static AutomatronException http401(String source) {
-        return new AutomatronException(UNAUTHORIZED, ACCESS, source, I18N_ERROR_401_001_MESSAGE);
+        return new AutomatronException(UNAUTHORIZED, ACCESS, source, I18N_1648168111078);
     }
 
     public static AutomatronException http500(String source, String reason) {

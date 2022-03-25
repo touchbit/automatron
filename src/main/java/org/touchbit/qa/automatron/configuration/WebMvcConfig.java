@@ -36,7 +36,7 @@ import org.touchbit.qa.automatron.interceptor.XRequestIdInterceptor;
 import java.util.Set;
 import java.util.TreeSet;
 
-import static org.touchbit.qa.automatron.constant.LocaleBundleProperties.*;
+import static org.touchbit.qa.automatron.constant.I18N.*;
 import static org.touchbit.qa.automatron.constant.ResourceConstants.*;
 
 /**
@@ -91,7 +91,7 @@ public class WebMvcConfig implements WebMvcConfigurer {
         return openApi -> openApi.info(new Info()
                 .title("Automatron")
                 .version(Application.class.getPackage().getImplementationVersion())
-                .description(OPENAPI_DESCRIPTION));
+                .description(I18N_1648167967145));
     }
 
     private OperationCustomizer xRequestIdGlobalHeader() {
@@ -103,7 +103,7 @@ public class WebMvcConfig implements WebMvcConfigurer {
                     .in(ParameterIn.HEADER.toString())
                     .schema(new StringSchema().type("integer"))
                     .name(RID)
-                    .description(HEADER_REQUEST_ID_DESCRIPTION)
+                    .description(I18N_1648168060464)
                     .required(false);
             operation.addParametersItem(xRequestId);
             return operation;
@@ -127,7 +127,7 @@ public class WebMvcConfig implements WebMvcConfigurer {
                     .in(ParameterIn.HEADER.toString())
                     .schema(new StringSchema().addEnumItem("ru").addEnumItem("en"))
                     .name(LOCALE)
-                    .description(HEADER_LOCALE_DESCRIPTION)
+                    .description(I18N_1648168069261)
                     .required(false);
             operation.addParametersItem(acceptLanguage);
             return operation;

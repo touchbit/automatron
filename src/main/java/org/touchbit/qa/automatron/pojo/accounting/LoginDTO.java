@@ -23,8 +23,8 @@ import lombok.experimental.Accessors;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
-import static org.touchbit.qa.automatron.constant.LocaleBundleProperties.LOGIN_DTO_ADMIN_DESCRIPTION;
-import static org.touchbit.qa.automatron.constant.LocaleBundleProperties.LOGIN_DTO_PASSWORD_DESCRIPTION;
+import static org.touchbit.qa.automatron.constant.I18N.I18N_1648168739660;
+import static org.touchbit.qa.automatron.constant.I18N.I18N_1648168744616;
 
 @Setter
 @Getter
@@ -35,14 +35,14 @@ public class LoginDTO {
     @Parameter(name = "login",
             style = ParameterStyle.FORM,
             required = true,
-            schema = @Schema(description = LOGIN_DTO_ADMIN_DESCRIPTION, example = "admin"))
+            schema = @Schema(description = I18N_1648168739660, example = "admin"))
     private @NotNull @Size(min = 2, max = 20) String login;
 
     @Parameter(
             name = "password",
             style = ParameterStyle.FORM,
             required = true,
-            schema = @Schema(description = LOGIN_DTO_PASSWORD_DESCRIPTION, example = "IDDQD"))
+            schema = @Schema(description = I18N_1648168744616, example = "IDDQD"))
     private @NotNull @Size(min = 5, max = 36) String password;
 
 }

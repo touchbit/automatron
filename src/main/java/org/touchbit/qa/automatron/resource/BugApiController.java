@@ -37,18 +37,18 @@ import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 import static org.springframework.http.MediaType.TEXT_PLAIN_VALUE;
 import static org.touchbit.qa.automatron.constant.APIExamples.BUG_INFO_EXAMPLE;
 import static org.touchbit.qa.automatron.constant.APIExamples.BUG_LIST;
-import static org.touchbit.qa.automatron.constant.LocaleBundleProperties.*;
+import static org.touchbit.qa.automatron.constant.I18N.*;
 import static org.touchbit.qa.automatron.constant.ResourceConstants.BUG_TAG;
 
 @Slf4j
 @RestController
-@Tag(name = BUG_TAG, description = CONTROLLER_BUG_DESCRIPTION)
+@Tag(name = BUG_TAG, description = I18N_1648168263223)
 public class BugApiController {
 
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Completed successfully", content = {@Content(mediaType = APPLICATION_JSON_VALUE, array = @ArraySchema(schema = @Schema(implementation = BugDTO.class)), examples = {@ExampleObject(BUG_LIST)})}),
     })
-    @Operation(tags = BUG_TAG, summary = RESOURCE_GET_BUGS_DESCRIPTION)
+    @Operation(tags = BUG_TAG, summary = I18N_1648168270342)
     @ResponseStatus(HttpStatus.OK)
     @RequestMapping(value = "/api/bugs", method = RequestMethod.GET)
     public List<BugDTO> getBugs() {
@@ -63,7 +63,7 @@ public class BugApiController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Completed successfully", content = {@Content(examples = {@ExampleObject(BUG_INFO_EXAMPLE)})}),
     })
-    @Operation(tags = BUG_TAG, summary = RESOURCE_GET_BUG_DESCRIPTION)
+    @Operation(tags = BUG_TAG, summary = I18N_1648168278936)
     @ResponseStatus(HttpStatus.OK)
     @RequestMapping(value = "/api/bug", method = RequestMethod.GET, produces = TEXT_PLAIN_VALUE)
     public String getBugs(@RequestParam(value = "id") @Valid @Min(1) Integer bugId) {

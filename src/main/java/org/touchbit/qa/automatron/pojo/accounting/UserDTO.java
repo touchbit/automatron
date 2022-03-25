@@ -14,7 +14,6 @@ package org.touchbit.qa.automatron.pojo.accounting;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.v3.oas.annotations.Parameter;
-import io.swagger.v3.oas.annotations.enums.ParameterStyle;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Getter;
 import lombok.Setter;
@@ -26,8 +25,8 @@ import org.touchbit.qa.automatron.db.entity.UserType;
 import java.util.Set;
 
 import static io.swagger.v3.oas.annotations.media.Schema.AccessMode.READ_ONLY;
-import static org.touchbit.qa.automatron.constant.LocaleBundleProperties.LOGIN_DTO_ADMIN_DESCRIPTION;
-import static org.touchbit.qa.automatron.constant.LocaleBundleProperties.LOGIN_DTO_PASSWORD_DESCRIPTION;
+import static org.touchbit.qa.automatron.constant.I18N.I18N_1648168739660;
+import static org.touchbit.qa.automatron.constant.I18N.I18N_1648168744616;
 
 @Getter
 @Setter
@@ -39,13 +38,13 @@ public class UserDTO {
     private long id;
 
     @Parameter(name = "login", schema =
-    @Schema(required = true, description = LOGIN_DTO_ADMIN_DESCRIPTION, example = "admin"))
+    @Schema(required = true, description = I18N_1648168739660, example = "admin"))
     private String login;
 
     @Parameter(
             name = "password",
             required = true,
-            schema = @Schema(description = LOGIN_DTO_PASSWORD_DESCRIPTION, example = "example_password"))
+            schema = @Schema(description = I18N_1648168744616, example = "example_password"))
     private String password;
 
     private UserStatus status;
