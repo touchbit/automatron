@@ -13,16 +13,13 @@
 package org.touchbit.qa.automatron.util;
 
 import org.springframework.http.server.ServerHttpRequest;
-import org.springframework.util.ResourceUtils;
 import org.touchbit.qa.automatron.Application;
 
 import javax.servlet.http.HttpServletRequest;
-import java.io.ByteArrayOutputStream;
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.nio.file.Files;
 import java.util.Locale;
+import java.util.function.Function;
 
 public class AutomatronUtils {
 
@@ -51,6 +48,14 @@ public class AutomatronUtils {
             }
             throw new IOException("The license file is missing from the project resources: " + licSource);
         }
+    }
+
+    public static <O> String errSource(O obj, Function<O, Object> func, String name) {
+        return obj.getClass().getSimpleName() + "{" + name + "=" + func.apply(obj) + "}";
+    }
+
+    public static <O> String errSource(O obj, Object val, String name) {
+        return obj.getClass().getSimpleName() + "{" + name + "=" + val + "}";
     }
 
 }

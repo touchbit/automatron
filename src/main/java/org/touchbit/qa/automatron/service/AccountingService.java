@@ -29,6 +29,7 @@ import java.util.Objects;
 import java.util.UUID;
 
 import static org.touchbit.qa.automatron.constant.I18N.I18N_1648168178176;
+import static org.touchbit.qa.automatron.util.AutomatronUtils.errSource;
 
 @Slf4j
 @Service
@@ -40,20 +41,30 @@ public class AccountingService {
 
     @SuppressWarnings("unused")
     public AuthDTO authenticate(final String login, final String password) {
-        log.info("Authentication Request Received");
-        final User user = userRepository.findByLogin(login);
-        if (user == null ||
-            !Objects.equals(password, user.password()) ||
-            user.status().equals(UserStatus.DELETED)) {
-            throw AutomatronException.http401("login/password");
+        log.info("User authentication request with login {}", login);
+        final User user = findUserByLogin(login);
+        final String source401 = "login/password";
+        if (user == null) {
+            log.error("User with login '{}' not found", login);
+            throw AutomatronException.http401(source401);
+        }
+        if (!Objects.equals(password, user.password())) {
+            log.error("Incorrect password received for login '{}'", login);
+            throw AutomatronException.http401(source401);
+        }
+        if (user.status().equals(UserStatus.DELETED)) {
+            log.error("Authentication is denied. The user status: {}", UserStatus.DELETED);
+            throw AutomatronException.http403(errSource(user, User::status, "status"));
         }
         if (user.status().equals(UserStatus.BLOCKED)) {
+            log.error("Authentication is denied. User status: {}", UserStatus.BLOCKED);
             BugAdviser.addBug(Bug.BUG_0003);
-            throw AutomatronException.http401(user.getClass().getSimpleName() + "{status=" + user.status() + "}");
+            throw AutomatronException.http401(errSource(user, User::status, "status"));
         }
         if (user.status().equals(UserStatus.ACTIVE)) {
             final Session session = getSession(user);
             sessionRepository.save(session);
+            log.info("Authentication successful");
             return new AuthDTO()
                     .accessToken(session.accessToken())
                     .refreshToken(session.refreshToken())
@@ -61,7 +72,7 @@ public class AccountingService {
                     .refreshExpiresIn(session.refreshExpiresIn())
                     .tokenType("bearer");
         }
-        throw AutomatronException.http500(user.getClass().getSimpleName() + ".id=" + user.id(), I18N_1648168178176);
+        throw AutomatronException.http500(errSource(user, User::status, "status"), I18N_1648168178176);
     }
 
     private Session getSession(final User user) {
@@ -71,6 +82,17 @@ public class AccountingService {
                 .accessExpiresIn(86400L)
                 .refreshExpiresIn(86400L)
                 .user(user);
+    }
+
+    private User findUserByLogin(String login) {
+        log.debug("DB: search user by login: {}", login);
+        final User user = userRepository.findByLogin(login);
+        if (user != null) {
+            log.debug("DB: user found");
+        } else {
+            log.debug("DB: user is not found");
+        }
+        return user;
     }
 
 }

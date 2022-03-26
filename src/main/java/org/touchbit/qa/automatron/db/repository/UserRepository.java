@@ -19,6 +19,7 @@ import org.touchbit.qa.automatron.db.entity.User;
 @Transactional
 public interface UserRepository extends CrudRepository<User, Long> {
 
+
     User findByLogin(String login);
 
 }

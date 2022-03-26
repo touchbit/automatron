@@ -24,7 +24,7 @@ spring:
         web-allow-others: true
 
 server:
-  port : 8080
+  port: 8080
 
 springdoc:
   writer-with-default-pretty-printer: true
