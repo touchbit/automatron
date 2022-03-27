@@ -10,18 +10,15 @@
  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package org.touchbit.qa.automatron.advice;
+package org.touchbit.qa.automatron.interceptor;
 
 import lombok.extern.slf4j.Slf4j;
 import org.slf4j.MDC;
-import org.springframework.core.MethodParameter;
-import org.springframework.http.MediaType;
-import org.springframework.http.converter.HttpMessageConverter;
-import org.springframework.http.server.ServerHttpRequest;
-import org.springframework.http.server.ServerHttpResponse;
-import org.springframework.web.bind.annotation.ControllerAdvice;
+import org.springframework.web.servlet.HandlerInterceptor;
 import org.touchbit.qa.automatron.constant.Bug;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
@@ -31,10 +28,9 @@ import static org.touchbit.qa.automatron.constant.ResourceConstants.BID;
 import static org.touchbit.qa.automatron.constant.ResourceConstants.RID;
 
 @Slf4j
-@ControllerAdvice
-public class BugAdviser implements BodyAdvice {
+public class BugInterceptor implements HandlerInterceptor {
 
-    public static final ConcurrentMap<String, List<Bug>> BUGS = new ConcurrentHashMap<>();
+    private static final ConcurrentMap<String, List<Bug>> BUGS = new ConcurrentHashMap<>();
 
     public static void addBug(final Bug bug) {
         final String rid = MDC.get(RID);
@@ -47,24 +43,23 @@ public class BugAdviser implements BodyAdvice {
     }
 
     @Override
-    public Object beforeBodyWrite(Object body,
-                                  MethodParameter returnType,
-                                  MediaType selectedContentType,
-                                  Class<? extends HttpMessageConverter<?>> selectedConverterType,
-                                  ServerHttpRequest request,
-                                  ServerHttpResponse response) {
+    public void afterCompletion(HttpServletRequest request,
+                                HttpServletResponse response,
+                                Object object,
+                                Exception arg3) {
         final String rid = MDC.get(RID);
+        log.debug("Get bugs for request=id: {}", rid);
         if (rid != null) {
             final List<Bug> bugs = BUGS.get(rid);
+            log.debug("Registered bugs: {}", bugs == null ? 0 : bugs.size());
             if (bugs != null && !bugs.isEmpty()) {
                 for (Bug bug : bugs) {
-                    log.info("Add bug header to the response: {}", bug.stringId());
-                    response.getHeaders().add(BID, bug.stringId());
+                    log.info("Add bug header to the response: '{}: {}'", BID, bug.stringId());
+                    response.setHeader(BID, bug.stringId());
                 }
             }
             BUGS.remove(rid);
         }
-        return body;
     }
 
 }

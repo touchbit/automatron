@@ -20,6 +20,7 @@ import org.springframework.http.converter.HttpMessageConverter;
 import org.springframework.http.server.ServerHttpRequest;
 import org.springframework.http.server.ServerHttpResponse;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.touchbit.qa.automatron.interceptor.BugInterceptor;
 import org.touchbit.qa.automatron.pojo.accounting.UserDTO;
 import org.touchbit.qa.automatron.util.AutomatronUtils;
 
@@ -39,7 +40,7 @@ public class LogBodyAdviser implements BodyAdvice {
                                 Class<? extends HttpMessageConverter<?>> converterType) {
         log.debug("Request body:\n{}", body);
         if (body instanceof UserDTO userDTO && userDTO.password() != null) {
-            BugAdviser.addBug(BUG_0001);
+            BugInterceptor.addBug(BUG_0001);
         }
         return body;
     }
@@ -55,7 +56,7 @@ public class LogBodyAdviser implements BodyAdvice {
             log.debug("Response body:\n{}", body);
         }
         if (body instanceof UserDTO userDTO && userDTO.password() != null) {
-            BugAdviser.addBug(BUG_0001);
+            BugInterceptor.addBug(BUG_0001);
         }
         return body;
     }

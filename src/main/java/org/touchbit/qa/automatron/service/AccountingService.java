@@ -16,7 +16,7 @@ import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Service;
-import org.touchbit.qa.automatron.advice.BugAdviser;
+import org.touchbit.qa.automatron.interceptor.BugInterceptor;
 import org.touchbit.qa.automatron.constant.Bug;
 import org.touchbit.qa.automatron.constant.LogoutMode;
 import org.touchbit.qa.automatron.db.entity.Session;
@@ -62,7 +62,7 @@ public class AccountingService {
         }
         if (user.status().equals(UserStatus.BLOCKED)) {
             log.error("Authentication is denied. User status: {}", UserStatus.BLOCKED);
-            BugAdviser.addBug(Bug.BUG_0003);
+            BugInterceptor.addBug(Bug.BUG_0003);
             throw AutomatronException.http401(errSource(user, User::status, "status"));
         }
         if (user.status().equals(UserStatus.ACTIVE)) {
@@ -102,7 +102,6 @@ public class AccountingService {
     public void logout(String bearerAuthorizationHeaderValue, String mode) {
         log.info("User logout request");
         final String accessToken = bearerAuthorizationHeaderValue.toLowerCase().replace("bearer ", "");
-        System.out.println(" >>>>>>>>>>> " + accessToken);
         final Session session = dbFindSessionByAccessToken(accessToken);
         if (session == null) {
             log.debug("There is no session with the received access token.");
@@ -117,7 +116,7 @@ public class AccountingService {
             return;
         }
         if (!LogoutMode.ALL.equals(logoutMode)) {
-            BugAdviser.addBug(BUG_0004);
+            BugInterceptor.addBug(BUG_0004);
         }
         dbDeleteSessionByUser(session.user());
     }
