@@ -16,7 +16,6 @@ import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Service;
-import org.touchbit.qa.automatron.interceptor.BugInterceptor;
 import org.touchbit.qa.automatron.constant.Bug;
 import org.touchbit.qa.automatron.constant.LogoutMode;
 import org.touchbit.qa.automatron.db.entity.Session;
@@ -24,12 +23,17 @@ import org.touchbit.qa.automatron.db.entity.User;
 import org.touchbit.qa.automatron.db.entity.UserStatus;
 import org.touchbit.qa.automatron.db.repository.SessionRepository;
 import org.touchbit.qa.automatron.db.repository.UserRepository;
+import org.touchbit.qa.automatron.interceptor.BugInterceptor;
 import org.touchbit.qa.automatron.pojo.accounting.AuthDTO;
+import org.touchbit.qa.automatron.pojo.accounting.UserDTO;
+import org.touchbit.qa.automatron.resource.param.GetUserQueryParameters;
 import org.touchbit.qa.automatron.util.AutomatronException;
 
 import java.util.Arrays;
+import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 import static org.touchbit.qa.automatron.constant.Bug.BUG_0004;
 import static org.touchbit.qa.automatron.constant.I18N.I18N_1648168178176;
@@ -45,7 +49,6 @@ public class AccountingService {
 
     @SuppressWarnings("unused")
     public AuthDTO authenticate(final String login, final String password) {
-        log.info("User authentication request with login {}", login);
         final User user = dbFindUserByLogin(login);
         final String source401 = "login/password";
         if (user == null) {
@@ -100,7 +103,9 @@ public class AccountingService {
     }
 
     public void logout(String bearerAuthorizationHeaderValue, String mode) {
-        log.info("User logout request");
+        if (bearerAuthorizationHeaderValue == null) {
+            throw AutomatronException.http403("Authorization header");
+        }
         final String accessToken = bearerAuthorizationHeaderValue.toLowerCase().replace("bearer ", "");
         final Session session = dbFindSessionByAccessToken(accessToken);
         if (session == null) {
@@ -151,6 +156,32 @@ public class AccountingService {
             final int count = sessionRepository.deleteAllByUser(user);
             log.debug("DB: successfully deleted user sessions: {}", count);
         }
+    }
+
+    public List<UserDTO> getUsers(GetUserQueryParameters filter) {
+        final List<User> users = dbFindAllByFilter(filter);
+        log.debug("Found users: {}", users.size());
+        return users.stream()
+                .map(this::userToUserDTO)
+                .collect(Collectors.toList());
+    }
+
+    private List<User> dbFindAllByFilter(GetUserQueryParameters filter) {
+        log.debug("DB: Search users by filter: {}", filter);
+        // TODO Bug return self password for Admin / Owner
+        // the password must be stored encrypted
+        // the password should under no circumstances be returned to the user
+        return userRepository.findAllByFilter(filter.getId(), filter.getLogin(), filter.getStatus(), filter.getType());
+    }
+
+    private UserDTO userToUserDTO(User user) {
+        return UserDTO.builder()
+                .id(user.id())
+                .login(user.login())
+                .status(user.status())
+                .type(user.type())
+                .phones(user.phones())
+                .build();
     }
 
 }

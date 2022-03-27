@@ -15,6 +15,8 @@ package org.touchbit.qa.automatron.pojo.accounting;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Schema;
+import lombok.Builder;
+import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
@@ -31,26 +33,33 @@ import static org.touchbit.qa.automatron.constant.I18N.I18N_1648168744616;
 @Getter
 @Setter
 @Accessors(chain = true, fluent = true)
+@Data
+@Builder
 public class UserDTO {
 
     @JsonProperty("id")
     @Schema(description = "TODO", required = true, example = "1", accessMode = READ_ONLY)
     private long id;
 
+    @JsonProperty("login")
     @Parameter(name = "login", schema =
     @Schema(required = true, description = I18N_1648168739660, example = "admin"))
     private String login;
 
+    @JsonProperty("password")
     @Parameter(
             name = "password",
             required = true,
             schema = @Schema(description = I18N_1648168744616, example = "example_password"))
     private String password;
 
+    @JsonProperty("status")
     private UserStatus status;
 
+    @JsonProperty("type")
     private UserType type;
 
+    @JsonProperty("phones")
     private Set<PhoneNumber> phones;
 
 }

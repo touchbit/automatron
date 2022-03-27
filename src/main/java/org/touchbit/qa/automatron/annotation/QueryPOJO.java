@@ -10,22 +10,17 @@
  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package org.touchbit.qa.automatron.constant;
+package org.touchbit.qa.automatron.annotation;
 
-import com.fasterxml.jackson.annotation.JsonValue;
-import io.swagger.v3.oas.annotations.media.Schema;
+import java.lang.annotation.Documented;
+import java.lang.annotation.Retention;
+import java.lang.annotation.Target;
 
-@Schema(defaultValue = "CURRENT")
-public enum LogoutMode {
+import static java.lang.annotation.ElementType.*;
+import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
-    CURRENT,
-    ALL,
-    ;
-
-    @Override
-    @JsonValue
-    public String toString() {
-        return name();
-    }
-
+@Target({ TYPE, TYPE_USE })
+@Retention(RUNTIME)
+@Documented
+public @interface QueryPOJO {
 }

@@ -21,6 +21,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.lang.Nullable;
@@ -29,14 +30,18 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
-import org.touchbit.qa.automatron.pojo.accounting.AuthDTO;
 import org.touchbit.qa.automatron.constant.LogoutMode;
+import org.touchbit.qa.automatron.pojo.accounting.AuthDTO;
+import org.touchbit.qa.automatron.pojo.accounting.UserDTO;
 import org.touchbit.qa.automatron.pojo.error.ErrorDTO;
+import org.touchbit.qa.automatron.resource.param.GetUserQueryParameters;
 import org.touchbit.qa.automatron.service.AccountingService;
 
+import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
+import java.util.List;
 
 import static io.swagger.v3.oas.annotations.enums.ParameterIn.QUERY;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
@@ -44,6 +49,7 @@ import static org.touchbit.qa.automatron.constant.APIExamples.*;
 import static org.touchbit.qa.automatron.constant.I18N.*;
 import static org.touchbit.qa.automatron.constant.ResourceConstants.*;
 
+@Slf4j
 @Validated
 @RestController
 @RequiredArgsConstructor
@@ -63,6 +69,7 @@ public class AccountingApiController {
     public AuthDTO authentication(
             @Parameter(description = I18N_1648168739660, in = QUERY, example = "admin") @NotNull @Size(min = 5, max = 25) String login,
             @Parameter(description = I18N_1648168744616, in = QUERY, example = "admin") @NotNull @Size(min = 5, max = 25) String password) {
+        log.info("User authentication request with login {}", login);
         return accountingService.authenticate(login, password);
     }
 
@@ -74,9 +81,16 @@ public class AccountingApiController {
                     @ExampleObject(summary = EX_400_BAD_REQUEST_SUMMARY, value = EX_ACCOUNTING_LOGOUT_400, name = I18N_1648168095253),
                     @ExampleObject(summary = EX_401_UNAUTHORIZED_SUMMARY, value = EX_CODE_401_002, name = I18N_1648168104107),})})})
     public void logout(
-            @RequestHeader(value = "Authorization", required = false) @NotNull @Pattern(regexp = "^(?i)(bearer [a-f0-9-]{36})$") String bearerAuthorizationHeader,
-            @Parameter(description = I18N_1648399645845, in = QUERY, schema = @Schema(enumAsRef = true, implementation = LogoutMode.class)) @Nullable String mode) {
+            @RequestHeader(value = "Authorization", required = false) @Pattern(regexp = "^(?i)(bearer [a-f0-9-]{36})$") String bearerAuthorizationHeader,
+            @Parameter(description = I18N_1648399645845, in = QUERY, schema = @Schema(implementation = LogoutMode.class)) @Nullable String mode) {
+        log.info("User logout request");
         accountingService.logout(bearerAuthorizationHeader, mode);
+    }
+
+    @GetMapping(path = "/api/accounting/user", produces = MediaType.APPLICATION_JSON_VALUE)
+    public List<UserDTO> user(@Valid GetUserQueryParameters search) {
+        log.info("Get users by filter");
+        return accountingService.getUsers(search);
     }
 
 }

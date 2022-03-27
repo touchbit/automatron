@@ -24,11 +24,15 @@ import lombok.extern.slf4j.Slf4j;
 import org.springdoc.core.GroupedOpenApi;
 import org.springdoc.core.customizers.OpenApiCustomiser;
 import org.springdoc.core.customizers.OperationCustomizer;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.ClassPathScanningCandidateComponentProvider;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.DependsOn;
 import org.springframework.context.support.ResourceBundleMessageSource;
+import org.springframework.core.type.filter.AnnotationTypeFilter;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.LocaleResolver;
@@ -36,6 +40,7 @@ import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import org.springframework.web.servlet.i18n.FixedLocaleResolver;
 import org.touchbit.qa.automatron.Application;
+import org.touchbit.qa.automatron.annotation.QueryPOJO;
 import org.touchbit.qa.automatron.interceptor.BugInterceptor;
 import org.touchbit.qa.automatron.interceptor.LocaleInterceptor;
 import org.touchbit.qa.automatron.interceptor.XRequestIdInterceptor;
@@ -43,10 +48,8 @@ import org.touchbit.qa.automatron.interceptor.XRequestIdInterceptor;
 import java.net.InetAddress;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Set;
-import java.util.TreeSet;
+import java.util.*;
+import java.util.stream.Collectors;
 
 import static io.swagger.v3.oas.models.security.SecurityScheme.In.HEADER;
 import static io.swagger.v3.oas.models.security.SecurityScheme.Type.HTTP;
@@ -124,6 +127,25 @@ public class WebMvcConfig {
         };
     }
 
+    @Bean(name = "queryPOJOClasses")
+    public Set<Class<?>> queryPOJOClasses() throws Exception {
+        log.info("Search QueryPOJO classes");
+        var scanner = new ClassPathScanningCandidateComponentProvider(false);
+        scanner.addIncludeFilter(new AnnotationTypeFilter(QueryPOJO.class));
+        final Set<Class<?>> queryPOJOs = new HashSet<>();
+        for (BeanDefinition bd : scanner.findCandidateComponents("org.touchbit.qa.automatron")) {
+            Class<?> cl = Class.forName(bd.getBeanClassName());
+            queryPOJOs.add(cl);
+            log.debug("Annotated class found: " + cl.getName());
+        }
+        return queryPOJOs;
+    }
+
+    @Bean(name = "queryPOJOClassSimpleNames")
+    public Set<String> queryPOJOClassNames(@Qualifier("queryPOJOClasses") Set<Class<?>> queryPOJOClasses) {
+        return queryPOJOClasses.stream().map(Class::getSimpleName).collect(Collectors.toSet());
+    }
+
     private GroupedOpenApi initOpenApiDefinition(String group, String appVersion) {
         return GroupedOpenApi.builder()
                 .group(group)
@@ -149,15 +171,18 @@ public class WebMvcConfig {
 
     private OperationCustomizer addSecurityItem() {
         return (Operation operation, HandlerMethod handlerMethod) -> {
-            operation.getParameters().removeIf(p ->
-                    HEADER.toString().equals(p.getIn()) && SECURITY_SCHEME_HEADER.equalsIgnoreCase(p.getName()));
-            final GetMapping get = handlerMethod.getMethodAnnotation(GetMapping.class);
-            if (get != null) {
-                final List<String> paths = Arrays.asList(get.path());
-                if (paths.contains("/api/bug") ||
-                    paths.contains("/api/bugs") ||
-                    paths.contains("/api/accounting/login")) {
-                    return operation;
+            final List<Parameter> parameters = operation.getParameters();
+            if (parameters != null) {
+                operation.getParameters().removeIf(p ->
+                        HEADER.toString().equals(p.getIn()) && SECURITY_SCHEME_HEADER.equalsIgnoreCase(p.getName()));
+                final GetMapping get = handlerMethod.getMethodAnnotation(GetMapping.class);
+                if (get != null) {
+                    final List<String> paths = Arrays.asList(get.path());
+                    if (paths.contains("/api/bug") ||
+                        paths.contains("/api/bugs") ||
+                        paths.contains("/api/accounting/login")) {
+                        return operation;
+                    }
                 }
             }
             return operation.addSecurityItem(new SecurityRequirement().addList(SECURITY_SCHEME_KEY));

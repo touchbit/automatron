@@ -16,7 +16,9 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.ExampleObject;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.MDC;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.MessageSourceResolvable;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -33,6 +35,7 @@ import javax.validation.ConstraintViolationException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Set;
 
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
@@ -46,6 +49,12 @@ import static org.touchbit.qa.automatron.pojo.error.ErrorType.SYSTEM;
 @RestControllerAdvice
 public class ExceptionAdviser {
     // ResponseEntityExceptionHandler
+
+    private final Set<String> queryPOJOClassSimpleNames;
+
+    public ExceptionAdviser(@Qualifier("queryPOJOClassSimpleNames") Set<String> queryPOJOClassSimpleNames) {
+        this.queryPOJOClassSimpleNames = queryPOJOClassSimpleNames;
+    }
 
     @ApiResponse(responseCode = "5xx", description = I18N_1648168141132, content =
     @Content(mediaType = APPLICATION_JSON_VALUE, examples = {
@@ -64,6 +73,7 @@ public class ExceptionAdviser {
 
     @ExceptionHandler({BindException.class, ConstraintViolationException.class})
     public ResponseEntity<List<ErrorDTO>> handleValidationExceptions(Exception exception) {
+        System.out.println(" >>>>>>>>>>>>>>> " + queryPOJOClassSimpleNames);
         List<ErrorDTO> errors = new ArrayList<>();
         if (exception instanceof BindException bindException) {
             for (ObjectError error : bindException.getAllErrors()) {
@@ -74,7 +84,16 @@ public class ExceptionAdviser {
                         if (argument instanceof MessageSourceResolvable messageSourceResolvable) {
                             final String[] codes = messageSourceResolvable.getCodes();
                             if (codes != null && codes.length > 0) {
-                                source = messageSourceResolvable.getCodes()[0];
+                                final String rawSource = StringUtils.capitalize(messageSourceResolvable.getCodes()[0]);
+                                final String target = queryPOJOClassSimpleNames.stream()
+                                        .filter(rawSource::startsWith)
+                                        .findFirst()
+                                        .orElse(null);
+                                if (target != null) {
+                                    source = rawSource.replace(target, "Query");
+                                } else {
+                                    source = rawSource;
+                                }
                             }
                         }
                     }
