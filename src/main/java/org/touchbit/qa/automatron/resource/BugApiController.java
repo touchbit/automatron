@@ -50,7 +50,7 @@ public class BugApiController {
     })
     @Operation(tags = BUG_TAG, summary = I18N_1648168270342)
     @ResponseStatus(HttpStatus.OK)
-    @RequestMapping(value = "/api/bugs", method = RequestMethod.GET)
+    @GetMapping(value = "/api/bugs")
     public List<BugDTO> getBugs() {
         log.info("The method for getting the list of errors registered in the system has been called.");
         final List<BugDTO> defects = Arrays.stream(Bug.values())
@@ -65,7 +65,7 @@ public class BugApiController {
     })
     @Operation(tags = BUG_TAG, summary = I18N_1648168278936)
     @ResponseStatus(HttpStatus.OK)
-    @RequestMapping(value = "/api/bug", method = RequestMethod.GET, produces = TEXT_PLAIN_VALUE)
+    @GetMapping(value = "/api/bug", produces = TEXT_PLAIN_VALUE)
     public String getBugs(@RequestParam(value = "id") @Valid @Min(1) Integer bugId) {
         log.info("Search for a defect with ID {}", bugId);
         final Bug bug = Arrays.stream(Bug.values())

@@ -18,6 +18,8 @@ import io.swagger.v3.oas.models.info.Info;
 import io.swagger.v3.oas.models.media.StringSchema;
 import io.swagger.v3.oas.models.parameters.Parameter;
 import io.swagger.v3.oas.models.responses.ApiResponses;
+import io.swagger.v3.oas.models.security.SecurityRequirement;
+import io.swagger.v3.oas.models.security.SecurityScheme;
 import lombok.extern.slf4j.Slf4j;
 import org.springdoc.core.GroupedOpenApi;
 import org.springdoc.core.customizers.OpenApiCustomiser;
@@ -27,6 +29,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.DependsOn;
 import org.springframework.context.support.ResourceBundleMessageSource;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.LocaleResolver;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
@@ -39,9 +42,13 @@ import org.touchbit.qa.automatron.interceptor.XRequestIdInterceptor;
 import java.net.InetAddress;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
 
+import static io.swagger.v3.oas.models.security.SecurityScheme.In.HEADER;
+import static io.swagger.v3.oas.models.security.SecurityScheme.Type.HTTP;
 import static org.touchbit.qa.automatron.constant.I18N.*;
 import static org.touchbit.qa.automatron.constant.ResourceConstants.*;
 
@@ -52,6 +59,7 @@ import static org.touchbit.qa.automatron.constant.ResourceConstants.*;
 @Configuration
 public class WebMvcConfig implements WebMvcConfigurer {
 
+    public static final String SECURITY_SCHEME_KEY = "access_token";
     private static final String[] PATHS = {"/**/*"};
 
     @Bean("appVersion")
@@ -111,12 +119,39 @@ public class WebMvcConfig implements WebMvcConfigurer {
                 .addOperationCustomizer(xRequestIdGlobalHeader())
                 .addOperationCustomizer(acceptLocaleHeader())
                 .addOperationCustomizer(sortResponses())
-                .addOpenApiCustomiser(openApiCustomiser(appVersion))
+                .addOperationCustomizer(addSecurityItem())
+                .addOpenApiCustomiser(openApiInfoCustomiser(appVersion))
+                .addOpenApiCustomiser(openApiSecuritySchemeCustomiser())
                 .pathsToMatch(PATHS)
                 .build();
     }
 
-    private OpenApiCustomiser openApiCustomiser(String appVersion) {
+    private OpenApiCustomiser openApiSecuritySchemeCustomiser() {
+        return openApi -> openApi.getComponents()
+                .addSecuritySchemes(SECURITY_SCHEME_KEY, new SecurityScheme()
+                        .scheme("bearer")
+                        .name("Authorization")
+                        .type(HTTP)
+                        .in(HEADER)
+                        .bearerFormat("UUID"));
+    }
+
+    private OperationCustomizer addSecurityItem() {
+        return (Operation operation, HandlerMethod handlerMethod) -> {
+            final GetMapping get = handlerMethod.getMethodAnnotation(GetMapping.class);
+            if (get != null) {
+                final List<String> paths = Arrays.asList(get.path());
+                if (paths.contains("/api/bug") ||
+                    paths.contains("/api/bugs") ||
+                    paths.contains("/api/accounting/login")) {
+                    return operation;
+                }
+            }
+            return operation.addSecurityItem(new SecurityRequirement().addList(SECURITY_SCHEME_KEY));
+        };
+    }
+
+    private OpenApiCustomiser openApiInfoCustomiser(String appVersion) {
         return openApi -> openApi.info(new Info()
                 .title("Automatron")
                 .version(appVersion)
