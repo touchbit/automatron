@@ -18,6 +18,8 @@ import org.springframework.context.annotation.Configuration;
 import org.touchbit.qa.automatron.db.entity.User;
 import org.touchbit.qa.automatron.db.repository.UserRepository;
 
+import java.util.stream.Stream;
+
 import static org.touchbit.qa.automatron.db.entity.UserStatus.ACTIVE;
 import static org.touchbit.qa.automatron.db.entity.UserType.ADMIN;
 import static org.touchbit.qa.automatron.db.entity.UserType.OWNER;
@@ -31,8 +33,10 @@ public class MigrationConfig {
     @Bean
     public Void migrateUsers(UserRepository userRepository) {
         log.info("DB migrations");
-        userRepository.save(new User().login("automatron").password("IDDQD").status(ACTIVE).type(OWNER));
-        userRepository.save(new User().login("admin").password("admin").status(ACTIVE).type(ADMIN));
+        Stream.of(new User().login("automatron").password("IDDQD").status(ACTIVE).type(OWNER),
+                        new User().login("admin").password("admin").status(ACTIVE).type(ADMIN))
+                .filter(user -> !userRepository.existsByLogin(user.login()))
+                .forEach(userRepository::save);
         return null;
     }
 

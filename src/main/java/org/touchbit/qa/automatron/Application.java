@@ -12,12 +12,8 @@
 
 package org.touchbit.qa.automatron;
 
-import org.apache.commons.io.FileUtils;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-
-import java.io.File;
-import java.io.IOException;
 
 /**
  * Application entry point
@@ -26,9 +22,7 @@ import java.io.IOException;
 @SpringBootApplication()
 public class Application {
 
-    public static void main(String[] args) throws IOException {
-        final File path = new File("./h2");
-        FileUtils.deleteDirectory(path); // TODO
+    public static void main(String[] args) {
         SpringApplication.run(Application.class, args);
     }
 

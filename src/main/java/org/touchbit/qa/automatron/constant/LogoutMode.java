@@ -10,18 +10,11 @@
  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package org.touchbit.qa.automatron.db.repository;
+package org.touchbit.qa.automatron.constant;
 
-import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.transaction.annotation.Transactional;
-import org.touchbit.qa.automatron.db.entity.User;
+public enum LogoutMode {
 
-@Transactional
-public interface UserRepository extends JpaRepository<User, Long> {
-
-
-    User findByLogin(String login);
-
-    boolean existsByLogin(String login);
+    CURRENT,
+    ALL,
 
 }

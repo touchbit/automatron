@@ -38,6 +38,7 @@ import org.springframework.web.servlet.i18n.FixedLocaleResolver;
 import org.touchbit.qa.automatron.Application;
 import org.touchbit.qa.automatron.interceptor.LocaleInterceptor;
 import org.touchbit.qa.automatron.interceptor.XRequestIdInterceptor;
+import org.touchbit.qa.automatron.service.AccountingService;
 
 import java.net.InetAddress;
 import java.net.MalformedURLException;
@@ -57,9 +58,10 @@ import static org.touchbit.qa.automatron.constant.ResourceConstants.*;
  */
 @Slf4j
 @Configuration
-public class WebMvcConfig implements WebMvcConfigurer {
+public class WebMvcConfig {
 
     public static final String SECURITY_SCHEME_KEY = "access_token";
+    public static final String SECURITY_SCHEME_HEADER = "Authorization";
     private static final String[] PATHS = {"/**/*"};
 
     @Bean("appVersion")
@@ -105,12 +107,19 @@ public class WebMvcConfig implements WebMvcConfigurer {
         return new URL(url);
     }
 
-    @Override
-    public void addInterceptors(InterceptorRegistry registry) {
-        log.info("Add {} to {}", XRequestIdInterceptor.class.getSimpleName(), registry.getClass().getSimpleName());
-        registry.addInterceptor(new XRequestIdInterceptor());
-        log.info("Add {} to {}", LocaleInterceptor.class.getSimpleName(), registry.getClass().getSimpleName());
-        registry.addInterceptor(new LocaleInterceptor());
+    @Bean
+    public WebMvcConfigurer webMvcConfigurer(AccountingService accountingService) {
+        return new WebMvcConfigurer() {
+
+            @Override
+            public void addInterceptors(InterceptorRegistry registry) {
+                log.info("Add {} to {}", XRequestIdInterceptor.class.getSimpleName(), registry.getClass().getSimpleName());
+                registry.addInterceptor(new XRequestIdInterceptor());
+                log.info("Add {} to {}", LocaleInterceptor.class.getSimpleName(), registry.getClass().getSimpleName());
+                registry.addInterceptor(new LocaleInterceptor());
+            }
+
+        };
     }
 
     private GroupedOpenApi initOpenApiDefinition(String group, String appVersion) {
@@ -130,14 +139,16 @@ public class WebMvcConfig implements WebMvcConfigurer {
         return openApi -> openApi.getComponents()
                 .addSecuritySchemes(SECURITY_SCHEME_KEY, new SecurityScheme()
                         .scheme("bearer")
-                        .name("Authorization")
+                        .name(SECURITY_SCHEME_HEADER)
                         .type(HTTP)
                         .in(HEADER)
-                        .bearerFormat("UUID"));
+                        .description(I18N_1648397372228));
     }
 
     private OperationCustomizer addSecurityItem() {
         return (Operation operation, HandlerMethod handlerMethod) -> {
+            operation.getParameters().removeIf(p ->
+                    HEADER.toString().equals(p.getIn()) && SECURITY_SCHEME_HEADER.equalsIgnoreCase(p.getName()));
             final GetMapping get = handlerMethod.getMethodAnnotation(GetMapping.class);
             if (get != null) {
                 final List<String> paths = Arrays.asList(get.path());

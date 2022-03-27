@@ -14,9 +14,11 @@ package org.touchbit.qa.automatron.service;
 
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Service;
 import org.touchbit.qa.automatron.advice.BugAdviser;
 import org.touchbit.qa.automatron.constant.Bug;
+import org.touchbit.qa.automatron.constant.LogoutMode;
 import org.touchbit.qa.automatron.db.entity.Session;
 import org.touchbit.qa.automatron.db.entity.User;
 import org.touchbit.qa.automatron.db.entity.UserStatus;
@@ -25,9 +27,11 @@ import org.touchbit.qa.automatron.db.repository.UserRepository;
 import org.touchbit.qa.automatron.pojo.accounting.AuthDTO;
 import org.touchbit.qa.automatron.util.AutomatronException;
 
+import java.util.Arrays;
 import java.util.Objects;
 import java.util.UUID;
 
+import static org.touchbit.qa.automatron.constant.Bug.BUG_0004;
 import static org.touchbit.qa.automatron.constant.I18N.I18N_1648168178176;
 import static org.touchbit.qa.automatron.util.AutomatronUtils.errSource;
 
@@ -42,7 +46,7 @@ public class AccountingService {
     @SuppressWarnings("unused")
     public AuthDTO authenticate(final String login, final String password) {
         log.info("User authentication request with login {}", login);
-        final User user = findUserByLogin(login);
+        final User user = dbFindUserByLogin(login);
         final String source401 = "login/password";
         if (user == null) {
             log.error("User with login '{}' not found", login);
@@ -84,7 +88,7 @@ public class AccountingService {
                 .user(user);
     }
 
-    private User findUserByLogin(String login) {
+    private User dbFindUserByLogin(String login) {
         log.debug("DB: search user by login: {}", login);
         final User user = userRepository.findByLogin(login);
         if (user != null) {
@@ -93,6 +97,61 @@ public class AccountingService {
             log.debug("DB: user is not found");
         }
         return user;
+    }
+
+    public void logout(String bearerAuthorizationHeaderValue, String mode) {
+        log.info("User logout request");
+        final String accessToken = bearerAuthorizationHeaderValue.toLowerCase().replace("bearer ", "");
+        System.out.println(" >>>>>>>>>>> " + accessToken);
+        final Session session = dbFindSessionByAccessToken(accessToken);
+        if (session == null) {
+            log.debug("There is no session with the received access token.");
+            return;
+        }
+        final LogoutMode logoutMode = Arrays.stream(LogoutMode.values())
+                .filter(lm -> lm.name().equalsIgnoreCase(mode))
+                .findAny()
+                .orElse(null);
+        if (mode == null || LogoutMode.CURRENT.equals(logoutMode)) {
+            dbDeleteSession(session);
+            return;
+        }
+        if (!LogoutMode.ALL.equals(logoutMode)) {
+            BugAdviser.addBug(BUG_0004);
+        }
+        dbDeleteSessionByUser(session.user());
+    }
+
+    @Nullable
+    private Session dbFindSessionByAccessToken(final String accessToken) {
+        log.debug("DB: search session by access token");
+        final Session session = sessionRepository.findSessionByAccessToken(accessToken);
+        if (session != null) {
+            log.debug("DB: session found");
+        } else {
+            log.debug("DB: session not found");
+        }
+        return session;
+    }
+
+    private void dbDeleteSession(final Session session) {
+        log.debug("DB: delete session");
+        if (session == null) {
+            log.debug("DB: session is null. There is nothing to delete.");
+        } else {
+            sessionRepository.delete(session);
+            log.debug("DB: session successfully deleted");
+        }
+    }
+
+    private void dbDeleteSessionByUser(final User user) {
+        log.debug("DB: delete user sessions");
+        if (user == null) {
+            log.debug("DB: user is null. There is nothing to delete.");
+        } else {
+            final int count = sessionRepository.deleteAllByUser(user);
+            log.debug("DB: successfully deleted user sessions: {}", count);
+        }
     }
 
 }
