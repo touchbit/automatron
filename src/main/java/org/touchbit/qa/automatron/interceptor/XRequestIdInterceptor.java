@@ -15,7 +15,6 @@ package org.touchbit.qa.automatron.interceptor;
 import lombok.extern.slf4j.Slf4j;
 import org.slf4j.MDC;
 import org.springframework.web.servlet.HandlerInterceptor;
-import org.touchbit.qa.automatron.util.AutomatronUtils;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -30,20 +29,21 @@ public class XRequestIdInterceptor implements HandlerInterceptor {
     public boolean preHandle(HttpServletRequest request,
                              HttpServletResponse response,
                              Object handler) {
-        if (AutomatronUtils.isNotSwaggerRequest(request)) {
+        final String path = request.getServletPath();
+        if (path.contains("/api/")) {
             final String xRequestIdValue = request.getHeader(RID);
             final String rid;
             if (xRequestIdValue == null || xRequestIdValue.isBlank()) {
                 rid = UUID.randomUUID().toString();
-                log.debug("'{}' header not present. Generated value is used: {}", RID, rid);
+                log.trace("'{}' header not present. Generated value is used: {}", RID, rid);
             } else {
                 rid = xRequestIdValue;
-                log.debug("'{}' header present. Header value is used: {}", RID, rid);
+                log.trace("'{}' header present. Header value is used: {}", RID, rid);
             }
             MDC.put(RID, rid);
-            log.debug("'{}' was successfully added to the context.", RID);
+            log.trace("'{}' was successfully added to the context.", RID);
             response.addHeader(RID, rid);
-            log.debug("'{}' header successfully initialized in response servlet.", RID);
+            log.trace("'{}' header successfully initialized in response servlet.", RID);
         }
         return true;
     }
@@ -53,12 +53,13 @@ public class XRequestIdInterceptor implements HandlerInterceptor {
                                 HttpServletResponse response,
                                 Object object,
                                 Exception arg3) {
-        if (AutomatronUtils.isNotSwaggerRequest(request)) {
+        final String path = request.getServletPath();
+        if (path.contains("/api/")) {
             final String xRequestIdValue = MDC.get(RID);
             if (xRequestIdValue == null || xRequestIdValue.isBlank()) {
                 log.warn("'{}' header value is empty. ", RID);
             } else {
-                log.debug("Remove '{}' header value from context.", RID);
+                log.trace("Remove '{}' header value from context.", RID);
                 MDC.remove(RID);
             }
         }

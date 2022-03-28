@@ -12,6 +12,7 @@
 
 package org.touchbit.qa.automatron.util;
 
+import org.springframework.context.annotation.ClassPathScanningCandidateComponentProvider;
 import org.springframework.http.server.ServerHttpRequest;
 import org.touchbit.qa.automatron.Application;
 
@@ -19,22 +20,14 @@ import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Locale;
+import java.util.Set;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 
 public class AutomatronUtils {
 
     private AutomatronUtils() {
 
-    }
-
-    public static boolean isNotSwaggerRequest(HttpServletRequest request) {
-        final String servletPath = request.getServletPath();
-        return !servletPath.contains("/v3/api-docs/") && !servletPath.contains("/swagger-ui/index.html");
-    }
-
-    public static boolean isNotSwaggerRequest(ServerHttpRequest request) {
-        final String servletPath = request.getURI().toString();
-        return !servletPath.contains("/v3/api-docs/") && !servletPath.contains("/swagger-ui/index.html");
     }
 
     @SuppressWarnings("ResultOfMethodCallIgnored")
@@ -56,6 +49,22 @@ public class AutomatronUtils {
 
     public static <O> String errSource(O obj, Object val, String name) {
         return obj.getClass().getSimpleName() + "{" + name + "=" + val + "}";
+    }
+
+    public static Set<Class<?>> getBeanDefinitionClasses(ClassPathScanningCandidateComponentProvider scanner) {
+        return scanner.findCandidateComponents("org.touchbit.qa.automatron")
+                .stream()
+                .map(s -> classForName(s.getBeanClassName()))
+                .collect(Collectors.toSet());
+
+    }
+
+    public static Class<?> classForName(String name) {
+        try {
+            return Class.forName(name);
+        } catch (ClassNotFoundException e) {
+            throw new RuntimeException("Unexpected class name loaded: " + name, e);
+        }
     }
 
 }

@@ -13,6 +13,7 @@
 package org.touchbit.qa.automatron.advice;
 
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.core.MethodParameter;
 import org.springframework.http.HttpInputMessage;
 import org.springframework.http.MediaType;
@@ -22,9 +23,10 @@ import org.springframework.http.server.ServerHttpResponse;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.touchbit.qa.automatron.interceptor.BugInterceptor;
 import org.touchbit.qa.automatron.pojo.accounting.UserDTO;
-import org.touchbit.qa.automatron.util.AutomatronUtils;
 
+import java.lang.reflect.Method;
 import java.lang.reflect.Type;
+import java.util.Set;
 
 import static org.touchbit.qa.automatron.constant.Bug.BUG_0001;
 
@@ -32,15 +34,24 @@ import static org.touchbit.qa.automatron.constant.Bug.BUG_0001;
 @RestControllerAdvice
 public class LogBodyAdviser implements BodyAdvice {
 
+    private final Set<Class<?>> restControllerClasses;
+
+    public LogBodyAdviser(@Qualifier("restControllerClasses") Set<Class<?>> restControllerClasses) {
+        this.restControllerClasses = restControllerClasses;
+    }
+
     @Override
     public Object afterBodyRead(Object body,
                                 HttpInputMessage inputMessage,
                                 MethodParameter parameter,
                                 Type targetType,
                                 Class<? extends HttpMessageConverter<?>> converterType) {
-        log.debug("Request body:\n{}", body);
-        if (body instanceof UserDTO userDTO && userDTO.password() != null) {
-            BugInterceptor.addBug(BUG_0001);
+        final Method method = parameter.getMethod();
+        if (method != null && restControllerClasses.contains(method.getDeclaringClass())) {
+            log.debug("Request body:\n{}", body);
+            if (body instanceof UserDTO userDTO && userDTO.password() != null) {
+                BugInterceptor.addBug(BUG_0001);
+            }
         }
         return body;
     }
@@ -52,11 +63,12 @@ public class LogBodyAdviser implements BodyAdvice {
                                   Class<? extends HttpMessageConverter<?>> selectedConverterType,
                                   ServerHttpRequest request,
                                   ServerHttpResponse response) {
-        if (AutomatronUtils.isNotSwaggerRequest(request)) {
+        final String path = request.getURI().toString();
+        if (path.contains("/api/")) {
             log.debug("Response body:\n{}", body);
-        }
-        if (body instanceof UserDTO userDTO && userDTO.password() != null) {
-            BugInterceptor.addBug(BUG_0001);
+            if (body instanceof UserDTO userDTO && userDTO.password() != null) {
+                BugInterceptor.addBug(BUG_0001);
+            }
         }
         return body;
     }

@@ -54,24 +54,27 @@ public class LocaleAdviser implements BodyAdvice {
                                   final ServerHttpRequest request,
                                   final ServerHttpResponse response) {
         final String path = request.getURI().getPath();
-        final String bodyTypeName = body == null ? "null" : body.getClass().getName();
-        final Locale locale = getLocale(request);
-        final Object localizedBody;
-        log.debug("Locale: language tag: {}", locale);
-        log.debug("Locale: request path: {}", path);
-        log.debug("Locale: response body type: {}", bodyTypeName);
-        if (isApiDocs(request)) {
-            localizedBody = getLocalizedApiDocResponseBody(body, request);
-        } else if (isBugResponseBody(body)) {
-            localizedBody = getLocalizedBugResponseBody(body, locale);
-        } else if (isErrorResponseBody(body)) {
-            localizedBody = getLocalizedErrorResponseBody(body, locale);
-        } else if (body instanceof String stringBody) {
-            localizedBody = localizeString(stringBody, locale);
-        } else {
-            localizedBody = body;
+        if (path.contains("/api-docs/") || path.contains("/api/")) {
+            final String bodyTypeName = body == null ? "null" : body.getClass().getName();
+            final Locale locale = getLocale(request);
+            final Object localizedBody;
+            log.trace("Locale: language tag: {}", locale);
+            log.trace("Locale: request path: {}", path);
+            log.trace("Locale: response body type: {}", bodyTypeName);
+            if (isApiDocs(request)) {
+                localizedBody = getLocalizedApiDocResponseBody(body, request);
+            } else if (isBugResponseBody(body)) {
+                localizedBody = getLocalizedBugResponseBody(body, locale);
+            } else if (isErrorResponseBody(body)) {
+                localizedBody = getLocalizedErrorResponseBody(body, locale);
+            } else if (body instanceof String stringBody) {
+                localizedBody = localizeString(stringBody, locale);
+            } else {
+                localizedBody = body;
+            }
+            return localizedBody;
         }
-        return localizedBody;
+        return body;
     }
 
     private Object getLocalizedErrorResponseBody(Object body, Locale locale) {
@@ -79,13 +82,13 @@ public class LocaleAdviser implements BodyAdvice {
             return localizeErrorDTO(errorDTO, locale);
         }
         if (body instanceof Collection<?> collection) {
-            if (log.isDebugEnabled()) {
+            if (log.isTraceEnabled()) {
                 final String names = String.join("\n - ", collection.stream()
                         .filter(Objects::nonNull)
                         .map(item -> item.getClass().getName())
                         .collect(Collectors.toSet()));
                 if (!names.isEmpty()) {
-                    log.debug("Locale: collection types:\n - {}", names);
+                    log.trace("Locale: collection types:\n - {}", names);
                 }
             }
             for (Object item : collection) {
@@ -102,13 +105,13 @@ public class LocaleAdviser implements BodyAdvice {
             return localizeBugDTO(bugDTO, locale);
         }
         if (body instanceof Collection<?> collection) {
-            if (log.isDebugEnabled()) {
+            if (log.isTraceEnabled()) {
                 final String names = String.join("\n - ", collection.stream()
                         .filter(Objects::nonNull)
                         .map(item -> item.getClass().getName())
                         .collect(Collectors.toSet()));
                 if (!names.isEmpty()) {
-                    log.debug("Locale: collection types:\n - {}", names);
+                    log.trace("Locale: collection types:\n - {}", names);
                 }
             }
             for (Object item : collection) {
@@ -140,7 +143,7 @@ public class LocaleAdviser implements BodyAdvice {
             result = result.replaceAll(CURRENT_HOST_PORT, String.valueOf(serverAddress));
             return result;
         } else {
-            log.debug("Locale of the openapi document has not been done. " +
+            log.warn("Locale of the openapi document has not been done. " +
                       "The body is not in String format: {}", bodyTypeName);
         }
         return body;
@@ -223,11 +226,11 @@ public class LocaleAdviser implements BodyAdvice {
                 log.debug("The default language tag is used.");
                 return Locale.getDefault();
             } else {
-                log.debug("The language tag from the request header is used.");
+                log.trace("The language tag from the request header is used.");
                 return Locale.forLanguageTag(headerValue);
             }
         } else {
-            log.debug("The default language tag is used.");
+            log.trace("The default language tag is used.");
             return Locale.getDefault();
         }
     }

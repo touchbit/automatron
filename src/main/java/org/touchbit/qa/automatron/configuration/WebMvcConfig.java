@@ -34,6 +34,7 @@ import org.springframework.context.annotation.DependsOn;
 import org.springframework.context.support.ResourceBundleMessageSource;
 import org.springframework.core.type.filter.AnnotationTypeFilter;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.LocaleResolver;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
@@ -44,6 +45,7 @@ import org.touchbit.qa.automatron.annotation.QueryPOJO;
 import org.touchbit.qa.automatron.interceptor.BugInterceptor;
 import org.touchbit.qa.automatron.interceptor.LocaleInterceptor;
 import org.touchbit.qa.automatron.interceptor.XRequestIdInterceptor;
+import org.touchbit.qa.automatron.util.AutomatronUtils;
 
 import java.net.InetAddress;
 import java.net.MalformedURLException;
@@ -66,6 +68,7 @@ public class WebMvcConfig {
     public static final String SECURITY_SCHEME_KEY = "access_token";
     public static final String SECURITY_SCHEME_HEADER = "Authorization";
     private static final String[] PATHS = {"/**/*"};
+
 
     @Bean("appVersion")
     public String appVersion() {
@@ -127,18 +130,20 @@ public class WebMvcConfig {
         };
     }
 
+    @Bean(name = "restControllerClasses")
+    public Set<Class<?>> restControllerClasses() {
+        log.info("Search resource classes with annotation @{}", RestController.class.getSimpleName());
+        var scanner = new ClassPathScanningCandidateComponentProvider(false);
+        scanner.addIncludeFilter(new AnnotationTypeFilter(RestController.class));
+        return AutomatronUtils.getBeanDefinitionClasses(scanner);
+    }
+
     @Bean(name = "queryPOJOClasses")
-    public Set<Class<?>> queryPOJOClasses() throws Exception {
-        log.info("Search QueryPOJO classes");
+    public Set<Class<?>> queryPOJOClasses() {
+        log.info("Search query POJO classes with annotation @{}", QueryPOJO.class.getSimpleName());
         var scanner = new ClassPathScanningCandidateComponentProvider(false);
         scanner.addIncludeFilter(new AnnotationTypeFilter(QueryPOJO.class));
-        final Set<Class<?>> queryPOJOs = new HashSet<>();
-        for (BeanDefinition bd : scanner.findCandidateComponents("org.touchbit.qa.automatron")) {
-            Class<?> cl = Class.forName(bd.getBeanClassName());
-            queryPOJOs.add(cl);
-            log.debug("Annotated class found: " + cl.getName());
-        }
-        return queryPOJOs;
+        return AutomatronUtils.getBeanDefinitionClasses(scanner);
     }
 
     @Bean(name = "queryPOJOClassSimpleNames")

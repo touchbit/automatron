@@ -12,13 +12,14 @@
 
 package org.touchbit.qa.automatron;
 
+import de.codecentric.boot.admin.server.config.EnableAdminServer;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 /**
  * Application entry point
  */
-
+@EnableAdminServer
 @SpringBootApplication()
 public class Application {
 

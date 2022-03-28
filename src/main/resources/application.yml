@@ -1,7 +1,22 @@
 ---
+management:
+  endpoints:
+    web:
+      exposure:
+        include: [loggers,health,info,metrics]
+  server:
+    port: 8080
 spring:
   application:
     name: Automatron
+  boot:
+    admin:
+      client:
+        url: http://localhost:8080/admin
+      context-path: /admin
+      discovery:
+        ignored-services: ['admin-server']
+        services: Automatron
   messages:
     basename: i18n
   datasource:
@@ -22,6 +37,9 @@ spring:
       enabled: true
       settings:
         web-allow-others: true
+  thymeleaf:
+    check-template: false
+    check-template-location: false
 
 server:
   port: 8080
@@ -32,7 +50,8 @@ springdoc:
     groups:
       enabled: true
   swagger-ui:
-    path: "/"
+    path: "/doc"
+    queryConfigEnabled: true
     display-request-duration: true
     groups-order: DESC
     operationsSorter: alpha
@@ -40,5 +59,3 @@ springdoc:
     show-extensions: true
     show-common-extensions: true
     csrf.enabled: false
-
-

@@ -47,18 +47,20 @@ public class BugInterceptor implements HandlerInterceptor {
                                 HttpServletResponse response,
                                 Object object,
                                 Exception arg3) {
-        final String rid = MDC.get(RID);
-        log.debug("Get bugs for request=id: {}", rid);
-        if (rid != null) {
-            final List<Bug> bugs = BUGS.get(rid);
-            log.debug("Registered bugs: {}", bugs == null ? 0 : bugs.size());
-            if (bugs != null && !bugs.isEmpty()) {
-                for (Bug bug : bugs) {
-                    log.info("Add bug header to the response: '{}: {}'", BID, bug.stringId());
-                    response.setHeader(BID, bug.stringId());
+        if (request.getServletPath().contains("/api/")) {
+            final String rid = MDC.get(RID);
+            log.debug("Get bugs for request=id: {}", rid);
+            if (rid != null) {
+                final List<Bug> bugs = BUGS.get(rid);
+                log.debug("Registered bugs: {}", bugs == null ? 0 : bugs.size());
+                if (bugs != null && !bugs.isEmpty()) {
+                    for (Bug bug : bugs) {
+                        log.info("Add bug header to the response: '{}: {}'", BID, bug.stringId());
+                        response.setHeader(BID, bug.stringId());
+                    }
                 }
+                BUGS.remove(rid);
             }
-            BUGS.remove(rid);
         }
     }
 
