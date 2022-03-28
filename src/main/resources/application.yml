@@ -40,7 +40,14 @@ spring:
   thymeleaf:
     check-template: false
     check-template-location: false
-
+  web:
+    resources:
+      chain:
+        strategy:
+          content:
+            enabled: true
+            paths: /**
+        cache: false
 server:
   port: 8080
 
@@ -51,7 +58,7 @@ springdoc:
       enabled: true
   swagger-ui:
     path: "/doc"
-    queryConfigEnabled: true
+    queryConfigEnabled: false
     display-request-duration: true
     groups-order: DESC
     operationsSorter: alpha

@@ -26,7 +26,6 @@ import org.springdoc.core.customizers.OpenApiCustomiser;
 import org.springdoc.core.customizers.OperationCustomizer;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ClassPathScanningCandidateComponentProvider;
 import org.springframework.context.annotation.Configuration;
@@ -42,6 +41,7 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import org.springframework.web.servlet.i18n.FixedLocaleResolver;
 import org.touchbit.qa.automatron.Application;
 import org.touchbit.qa.automatron.annotation.QueryPOJO;
+import org.touchbit.qa.automatron.constant.Bug;
 import org.touchbit.qa.automatron.interceptor.BugInterceptor;
 import org.touchbit.qa.automatron.interceptor.LocaleInterceptor;
 import org.touchbit.qa.automatron.interceptor.XRequestIdInterceptor;
@@ -55,6 +55,7 @@ import java.util.stream.Collectors;
 
 import static io.swagger.v3.oas.models.security.SecurityScheme.In.HEADER;
 import static io.swagger.v3.oas.models.security.SecurityScheme.Type.HTTP;
+import static org.touchbit.qa.automatron.constant.Bug.*;
 import static org.touchbit.qa.automatron.constant.I18N.*;
 import static org.touchbit.qa.automatron.constant.ResourceConstants.*;
 
@@ -149,6 +150,19 @@ public class WebMvcConfig {
     @Bean(name = "queryPOJOClassSimpleNames")
     public Set<String> queryPOJOClassNames(@Qualifier("queryPOJOClasses") Set<Class<?>> queryPOJOClasses) {
         return queryPOJOClasses.stream().map(Class::getSimpleName).collect(Collectors.toSet());
+    }
+
+    @Bean
+    public Map<BugType, List<Bug>> collectBugs() {
+        final Map<BugType, List<Bug>> result = new HashMap<>();
+        Arrays.stream(BugType.values()).forEach(t -> result.put(t, new ArrayList<>()));
+        Arrays.stream(Bug.values()).forEach(b -> result.get(b.type()).add(b));
+        return result;
+    }
+
+    @Bean
+    public Map<BugType, Integer> bugsCount(final Map<BugType, List<Bug>> bugs) {
+        return bugs.entrySet().stream().collect(Collectors.toMap(Map.Entry::getKey, e -> e.getValue().size()));
     }
 
     private GroupedOpenApi initOpenApiDefinition(String group, String appVersion) {

@@ -21,18 +21,17 @@ import org.springframework.http.converter.HttpMessageConverter;
 import org.springframework.http.server.ServerHttpRequest;
 import org.springframework.http.server.ServerHttpResponse;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.touchbit.qa.automatron.constant.Bug;
 import org.touchbit.qa.automatron.pojo.bug.BugDTO;
 import org.touchbit.qa.automatron.pojo.error.ErrorDTO;
 import org.touchbit.qa.automatron.util.AutomatronUtils;
 
 import java.io.IOException;
 import java.net.URL;
-import java.util.Collection;
-import java.util.List;
-import java.util.Locale;
-import java.util.Objects;
+import java.util.*;
 import java.util.stream.Collectors;
 
+import static org.touchbit.qa.automatron.constant.Bug.BugType.*;
 import static org.touchbit.qa.automatron.constant.I18N.getKeys;
 import static org.touchbit.qa.automatron.constant.ResourceConstants.LOCALE;
 
@@ -43,9 +42,14 @@ public class LocaleAdviser implements BodyAdvice {
 
     public static final String CURRENT_HOST_PORT = "current_host_port";
     public static final String OPENAPI_DESCRIPTION_LICENCE = "openapi_description_licence";
+    public static final String BUG_CONTRACT_COUNT = "bug_type_contract_count";
+    public static final String BUG_SPECIFICATION_COUNT = "bug_type_specification_count";
+    public static final String BUG_IMPLEMENTATION_COUNT = "bug_type_implementation_count";
+    public static final String BUG_SECURITY_COUNT = "bug_type_security_count";
 
     private ResourceBundleMessageSource messageSource;
     private URL serverAddress;
+    private Map<Bug.BugType, Integer> bugsCount;
 
     @Override
     public Object beforeBodyWrite(final Object body, MethodParameter returnType,
@@ -141,6 +145,10 @@ public class LocaleAdviser implements BodyAdvice {
                 }
             }
             result = result.replaceAll(CURRENT_HOST_PORT, String.valueOf(serverAddress));
+            result = result.replaceAll(BUG_CONTRACT_COUNT, String.valueOf(bugsCount.get(CONTRACT)));
+            result = result.replaceAll(BUG_SPECIFICATION_COUNT, String.valueOf(bugsCount.get(SPECIFICATION)));
+            result = result.replaceAll(BUG_IMPLEMENTATION_COUNT, String.valueOf(bugsCount.get(IMPLEMENTATION)));
+            result = result.replaceAll(BUG_SECURITY_COUNT, String.valueOf(bugsCount.get(SECURITY)));
             return result;
         } else {
             log.warn("Locale of the openapi document has not been done. " +

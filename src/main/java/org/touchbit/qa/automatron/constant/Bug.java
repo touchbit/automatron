@@ -45,9 +45,10 @@ public enum Bug {
     }
 
     public enum BugType {
-        SECURITY,
+        CONTRACT,
         SPECIFICATION,
         IMPLEMENTATION,
+        SECURITY,
     }
 
 }
