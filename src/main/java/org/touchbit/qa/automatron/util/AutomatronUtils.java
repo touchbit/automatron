@@ -13,10 +13,8 @@
 package org.touchbit.qa.automatron.util;
 
 import org.springframework.context.annotation.ClassPathScanningCandidateComponentProvider;
-import org.springframework.http.server.ServerHttpRequest;
 import org.touchbit.qa.automatron.Application;
 
-import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Locale;
@@ -30,16 +28,20 @@ public class AutomatronUtils {
 
     }
 
-    @SuppressWarnings("ResultOfMethodCallIgnored")
     public static String getLicence(Locale locale) throws IOException {
         final String licSource = "META-INF/LICENSE_" + locale.getLanguage();
-        try (InputStream is = Application.class.getClassLoader().getResourceAsStream(licSource)) {
+        return readResource(licSource);
+    }
+
+    @SuppressWarnings("ResultOfMethodCallIgnored")
+    public static String readResource(String resourcePath) throws IOException {
+        try (InputStream is = Application.class.getClassLoader().getResourceAsStream(resourcePath)) {
             if (is != null) {
                 byte[] targetArray = new byte[is.available()];
                 is.read(targetArray);
                 return new String(targetArray);
             }
-            throw new IOException("The license file is missing from the project resources: " + licSource);
+            throw new IOException("File is missing from the project resources: " + resourcePath);
         }
     }
 

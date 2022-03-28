@@ -1,0 +1,45 @@
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Automatron</title>
+    <link rel="stylesheet" type="text/css" href="./swagger-ui/swagger-ui.css">
+    <style>
+        html {
+            box-sizing: border-box;
+            overflow: -moz-scrollbars-vertical;
+            overflow-y: scroll;
+        }
+        *,
+        *:before,
+        *:after {
+            box-sizing: inherit;
+        }
+        body {
+            margin: 0;
+            background: #fafafa;
+        }
+    </style>
+</head>
+
+<body>
+<div class="swagger-ui">
+    <div class="information-container wrapper">
+        <section class="block col-12">
+            <div class="info">
+                <hgroup class="main">
+                    <h2 class="title">Automatron<span>
+                        <sup><a th:text="${lang}" th:href="${lang_href}"></a></sup>
+                    </span>
+                    </h2>
+                </hgroup>
+                <div class="description">
+                    <div class="renderedMarkdown">
+                        <div th:utext="${htmlContent}"></div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+</div>
+</body>
+</html>

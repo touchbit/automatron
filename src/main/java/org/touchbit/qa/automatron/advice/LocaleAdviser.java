@@ -41,8 +41,8 @@ import static org.touchbit.qa.automatron.constant.ResourceConstants.LOCALE;
 @AllArgsConstructor
 public class LocaleAdviser implements BodyAdvice {
 
-    private static final String CURRENT_HOST_PORT = "current_host_port";
-    private static final String OPENAPI_DESCRIPTION_LICENCE = "openapi_description_licence";
+    public static final String CURRENT_HOST_PORT = "current_host_port";
+    public static final String OPENAPI_DESCRIPTION_LICENCE = "openapi_description_licence";
 
     private ResourceBundleMessageSource messageSource;
     private URL serverAddress;
