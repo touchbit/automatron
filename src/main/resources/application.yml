@@ -3,7 +3,7 @@ management:
   endpoints:
     web:
       exposure:
-        include: [loggers,health,info,metrics]
+        include: [loggers,health,info,metrics,config]
   server:
     port: 8080
 spring:
@@ -17,6 +17,10 @@ spring:
       discovery:
         ignored-services: ['admin-server']
         services: Automatron
+      ui:
+        cache-templates: false
+        cache:
+          no-cache: true
   messages:
     basename: i18n
   datasource:
