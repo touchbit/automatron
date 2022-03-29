@@ -13,33 +13,36 @@
 package org.touchbit.qa.automatron.pojo.admin;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 import lombok.experimental.Accessors;
+import org.touchbit.qa.automatron.constant.ConfigParameter;
+import org.touchbit.qa.automatron.constant.ConfigParameterType;
 
 import javax.validation.constraints.NotNull;
+import java.util.Set;
 
 @Setter
 @Getter
 @Accessors(chain = true, fluent = true)
 @ToString
-public class OpenAPIConfig {
+public class ConfigDTO {
 
-    @JsonProperty("enableDefaultLocaleHeader")
-    @Schema(description = "todo")
+    @JsonProperty("parameter")
     @NotNull
-    private boolean enableDefaultLocaleHeader;
+    private ConfigParameter parameter;
 
-    @JsonProperty("enableDefaultRequestIdHeader")
-    @Schema(description = "todo")
+    @JsonProperty("value")
     @NotNull
-    private boolean enableDefaultRequestIdHeader;
+    private String value;
 
-    @JsonProperty("enableDefault5xxResponse")
-    @Schema(description = "todo")
+    @JsonProperty("type")
     @NotNull
-    private boolean enableDefault5xxResponse;
+    private ConfigParameterType type;
+
+    @JsonProperty("values")
+    @NotNull
+    private Set<String> values;
 
 }

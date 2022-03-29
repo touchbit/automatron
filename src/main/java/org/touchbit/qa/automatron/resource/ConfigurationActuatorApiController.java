@@ -10,36 +10,44 @@
  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package org.touchbit.qa.automatron.admin;
+package org.touchbit.qa.automatron.resource;
 
+import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.actuate.endpoint.web.annotation.RestControllerEndpoint;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.RequestEntity;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
-import org.touchbit.qa.automatron.pojo.admin.ConfigurationDTO;
-import org.touchbit.qa.automatron.pojo.admin.OpenAPIConfig;
+import org.touchbit.qa.automatron.pojo.admin.ConfigDTO;
+import org.touchbit.qa.automatron.service.ConfigService;
+
+import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
+import java.util.Objects;
+import java.util.Set;
 
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
+@Slf4j
+@AllArgsConstructor
 @RestControllerEndpoint(id = "config")
-public class AdminConfigViewEndpoint {
+public class ConfigurationActuatorApiController {
+
+    private final ConfigService confService;
 
     @ResponseStatus(HttpStatus.OK)
     @GetMapping(path = "/", produces = APPLICATION_JSON_VALUE)
-    public ConfigurationDTO getConfiguration() {
-        return new ConfigurationDTO()
-                .openapi(new OpenAPIConfig()
-                        .enableDefaultLocaleHeader(true)
-                        .enableDefaultRequestIdHeader(true)
-                        .enableDefault5xxResponse(true));
+    public Set<ConfigDTO> getConfiguration() {
+        return confService.getConfiguration();
     }
 
     @ResponseStatus(HttpStatus.OK)
-    @PostMapping(path = "/", produces = APPLICATION_JSON_VALUE, consumes = APPLICATION_JSON_VALUE)
-    public ConfigurationDTO todo(RequestEntity<ConfigurationDTO> value) {
-        return value.getBody();
+    @PatchMapping(path = "/", produces = APPLICATION_JSON_VALUE, consumes = APPLICATION_JSON_VALUE)
+    public Set<ConfigDTO> updateConfig(RequestEntity<@Valid @NotNull ConfigDTO> value) {
+        confService.updateConfig(Objects.requireNonNull(value.getBody()));
+        return confService.getConfiguration();
     }
 
 }

@@ -5,8 +5,7 @@ management:
   endpoints:
     web:
       exposure:
-#        include: '*'
-        include: [loggers,health,info,metrics,config]
+        include: [loggers,health,info,metrics,config,mappings]
 
 spring:
   application:
@@ -61,6 +60,7 @@ server:
   port: 8080
 
 springdoc:
+  show-actuator: false
   writer-with-default-pretty-printer: true
   api-docs:
     groups:

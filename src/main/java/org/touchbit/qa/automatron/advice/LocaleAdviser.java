@@ -14,6 +14,7 @@ package org.touchbit.qa.automatron.advice;
 
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springdoc.core.AbstractSwaggerUiConfigProperties.SwaggerUrl;
 import org.springframework.context.support.ResourceBundleMessageSource;
 import org.springframework.core.MethodParameter;
 import org.springframework.http.MediaType;
@@ -24,6 +25,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.touchbit.qa.automatron.constant.Bug;
 import org.touchbit.qa.automatron.pojo.bug.BugDTO;
 import org.touchbit.qa.automatron.pojo.error.ErrorDTO;
+import org.touchbit.qa.automatron.service.ConfigService;
 import org.touchbit.qa.automatron.util.AutomatronUtils;
 
 import java.io.IOException;
@@ -50,6 +52,7 @@ public class LocaleAdviser implements BodyAdvice {
     private ResourceBundleMessageSource messageSource;
     private URL serverAddress;
     private Map<Bug.BugType, Integer> bugsCount;
+    private ConfigService configService;
 
     @Override
     public Object beforeBodyWrite(final Object body, MethodParameter returnType,
@@ -127,6 +130,7 @@ public class LocaleAdviser implements BodyAdvice {
         return body;
     }
 
+    @SuppressWarnings("unchecked")
     private Object getLocalizedApiDocResponseBody(final Object body, final ServerHttpRequest request) {
         final String bodyTypeName = body == null ? "null" : body.getClass().getName();
         if (body instanceof String stringBody) {
@@ -150,10 +154,28 @@ public class LocaleAdviser implements BodyAdvice {
             result = result.replaceAll(BUG_IMPLEMENTATION_COUNT, String.valueOf(bugsCount.get(IMPLEMENTATION)));
             result = result.replaceAll(BUG_SECURITY_COUNT, String.valueOf(bugsCount.get(SECURITY)));
             return result;
-        } else {
-            log.warn("Locale of the openapi document has not been done. " +
-                      "The body is not in String format: {}", bodyTypeName);
         }
+        if (request.getURI().toString().contains("/v3/api-docs/swagger-config")) {
+            if (body instanceof TreeMap map) {
+                final Set<SwaggerUrl> urlList = (Set<SwaggerUrl>) map.get("urls");
+                final Map<String, SwaggerUrl> name = urlList.stream()
+                        .collect(Collectors.toMap(SwaggerUrl::getName, m -> m));
+                final List<SwaggerUrl> newUrls = new LinkedList<>();
+                final Locale defaultLocale = configService.getDefaultLocale();
+                if (defaultLocale.getLanguage().equalsIgnoreCase("ru")) {
+                    newUrls.add(name.get("Russian"));
+                    newUrls.add(name.get("English"));
+                } else {
+                    newUrls.add(name.get("English"));
+                    newUrls.add(name.get("Russian"));
+                }
+                map.put("urls", newUrls);
+                log.info("Swagger configured for default language: {}", defaultLocale);
+                return body;
+            }
+        }
+        log.warn("Locale of the openapi document has not been done. " +
+                 "The body is not in String format: {}", bodyTypeName);
         return body;
     }
 

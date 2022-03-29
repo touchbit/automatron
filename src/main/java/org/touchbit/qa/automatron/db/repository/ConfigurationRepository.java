@@ -10,26 +10,14 @@
  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package org.touchbit.qa.automatron.pojo.admin;
+package org.touchbit.qa.automatron.db.repository;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-import io.swagger.v3.oas.annotations.media.Schema;
-import lombok.Getter;
-import lombok.Setter;
-import lombok.ToString;
-import lombok.experimental.Accessors;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.transaction.annotation.Transactional;
+import org.touchbit.qa.automatron.constant.ConfigParameter;
+import org.touchbit.qa.automatron.db.entity.Config;
 
-import javax.validation.constraints.NotNull;
-
-@Setter
-@Getter
-@Accessors(chain = true, fluent = true)
-@ToString
-public class ConfigurationDTO {
-
-    @JsonProperty("openapi")
-    @Schema(description = "todo")
-    @NotNull
-    private OpenAPIConfig openapi;
+@Transactional()
+public interface ConfigurationRepository extends JpaRepository<Config, ConfigParameter> {
 
 }

@@ -10,19 +10,25 @@
  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package org.touchbit.qa.automatron.configuration;
+package org.touchbit.qa.automatron.db.entity;
 
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
-import org.touchbit.qa.automatron.resource.ConfigurationActuatorApiController;
-import org.touchbit.qa.automatron.service.ConfigService;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.experimental.Accessors;
 
-@Configuration
-public class AdminConfig {
+import javax.persistence.*;
 
-    @Bean
-    public ConfigurationActuatorApiController customEndpoint(final ConfigService confService) {
-        return new ConfigurationActuatorApiController(confService);
-    }
+@Entity
+@Getter
+@Setter
+@Accessors(chain = true, fluent = true)
+@Table(name = "config_param_values")
+public class ConfigParamValues {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.SEQUENCE)
+    private long id;
+
+    private String value;
 
 }

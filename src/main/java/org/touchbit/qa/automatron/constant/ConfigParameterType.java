@@ -10,19 +10,10 @@
  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package org.touchbit.qa.automatron.configuration;
+package org.touchbit.qa.automatron.constant;
 
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
-import org.touchbit.qa.automatron.resource.ConfigurationActuatorApiController;
-import org.touchbit.qa.automatron.service.ConfigService;
+public enum ConfigParameterType {
 
-@Configuration
-public class AdminConfig {
-
-    @Bean
-    public ConfigurationActuatorApiController customEndpoint(final ConfigService confService) {
-        return new ConfigurationActuatorApiController(confService);
-    }
+    SWITCH,
 
 }

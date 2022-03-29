@@ -72,7 +72,6 @@ public class WebMvcConfig {
     public static final String SECURITY_SCHEME_HEADER = "Authorization";
     private static final String[] PATHS = {"/**/*"};
 
-
     @Bean("appVersion")
     public String appVersion() {
         String version = Application.class.getPackage().getImplementationVersion();
@@ -82,7 +81,7 @@ public class WebMvcConfig {
     @Bean
     @DependsOn({"appVersion"})
     public GroupedOpenApi initRussianOpenApiDefinition(final String appVersion) {
-        log.info("Initializing russian open api definition.");
+        log.info("Initializing russian openapi definition.");
         return initOpenApiDefinition("Russian", appVersion);
     }
 
