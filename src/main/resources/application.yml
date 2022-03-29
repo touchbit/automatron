@@ -48,6 +48,10 @@ spring:
             enabled: true
             paths: /**
         cache: false
+  util:
+    timeout:
+      sec: 0 # InetUtilsProperties
+
 server:
   port: 8080
 
