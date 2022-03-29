@@ -54,4 +54,37 @@ public record ConfigService(ConfigurationRepository repository) {
         return Locale.forLanguageTag(config.value());
     }
 
+    public boolean isGlobalRequestIdHeaderEnabled() {
+        final Config config = repository.findById(ConfigParameter.ENABLE_DEFAULT_REQUEST_ID_HEADER).orElse(null);
+        final boolean result;
+        if (config != null) {
+            result = Boolean.parseBoolean(config.value());
+        } else {
+            result = Boolean.parseBoolean(ConfigParameter.ENABLE_DEFAULT_REQUEST_ID_HEADER.getDefaultValue());
+        }
+        return result;
+    }
+
+    public boolean isGlobalLocaleHeaderEnabled() {
+        final Config config = repository.findById(ConfigParameter.ENABLE_DEFAULT_LOCALE_HEADER).orElse(null);
+        final boolean result;
+        if (config != null) {
+            result = Boolean.parseBoolean(config.value());
+        } else {
+            result = Boolean.parseBoolean(ConfigParameter.ENABLE_DEFAULT_LOCALE_HEADER.getDefaultValue());
+        }
+        return result;
+    }
+
+    public boolean isGlobal5xxResponseEnabled() {
+        final Config config = repository.findById(ConfigParameter.ENABLE_DEFAULT_5_XX_RESPONSE).orElse(null);
+        final boolean result;
+        if (config != null) {
+            result = Boolean.parseBoolean(config.value());
+        } else {
+            result = Boolean.parseBoolean(ConfigParameter.ENABLE_DEFAULT_5_XX_RESPONSE.getDefaultValue());
+        }
+        return result;
+    }
+
 }

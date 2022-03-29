@@ -12,18 +12,7 @@
 
 package org.touchbit.qa.automatron.configuration;
 
-import io.swagger.v3.oas.annotations.enums.ParameterIn;
-import io.swagger.v3.oas.models.Operation;
-import io.swagger.v3.oas.models.info.Info;
-import io.swagger.v3.oas.models.media.StringSchema;
-import io.swagger.v3.oas.models.parameters.Parameter;
-import io.swagger.v3.oas.models.responses.ApiResponses;
-import io.swagger.v3.oas.models.security.SecurityRequirement;
-import io.swagger.v3.oas.models.security.SecurityScheme;
 import lombok.extern.slf4j.Slf4j;
-import org.springdoc.core.GroupedOpenApi;
-import org.springdoc.core.customizers.OpenApiCustomiser;
-import org.springdoc.core.customizers.OperationCustomizer;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cloud.commons.util.InetUtils;
@@ -31,12 +20,9 @@ import org.springframework.cloud.commons.util.InetUtilsProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ClassPathScanningCandidateComponentProvider;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.DependsOn;
 import org.springframework.context.support.ResourceBundleMessageSource;
 import org.springframework.core.type.filter.AnnotationTypeFilter;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.LocaleResolver;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
@@ -55,11 +41,7 @@ import java.net.URL;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import static io.swagger.v3.oas.models.security.SecurityScheme.In.HEADER;
-import static io.swagger.v3.oas.models.security.SecurityScheme.Type.HTTP;
 import static org.touchbit.qa.automatron.constant.Bug.BugType;
-import static org.touchbit.qa.automatron.constant.I18N.*;
-import static org.touchbit.qa.automatron.constant.ResourceConstants.*;
 
 /**
  * https://springdoc.github.io/springdoc-openapi-demos/faq.html
@@ -68,28 +50,10 @@ import static org.touchbit.qa.automatron.constant.ResourceConstants.*;
 @Configuration
 public class WebMvcConfig {
 
-    public static final String SECURITY_SCHEME_KEY = "access_token";
-    public static final String SECURITY_SCHEME_HEADER = "Authorization";
-    private static final String[] PATHS = {"/**/*"};
-
     @Bean("appVersion")
     public String appVersion() {
         String version = Application.class.getPackage().getImplementationVersion();
         return version == null || version.isBlank() ? "0.0.0" : version;
-    }
-
-    @Bean
-    @DependsOn({"appVersion"})
-    public GroupedOpenApi initRussianOpenApiDefinition(final String appVersion) {
-        log.info("Initializing russian openapi definition.");
-        return initOpenApiDefinition("Russian", appVersion);
-    }
-
-    @Bean
-    @DependsOn({"appVersion"})
-    public GroupedOpenApi initEnglishOpenApiDefinition(final String appVersion) {
-        log.info("Initializing english openapi definition.");
-        return initOpenApiDefinition("English", appVersion);
     }
 
     @Bean
@@ -178,96 +142,6 @@ public class WebMvcConfig {
                 return hostInfo;
             }
 
-        };
-    }
-
-    private GroupedOpenApi initOpenApiDefinition(String group, String appVersion) {
-        return GroupedOpenApi.builder()
-                .group(group)
-                .addOperationCustomizer(xRequestIdGlobalHeader())
-                .addOperationCustomizer(acceptLocaleHeader())
-                .addOperationCustomizer(sortResponses())
-                .addOperationCustomizer(addSecurityItem())
-                .addOpenApiCustomiser(openApiInfoCustomiser(appVersion))
-                .addOpenApiCustomiser(openApiSecuritySchemeCustomiser())
-                .pathsToMatch(PATHS)
-                .build();
-    }
-
-    private OpenApiCustomiser openApiSecuritySchemeCustomiser() {
-        return openApi -> openApi.getComponents()
-                .addSecuritySchemes(SECURITY_SCHEME_KEY, new SecurityScheme()
-                        .scheme("bearer")
-                        .name(SECURITY_SCHEME_HEADER)
-                        .type(HTTP)
-                        .in(HEADER)
-                        .description(I18N_1648397372228));
-    }
-
-    private OperationCustomizer addSecurityItem() {
-        return (Operation operation, HandlerMethod handlerMethod) -> {
-            final List<Parameter> parameters = operation.getParameters();
-            if (parameters != null) {
-                operation.getParameters().removeIf(p ->
-                        HEADER.toString().equals(p.getIn()) && SECURITY_SCHEME_HEADER.equalsIgnoreCase(p.getName()));
-                final GetMapping get = handlerMethod.getMethodAnnotation(GetMapping.class);
-                if (get != null) {
-                    final List<String> paths = Arrays.asList(get.path());
-                    if (paths.contains("/api/bug") ||
-                        paths.contains("/api/bugs") ||
-                        paths.contains("/api/accounting/login")) {
-                        return operation;
-                    }
-                }
-            }
-            return operation.addSecurityItem(new SecurityRequirement().addList(SECURITY_SCHEME_KEY));
-        };
-    }
-
-    private OpenApiCustomiser openApiInfoCustomiser(String appVersion) {
-        return openApi -> openApi.info(new Info()
-                .title("Automatron")
-                .version(appVersion)
-                .description(I18N_1648167967145));
-    }
-
-    private OperationCustomizer xRequestIdGlobalHeader() {
-        return (Operation operation, HandlerMethod handlerMethod) -> {
-            if (operation.getTags().contains(BUG_TAG)) {
-                return operation;
-            }
-            final Parameter xRequestId = new Parameter()
-                    .in(ParameterIn.HEADER.toString())
-                    .schema(new StringSchema().type("integer"))
-                    .name(RID)
-                    .description(I18N_1648168060464)
-                    .required(false);
-            operation.addParametersItem(xRequestId);
-            return operation;
-        };
-    }
-
-    private OperationCustomizer sortResponses() {
-        return (Operation operation, HandlerMethod handlerMethod) -> {
-            final ApiResponses responses = operation.getResponses();
-            final Set<String> keys = new TreeSet<>(responses.keySet());
-            final ApiResponses sortedApiResponses = new ApiResponses();
-            keys.forEach(key -> sortedApiResponses.put(key, responses.get(key)));
-            operation.setResponses(sortedApiResponses);
-            return operation;
-        };
-    }
-
-    private OperationCustomizer acceptLocaleHeader() {
-        return (Operation operation, HandlerMethod handlerMethod) -> {
-            final Parameter acceptLanguage = new Parameter()
-                    .in(ParameterIn.HEADER.toString())
-                    .schema(new StringSchema().addEnumItem("ru").addEnumItem("en"))
-                    .name(LOCALE)
-                    .description(I18N_1648168069261)
-                    .required(false);
-            operation.addParametersItem(acceptLanguage);
-            return operation;
         };
     }
 
