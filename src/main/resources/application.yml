@@ -1,11 +1,13 @@
 ---
 management:
+  server:
+    port: 8080
   endpoints:
     web:
       exposure:
+#        include: '*'
         include: [loggers,health,info,metrics,config]
-  server:
-    port: 8080
+
 spring:
   application:
     name: Automatron
@@ -13,6 +15,8 @@ spring:
     admin:
       client:
         url: http://localhost:8080/admin
+        instance:
+          service-base-url: http://localhost:8080
       context-path: /admin
       discovery:
         ignored-services: ['admin-server']

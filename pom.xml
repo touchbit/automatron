@@ -238,7 +238,7 @@
 
     <profiles>
         <profile>
-            <id>custom</id>
+            <id>admin-config-view-generation</id>
             <build>
                 <plugins>
                     <plugin>
@@ -252,21 +252,21 @@
                             <workingDirectory>src/main/js</workingDirectory>
                         </configuration>
                         <executions>
-                            <execution>
-                                <id>install-node-and-npm</id>
-                                <goals>
-                                    <goal>install-node-and-npm</goal>
-                                </goals>
-                            </execution>
-                            <execution>
-                                <id>npm-install</id>
-                                <goals>
-                                    <goal>npm</goal>
-                                </goals>
-                                <configuration>
-                                    <arguments>ci</arguments>
-                                </configuration>
-                            </execution>
+<!--                            <execution>-->
+<!--                                <id>install-node-and-npm</id>-->
+<!--                                <goals>-->
+<!--                                    <goal>install-node-and-npm</goal>-->
+<!--                                </goals>-->
+<!--                            </execution>-->
+<!--                            <execution>-->
+<!--                                <id>npm-install</id>-->
+<!--                                <goals>-->
+<!--                                    <goal>npm</goal>-->
+<!--                                </goals>-->
+<!--                                <configuration>-->
+<!--                                    <arguments>ci</arguments>-->
+<!--                                </configuration>-->
+<!--                            </execution>-->
                             <execution>
                                 <id>npm-build</id>
                                 <goals>
@@ -293,6 +293,21 @@
                                 </resource>
                             </resources>
                             <outputDirectory>src/main/resources/META-INF/spring-boot-admin-server-ui/extensions/custom</outputDirectory>
+                        </configuration>
+                    </plugin>
+                    <plugin>
+                        <artifactId>maven-clean-plugin</artifactId>
+                        <version>3.1.0</version>
+                        <configuration>
+                            <filesets>
+                                <fileset>
+                                    <directory>src/main/resources/META-INF/spring-boot-admin-server-ui/extensions/custom</directory>
+                                    <includes>
+                                        <include>**/*</include>
+                                    </includes>
+                                    <followSymlinks>false</followSymlinks>
+                                </fileset>
+                            </filesets>
                         </configuration>
                     </plugin>
                 </plugins>

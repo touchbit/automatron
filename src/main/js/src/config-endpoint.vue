@@ -12,32 +12,127 @@
 
 <template>
   <div class="config">
-    <p>Instance: <span v-text="instance.id" /></p>
-    <p>Output: <span v-text="text" /></p>
+    <section class="section">
+      <div class="details-header">
+        <h1 v-if="instance" class="title">Automatron configuration</h1>
+      </div>
+      <table class="table is-hoverable is-fullwidth">
+        <thead>
+        <tr>
+          <th>
+            Swagger UI configuration
+          </th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr>
+          <td>
+            <span class="is-breakable">Display default 'Locale' header</span>&nbsp;
+            <config-switch-control class="is-pulled-right"
+                                   :value="config.openapi.enableDefaultLocaleHeader"
+                                   @input="value => this.updated(function () {
+                                     config.openapi.enableDefaultLocaleHeader = value;
+                                     return config;
+                                   })"
+            />
+          </td>
+        </tr>
+        <tr>
+          <td>
+            <span class="is-breakable">Display default 'Request-ID' header</span>&nbsp;
+            <config-switch-control class="is-pulled-right"
+                                   :value="config.openapi.enableDefaultRequestIdHeader"
+                                   @input="value => this.updated(function () {
+                                     config.openapi.enableDefaultRequestIdHeader = value;
+                                     return config;
+                                   })"
+            />
+          </td>
+        </tr>
+        <tr>
+          <td>
+            <span class="is-breakable">Display default '5xx' response</span>&nbsp;
+            <config-switch-control class="is-pulled-right"
+                                   :value="config.openapi.enableDefault5xxResponse"
+                                   @input="value => this.updated(function () {
+                                     config.openapi.enableDefault5xxResponse = value;
+                                     return config;
+                                   })"
+            />
+          </td>
+        </tr>
+        </tbody>
+      </table>
+    </section>
   </div>
 </template>
 
 <script>
-  export default {
-    props: {
-      instance: { //<1>
-        type: Object,
-        required: true
+import ConfigSwitchControl from './config-switch-control'
+
+export default {
+  components: {ConfigSwitchControl},
+  props: {
+    instance: { //<1>
+      type: Object,
+      required: true
+    }
+  },
+  data: () => ({
+    config: {
+      openapi: {
+        enableDefaultLocaleHeader: Boolean,
+        enableDefaultRequestIdHeader: Boolean,
+        enableDefault5xxResponse: Boolean,
+      }
+    }
+  }),
+  async created() {
+    try {
+      const response = await this.instance.axios.get('actuator/config');
+      this.config = response.data;
+    } catch (error) {
+      console.warn('Fetching configuration failed:', error);
+    }
+  },
+  methods: {
+    async updated(func) {
+      try {
+        const body = func.call()
+        const response = await this.instance.axios.post('actuator/config', body);
+        this.config = response.data;
+      } catch (error) {
+        console.warn('Configure failed:', error);
       }
     },
-    data: () => ({
-      text: ''
-    }),
-    async created() {
-      const response = await this.instance.axios.get('actuator/config'); //<2>
-      this.text = response.data;
-    }
-  };
+  },
+};
 </script>
 
-<style>
-  .config {
-    font-size: 20px;
-    width: 80%;
+<style lang="scss">
+@import "./assets/css/utilities";
+
+.details-header {
+  margin-bottom: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+
+  &__urls {
+    width: 100%;
+    text-align: center;
   }
+}
+
+.config {
+  &__header {
+    background-color: $white;
+    z-index: 10;
+    padding: 0.5em 1em;
+  }
+
+  &__toggle-scope {
+    width: 10em;
+  }
+}
 </style>

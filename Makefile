@@ -14,3 +14,8 @@ run: build
 d: build
 	@docker build -t touchbit/automatron .
 	@docker run -p 8080:8080 -p 9092:9092 touchbit/automatron
+
+gen:
+	@mvn clean compile -P admin-config-view-generation
+	@mvn clean package
+

@@ -170,7 +170,16 @@ public class WebMvcConfig {
     @Bean
     public InetUtils inetUtils(InetUtilsProperties properties) {
         properties.setTimeoutSeconds(0);
-        return new InetUtils(properties);
+        return new InetUtils(properties) {
+
+            public HostInfo findFirstNonLoopbackHostInfo() {
+                HostInfo hostInfo = new HostInfo();
+                hostInfo.setHostname(properties.getDefaultHostname());
+                hostInfo.setIpAddress(properties.getDefaultIpAddress());
+                return hostInfo;
+            }
+
+        };
     }
 
     private GroupedOpenApi initOpenApiDefinition(String group, String appVersion) {

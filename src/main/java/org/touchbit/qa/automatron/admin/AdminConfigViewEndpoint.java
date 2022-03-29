@@ -12,15 +12,34 @@
 
 package org.touchbit.qa.automatron.admin;
 
-import org.springframework.boot.actuate.endpoint.annotation.Endpoint;
-import org.springframework.boot.actuate.endpoint.annotation.ReadOperation;
+import org.springframework.boot.actuate.endpoint.web.annotation.RestControllerEndpoint;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.RequestEntity;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.ResponseStatus;
+import org.touchbit.qa.automatron.pojo.admin.ConfigurationDTO;
+import org.touchbit.qa.automatron.pojo.admin.OpenAPIConfig;
 
-@Endpoint(id = "config")
+import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
+
+@RestControllerEndpoint(id = "config")
 public class AdminConfigViewEndpoint {
 
-    @ReadOperation
-    public String getHello() {
-        return "In developing";
+    @ResponseStatus(HttpStatus.OK)
+    @GetMapping(path = "/", produces = APPLICATION_JSON_VALUE)
+    public ConfigurationDTO getConfiguration() {
+        return new ConfigurationDTO()
+                .openapi(new OpenAPIConfig()
+                        .enableDefaultLocaleHeader(true)
+                        .enableDefaultRequestIdHeader(true)
+                        .enableDefault5xxResponse(true));
+    }
+
+    @ResponseStatus(HttpStatus.OK)
+    @PostMapping(path = "/", produces = APPLICATION_JSON_VALUE, consumes = APPLICATION_JSON_VALUE)
+    public ConfigurationDTO todo(RequestEntity<ConfigurationDTO> value) {
+        return value.getBody();
     }
 
 }

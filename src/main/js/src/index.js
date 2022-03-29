@@ -10,25 +10,21 @@
  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-/* global SBA */
 import config from './config';
 import configEndpoint from './config-endpoint';
 
-// tag::customization-ui-toplevel[]
 SBA.use({
   install({viewRegistry}) {
     viewRegistry.addView({
       name: 'config',  //<1>
       path: '/config', //<2>
       component: config, //<3>
-      label: 'Config', //<4>
-      order: 1000, //<5>
+      label: 'Configuration', //<4>
+      order: 1000,
     });
   }
 });
-// end::customization-ui-toplevel[]
 
-// tag::customization-ui-endpoint[]
 SBA.use({
   install({viewRegistry, vueI18n}) {
     viewRegistry.addView({
@@ -36,7 +32,7 @@ SBA.use({
       parent: 'instances', // <1>
       path: 'config',
       component: configEndpoint,
-      label: 'Config',
+      label: 'Configuration',
       group: 'config', // <2>
       order: 1000,
       isEnabled: ({instance}) => instance.hasEndpoint('config') // <3>
@@ -45,10 +41,9 @@ SBA.use({
     vueI18n.mergeLocaleMessage('en', { // <4>
       sidebar: {
         custom : {
-          title : "Config Extension"
+          title : 'Config Extension'
         }
       }
     });
   }
 });
-// end::customization-ui-endpoint[]
