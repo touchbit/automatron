@@ -39,6 +39,26 @@ docker rm -f -v 6f1fa2a978dd
 
 ### Admin panel
 
+#### Service configuration
+
+In the admin panel, you can set the default language.
+
+<details>
+<summary>It is also possible to control the display of common blocks in the Swagger documentation.</summary>
+
+![](./admin_conf_example.png)
+
+</details>
+
+<details>
+<summary>How is it done</summary>
+
+![](./admin_conf_example.gif)
+
+</details>
+
+#### Change logging level
+
 In the admin panel, you can change the logging level of the service and its components. This can come in handy when catching bugs.
 
 <details>

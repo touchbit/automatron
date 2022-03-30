@@ -50,17 +50,28 @@ export default {
       this.$emit('input', this.configMap);
     },
     cssClass(switchOption) {
-      let booleanSwitchOption = (switchOption === 'true');
-      let booleanParameterValue = (this.configMap.parameterValue === 'true');
-      if (booleanParameterValue !== booleanSwitchOption) {
-        return 'config-switch-control__level--inherited';
+      if (this.configMap.parameterName === 'DEFAULT_LANGUAGE') {
+        if (switchOption !== this.configMap.parameterValue) {
+          return 'config-switch-control__level--inherited';
+        } else {
+          return 'is-active is-success';
+        }
+      } else {
+        let booleanSwitchOption = (switchOption === 'true');
+        let booleanParameterValue = (this.configMap.parameterValue === 'true');
+        if (booleanParameterValue !== booleanSwitchOption) {
+          return 'config-switch-control__level--inherited';
+        }
+        if (booleanParameterValue && booleanSwitchOption) {
+          return 'is-active is-success';
+        }
+        return 'is-active is-danger';
       }
-      if (booleanParameterValue && booleanSwitchOption) {
-        return 'is-active is-success';
-      }
-      return 'is-active is-danger';
     },
     getLabel(switchOption) {
+      if (this.configMap.parameterName === 'DEFAULT_LANGUAGE') {
+        return (switchOption === 'RU') ? 'Russian' : 'English';
+      }
       let isTrue = (switchOption === 'true');
       return isTrue ? 'Enable' : 'Disable';
     },

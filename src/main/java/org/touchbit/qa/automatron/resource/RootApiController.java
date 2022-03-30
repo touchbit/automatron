@@ -20,6 +20,7 @@ import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.ModelAndView;
+import org.touchbit.qa.automatron.service.ConfigService;
 import org.touchbit.qa.automatron.service.RootService;
 
 import java.io.IOException;
@@ -31,18 +32,16 @@ import java.util.Locale;
 public class RootApiController {
 
     private RootService rootService;
+    private ConfigService configService;
 
     @ResponseStatus(HttpStatus.OK)
     @GetMapping(value = "/")
-    public ModelAndView getBugs(@RequestHeader(name = "Accept-Language", required = false) String acceptLanguage,
-                                String lang) throws IOException {
+    public ModelAndView getBugs(String lang) throws IOException {
         final Locale reqLocale;
         if (lang != null) {
             reqLocale = Locale.forLanguageTag(lang);
-        } else if (acceptLanguage != null) {
-            reqLocale = Locale.forLanguageTag(acceptLanguage);
         } else {
-            reqLocale = Locale.getDefault();
+            reqLocale = configService.getDefaultLocale();
         }
         String language = reqLocale.getLanguage();
         final Locale locale;

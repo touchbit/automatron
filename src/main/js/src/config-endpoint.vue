@@ -20,6 +20,26 @@
         <thead>
         <tr>
           <th>
+            Global configuration
+          </th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr>
+          <td>
+            <span class="is-breakable">Default language</span>&nbsp;
+            <config-switch-control class="is-pulled-right"
+                                   :configMap="configs.DEFAULT_LANGUAGE"
+                                   @input="value => this.patchConfig(value)"
+            />
+          </td>
+        </tr>
+        </tbody>
+      </table>
+      <table class="table is-hoverable is-fullwidth">
+        <thead>
+        <tr>
+          <th>
             Swagger UI configuration
           </th>
         </tr>
@@ -27,7 +47,7 @@
         <tbody>
         <tr>
           <td>
-            <span class="is-breakable">Display default 'Locale' header</span>&nbsp;
+            <span class="is-breakable">Display default request header: 'Language'</span>&nbsp;
             <config-switch-control class="is-pulled-right"
                                    :configMap="configs.ENABLE_DEFAULT_LOCALE_HEADER"
                                    @input="value => this.patchConfig(value)"
@@ -36,7 +56,7 @@
         </tr>
         <tr>
           <td>
-            <span class="is-breakable">Display default 'Request-ID' header</span>&nbsp;
+            <span class="is-breakable">Display default request header: 'Request-ID'</span>&nbsp;
             <config-switch-control class="is-pulled-right"
                                    :configMap="configs.ENABLE_DEFAULT_REQUEST_ID_HEADER"
                                    @input="value => this.patchConfig(value)"
@@ -45,7 +65,7 @@
         </tr>
         <tr>
           <td>
-            <span class="is-breakable">Display default '5xx' response</span>&nbsp;
+            <span class="is-breakable">Display default response group: '5xx'</span>&nbsp;
             <config-switch-control class="is-pulled-right"
                                    :configMap="configs.ENABLE_DEFAULT_5_XX_RESPONSE"
                                    @input="value => this.patchConfig(value)"
