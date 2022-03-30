@@ -13,11 +13,9 @@
 package org.touchbit.qa.automatron.db.repository;
 
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.transaction.annotation.Transactional;
 import org.touchbit.qa.automatron.db.entity.Session;
 import org.touchbit.qa.automatron.db.entity.User;
 
-@Transactional
 public interface SessionRepository extends JpaRepository<Session, Long> {
 
     Session findSessionByAccessToken(String accessToken);

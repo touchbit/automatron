@@ -17,7 +17,6 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.touchbit.qa.automatron.constant.ConfigParameter;
 import org.touchbit.qa.automatron.db.entity.Config;
-import org.touchbit.qa.automatron.db.entity.ConfigParamValues;
 import org.touchbit.qa.automatron.db.entity.User;
 import org.touchbit.qa.automatron.db.repository.ConfigurationRepository;
 import org.touchbit.qa.automatron.db.repository.UserRepository;
@@ -44,13 +43,11 @@ public class MigrationConfig {
                 .map(Config::parameter)
                 .collect(Collectors.toSet());
         parameters.removeAll(existsParams);
-        final Set<Config> configs = parameters.stream().map(p -> new Config()
+        final Set<Config> configs = parameters.stream()
+                .map(p -> new Config()
                         .parameter(p)
                         .value(p.getDefaultValue())
-                        .type(p.getType())
-                        .values(p.getPossibleValues().stream()
-                                .map(v -> new ConfigParamValues().value(v))
-                                .collect(Collectors.toSet())))
+                        .type(p.getType()))
                 .collect(Collectors.toSet());
         configRepository.saveAll(configs);
         Stream.of(new User().login("automatron").password("IDDQD").status(ACTIVE).type(OWNER),

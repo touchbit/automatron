@@ -24,17 +24,17 @@ import static org.touchbit.qa.automatron.constant.ConfigParameterType.SWITCH;
 @Getter
 public enum ConfigParameter {
 
-    ENABLE_DEFAULT_5_XX_RESPONSE(Boolean.TRUE.toString(), SWITCH, List.of(Boolean.TRUE.toString(), Boolean.FALSE.toString())),
-    ENABLE_DEFAULT_LOCALE_HEADER(Boolean.TRUE.toString(), SWITCH, List.of(Boolean.TRUE.toString(), Boolean.FALSE.toString())),
-    ENABLE_DEFAULT_REQUEST_ID_HEADER(Boolean.TRUE.toString(), SWITCH, List.of(Boolean.TRUE.toString(), Boolean.FALSE.toString())),
-    DEFAULT_LANGUAGE("RU", SWITCH, List.of("RU", "EN")),
+    ENABLE_DEFAULT_5_XX_RESPONSE(Boolean.TRUE.toString(), SWITCH, Set.of(Boolean.TRUE.toString(), Boolean.FALSE.toString())),
+    ENABLE_DEFAULT_LOCALE_HEADER(Boolean.TRUE.toString(), SWITCH, Set.of(Boolean.TRUE.toString(), Boolean.FALSE.toString())),
+    ENABLE_DEFAULT_REQUEST_ID_HEADER(Boolean.TRUE.toString(), SWITCH, Set.of(Boolean.TRUE.toString(), Boolean.FALSE.toString())),
+    DEFAULT_LANGUAGE("RU", SWITCH, Set.of("RU", "EN")),
     ;
 
     private final String defaultValue;
     private final ConfigParameterType type;
-    private final List<String> possibleValues;
+    private final Set<String> possibleValues;
 
-    ConfigParameter(String defaultValue, ConfigParameterType type, List<String> possibleValues) {
+    ConfigParameter(String defaultValue, ConfigParameterType type, Set<String> possibleValues) {
         this.defaultValue = defaultValue;
         this.type = type;
         this.possibleValues = possibleValues;

@@ -126,6 +126,7 @@ public class OpenApiConfig {
                 return operation;
             }
             if (configService.isGlobalRequestIdHeaderEnabled()) {
+                log.debug("Global 'Request-Id' header enabled");
                 final Parameter xRequestId = new Parameter()
                         .in(ParameterIn.HEADER.toString())
                         .schema(new StringSchema().type("integer"))
@@ -133,6 +134,8 @@ public class OpenApiConfig {
                         .description(I18N_1648168060464)
                         .required(false);
                 operation.addParametersItem(xRequestId);
+            } else {
+                log.debug("Global 'Request-Id' header disabled");
             }
             return operation;
         };
@@ -142,7 +145,10 @@ public class OpenApiConfig {
         return (Operation operation, HandlerMethod handlerMethod) -> {
             final ApiResponses responses = operation.getResponses();
             final Set<String> keys = new TreeSet<>(responses.keySet());
-            if (!configService.isGlobal5xxResponseEnabled()) {
+            if (configService.isGlobal5xxResponseEnabled()) {
+                log.debug("Global 5xx response group enabled");
+            } else {
+                log.debug("Global 5xx response group disabled");
                 keys.remove("5xx");
             }
             final ApiResponses sortedApiResponses = new ApiResponses();
@@ -155,6 +161,7 @@ public class OpenApiConfig {
     private OperationCustomizer acceptLocaleHeader() {
         return (Operation operation, HandlerMethod handlerMethod) -> {
             if (configService.isGlobalLocaleHeaderEnabled()) {
+                log.debug("Global 'Locale' header enabled");
                 final Parameter acceptLanguage = new Parameter()
                         .in(ParameterIn.HEADER.toString())
                         .schema(new StringSchema().addEnumItem("ru").addEnumItem("en"))
@@ -162,6 +169,8 @@ public class OpenApiConfig {
                         .description(I18N_1648168069261)
                         .required(false);
                 operation.addParametersItem(acceptLanguage);
+            } else {
+                log.debug("Global 'Locale' header disabled");
             }
             return operation;
         };

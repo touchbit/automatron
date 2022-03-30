@@ -19,7 +19,6 @@ import org.touchbit.qa.automatron.constant.ConfigParameter;
 import org.touchbit.qa.automatron.constant.ConfigParameterType;
 
 import javax.persistence.*;
-import java.util.Set;
 
 @Entity
 @Getter
@@ -39,9 +38,5 @@ public class Config {
     @Column(nullable = false, updatable = false)
     @Enumerated(EnumType.STRING)
     private ConfigParameterType type;
-
-    @JoinColumn(updatable = false, nullable = false)
-    @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
-    private Set<ConfigParamValues> values;
 
 }

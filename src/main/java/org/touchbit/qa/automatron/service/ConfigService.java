@@ -16,7 +16,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.touchbit.qa.automatron.constant.ConfigParameter;
 import org.touchbit.qa.automatron.db.entity.Config;
-import org.touchbit.qa.automatron.db.entity.ConfigParamValues;
 import org.touchbit.qa.automatron.db.repository.ConfigurationRepository;
 import org.touchbit.qa.automatron.pojo.admin.ConfigDTO;
 
@@ -31,19 +30,17 @@ public record ConfigService(ConfigurationRepository repository) {
     public Set<ConfigDTO> getConfiguration() {
         return repository.findAll().stream()
                 .map(config -> new ConfigDTO()
-                        .parameter(config.parameter())
-                        .type(config.type())
-                        .value(config.value())
-                        .values(config.values().stream()
-                                .map(ConfigParamValues::value)
-                                .collect(Collectors.toSet())))
+                        .parameterName(config.parameter())
+                        .parameterType(config.type())
+                        .parameterValue(config.value())
+                        .parameterValues(config.parameter().getPossibleValues()))
                 .collect(Collectors.toSet());
     }
 
     public void updateConfig(ConfigDTO dto) {
         repository.saveAndFlush(new Config()
-                .parameter(dto.parameter())
-                .value(dto.value()));
+                .parameter(dto.parameterName())
+                .value(dto.parameterValue()));
     }
 
     public Locale getDefaultLocale() {

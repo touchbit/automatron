@@ -29,20 +29,20 @@ import java.util.Set;
 @ToString
 public class ConfigDTO {
 
-    @JsonProperty("parameter")
+    @JsonProperty("parameterName")
     @NotNull
-    private ConfigParameter parameter;
+    private ConfigParameter parameterName;
 
-    @JsonProperty("value")
+    @JsonProperty("parameterValue")
     @NotNull
-    private String value;
+    private String parameterValue;
 
-    @JsonProperty("type")
+    @JsonProperty("parameterType")
     @NotNull
-    private ConfigParameterType type;
+    private ConfigParameterType parameterType;
 
-    @JsonProperty("values")
+    @JsonProperty("parameterValues")
     @NotNull
-    private Set<String> values;
+    private Set<String> parameterValues;
 
 }

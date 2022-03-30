@@ -18,7 +18,7 @@
   <div class="field is-grouped config-switch-control">
     <div class="control buttons has-addons">
       <button
-          v-for="switchOption in [true, false]"
+          v-for="switchOption in this.configMap.parameterValues"
           :key="switchOption"
           class="button config-switch-control__level"
           :class="cssClass(switchOption)"
@@ -32,30 +32,37 @@
 <script>
 export default {
   props: {
-    value: {
-      type: Boolean,
-      required: true
-    },
-    status: {
+    configMap: {
       type: Object,
-      default: null
-    },
+      parameterName: String,
+      parameterValue: String,
+      parameterType: String,
+      parameterValues: {
+        type: Array,
+      }
+    }
   },
   methods: {
-    select(value) {
-      this.$emit('input', value);
+    select(confValue) {
+      console.info(' >>>>>>> confValue >>>>>>>>>> '.concat(confValue))
+      this.configMap.parameterValue = confValue
+      console.info(' >>>>>>>> configMap >>>>>>>>> '.concat(JSON.stringify(this.configMap)))
+      this.$emit('input', this.configMap);
     },
     cssClass(switchOption) {
-      if (this.value !== switchOption) {
+      let booleanSwitchOption = (switchOption === 'true');
+      let booleanParameterValue = (this.configMap.parameterValue === 'true');
+      if (booleanParameterValue !== booleanSwitchOption) {
         return 'config-switch-control__level--inherited';
       }
-      if (this.value && switchOption) {
+      if (booleanParameterValue && booleanSwitchOption) {
         return 'is-active is-success';
       }
       return 'is-active is-danger';
     },
-    getLabel(value) {
-      return value ? 'Enable' : 'Disable';
+    getLabel(switchOption) {
+      let isTrue = (switchOption === 'true');
+      return isTrue ? 'Enable' : 'Disable';
     },
   }
 }

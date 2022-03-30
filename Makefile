@@ -18,4 +18,5 @@ d: build
 gen:
 	@mvn clean compile -P admin-config-view-generation
 	@mvn clean package
+	@java -jar target/automatron.jar
 

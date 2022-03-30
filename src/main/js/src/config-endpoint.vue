@@ -29,11 +29,8 @@
           <td>
             <span class="is-breakable">Display default 'Locale' header</span>&nbsp;
             <config-switch-control class="is-pulled-right"
-                                   :value="config.openapi.enableDefaultLocaleHeader"
-                                   @input="value => this.updated(function () {
-                                     config.openapi.enableDefaultLocaleHeader = value;
-                                     return config;
-                                   })"
+                                   :configMap="configs.ENABLE_DEFAULT_LOCALE_HEADER"
+                                   @input="value => this.patchConfig(value)"
             />
           </td>
         </tr>
@@ -41,11 +38,8 @@
           <td>
             <span class="is-breakable">Display default 'Request-ID' header</span>&nbsp;
             <config-switch-control class="is-pulled-right"
-                                   :value="config.openapi.enableDefaultRequestIdHeader"
-                                   @input="value => this.updated(function () {
-                                     config.openapi.enableDefaultRequestIdHeader = value;
-                                     return config;
-                                   })"
+                                   :configMap="configs.ENABLE_DEFAULT_REQUEST_ID_HEADER"
+                                   @input="value => this.patchConfig(value)"
             />
           </td>
         </tr>
@@ -53,11 +47,8 @@
           <td>
             <span class="is-breakable">Display default '5xx' response</span>&nbsp;
             <config-switch-control class="is-pulled-right"
-                                   :value="config.openapi.enableDefault5xxResponse"
-                                   @input="value => this.updated(function () {
-                                     config.openapi.enableDefault5xxResponse = value;
-                                     return config;
-                                   })"
+                                   :configMap="configs.ENABLE_DEFAULT_5_XX_RESPONSE"
+                                   @input="value => this.patchConfig(value)"
             />
           </td>
         </tr>
@@ -79,28 +70,28 @@ export default {
     }
   },
   data: () => ({
-    config: {
-      openapi: {
-        enableDefaultLocaleHeader: Boolean,
-        enableDefaultRequestIdHeader: Boolean,
-        enableDefault5xxResponse: Boolean,
-      }
+    configs: {
+      ENABLE_DEFAULT_5_XX_RESPONSE: Object,
+      ENABLE_DEFAULT_LOCALE_HEADER: Object,
+      ENABLE_DEFAULT_REQUEST_ID_HEADER: Object,
+      DEFAULT_LANGUAGE: Object,
     }
   }),
   async created() {
     try {
-      const response = await this.instance.axios.get('actuator/config');
-      this.config = response.data;
+      let response = await this.instance.axios.get('actuator/config');
+      this.configs = response.data;
     } catch (error) {
       console.warn('Fetching configuration failed:', error);
     }
   },
   methods: {
-    async updated(func) {
+    async patchConfig(body) {
       try {
-        const body = func.call()
-        const response = await this.instance.axios.post('actuator/config', body);
-        this.config = response.data;
+        let response = await this.instance.axios.patch('actuator/config', body);
+        console.info(' >>>>>>> patch response >>>>>>>>>> '.concat(response.data))
+        this.configs = response.data;
+        console.info(' >>>>>>> patch configs >>>>>>>>>> '.concat(this.configs))
       } catch (error) {
         console.warn('Configure failed:', error);
       }

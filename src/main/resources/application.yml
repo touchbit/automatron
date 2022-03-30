@@ -75,3 +75,6 @@ springdoc:
     show-extensions: true
     show-common-extensions: true
     csrf.enabled: false
+  cache:
+    disabled: true
+  pre-loading-enabled: false

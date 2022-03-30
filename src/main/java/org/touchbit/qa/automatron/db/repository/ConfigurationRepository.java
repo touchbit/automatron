@@ -13,11 +13,9 @@
 package org.touchbit.qa.automatron.db.repository;
 
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.transaction.annotation.Transactional;
 import org.touchbit.qa.automatron.constant.ConfigParameter;
 import org.touchbit.qa.automatron.db.entity.Config;
 
-@Transactional()
 public interface ConfigurationRepository extends JpaRepository<Config, ConfigParameter> {
 
 }

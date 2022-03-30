@@ -20,13 +20,16 @@ import org.springframework.http.RequestEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
+import org.touchbit.qa.automatron.constant.ConfigParameter;
 import org.touchbit.qa.automatron.pojo.admin.ConfigDTO;
 import org.touchbit.qa.automatron.service.ConfigService;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
@@ -39,15 +42,22 @@ public class ConfigurationActuatorApiController {
 
     @ResponseStatus(HttpStatus.OK)
     @GetMapping(path = "/", produces = APPLICATION_JSON_VALUE)
-    public Set<ConfigDTO> getConfiguration() {
-        return confService.getConfiguration();
+    public Map<ConfigParameter, ConfigDTO> getConfiguration() {
+        final Set<ConfigDTO> configs = confService.getConfiguration();
+        return toMap(configs);
     }
 
     @ResponseStatus(HttpStatus.OK)
     @PatchMapping(path = "/", produces = APPLICATION_JSON_VALUE, consumes = APPLICATION_JSON_VALUE)
-    public Set<ConfigDTO> updateConfig(RequestEntity<@Valid @NotNull ConfigDTO> value) {
+    public Map<ConfigParameter, ConfigDTO> updateConfig(RequestEntity<@Valid @NotNull ConfigDTO> value) {
         confService.updateConfig(Objects.requireNonNull(value.getBody()));
-        return confService.getConfiguration();
+        final Set<ConfigDTO> configs = confService.getConfiguration();
+        return toMap(configs);
+    }
+
+    private Map<ConfigParameter, ConfigDTO> toMap(Set<ConfigDTO> configs) {
+        return confService.getConfiguration().stream()
+                .collect(Collectors.toMap(ConfigDTO::parameterName, c -> c));
     }
 
 }
