@@ -14,17 +14,16 @@ package org.touchbit.qa.automatron.resource;
 
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.touchbit.qa.automatron.constant.Bug;
 import org.touchbit.qa.automatron.pojo.bug.BugDTO;
 import org.touchbit.qa.automatron.resource.mapping.GetRequest;
+import org.touchbit.qa.automatron.resource.param.GetBugPathParameters;
 import org.touchbit.qa.automatron.resource.spec.GetBugListSpec;
 import org.touchbit.qa.automatron.resource.spec.GetBugSpec;
 import org.touchbit.qa.automatron.util.AutomatronException;
 
 import javax.validation.Valid;
-import javax.validation.constraints.Min;
 import java.util.Arrays;
 import java.util.List;
 import java.util.StringJoiner;
@@ -41,7 +40,7 @@ public class BugApiController {
 
     @GetBugListSpec()
     @GetRequest(path = "/api/bugs")
-    public List<BugDTO> getBugs() {
+    public List<BugDTO> getBugsLIst() {
         log.info("The method for getting the list of errors registered in the system has been called.");
         final List<BugDTO> defects = Arrays.stream(Bug.values())
                 .map(BugDTO::new)
@@ -51,24 +50,27 @@ public class BugApiController {
     }
 
     @GetBugSpec()
-    @GetRequest(path = "/api/bug", responseMediaType = TEXT_PLAIN_VALUE)
-    public String getBugs(@RequestParam(value = "id") @Valid @Min(1) Integer bugId) {
-        log.info("Search for a defect with ID {}", bugId);
-        final Bug bug = Arrays.stream(Bug.values())
-                .filter(b -> b.id() == bugId)
-                .findFirst().orElse(null);
-        if (bug == null) {
-            throw AutomatronException.http404("Path.id");
+    @GetRequest(path = "/api/bugs/{id}", responseMediaType = TEXT_PLAIN_VALUE)
+    public String getBugById(@Valid GetBugPathParameters parameters) {
+        log.info("Search for a defect with ID {}", parameters);
+        if (parameters != null) {
+            final Bug bug = Arrays.stream(Bug.values())
+                    .filter(b -> b.id() == parameters.getId())
+                    .findFirst().orElse(null);
+            if (bug == null) {
+                throw AutomatronException.http404("/api/bugs/" + parameters.getId());
+            }
+            log.info("Defect found. Sending defect information.");
+            return new StringJoiner("\n")
+                    .add("ID: " + bug.id())
+                    .add("Type: " + bug.type())
+                    .add("Info: " + bug.info())
+                    .add("Description:")
+                    .add(bug.description())
+                    .add("\n\n")
+                    .toString();
         }
-        log.info("Defect found. Sending defect information.");
-        return new StringJoiner("\n")
-                .add("ID: " + bug.id())
-                .add("Type: " + bug.type())
-                .add("Info: " + bug.info())
-                .add("Description:")
-                .add(bug.description())
-                .add("\n\n")
-                .toString();
+        throw AutomatronException.http404("/api/bugs/null");
     }
 
 }

@@ -70,7 +70,7 @@ public class AccountingApiController {
     }
 
     @GetUserListSpec()
-    @GetRequest(path = "/api/accounting/user")
+    @GetRequest(path = "/api/accounting/users")
     public List<GetUserResponseDTO> getUserList(
             @RequestHeader HttpHeaders headers,
             @Valid GetUserListQueryParameters search) {
@@ -82,7 +82,7 @@ public class AccountingApiController {
     }
 
     @GetUserSpec()
-    @GetRequest(path = "/api/accounting/user/{login}")
+    @GetRequest(path = "/api/accounting/users/{login}")
     public GetUserResponseDTO getUser(
             @RequestHeader HttpHeaders headers,
             @Valid GetUserPathParameters pathParameters) {
