@@ -31,7 +31,7 @@ import static org.touchbit.qa.automatron.constant.I18N.*;
 @ToString
 @QueryPOJO
 @ParameterObject
-public class GetUserListQueryParameters {
+public class GetUserListQuery {
 
     @Parameter(name = "login", in = ParameterIn.QUERY, description = I18N_1648168739660)
     @Size(min = 5, max = 25)

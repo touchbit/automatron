@@ -27,8 +27,8 @@ import org.touchbit.qa.automatron.pojo.accounting.LoginRequestDTO;
 import org.touchbit.qa.automatron.pojo.accounting.LoginResponseDTO;
 import org.touchbit.qa.automatron.resource.mapping.GetRequest;
 import org.touchbit.qa.automatron.resource.mapping.PostRequest;
-import org.touchbit.qa.automatron.resource.param.GetUserListQueryParameters;
-import org.touchbit.qa.automatron.resource.param.GetUserPathParameters;
+import org.touchbit.qa.automatron.resource.param.GetUserListQuery;
+import org.touchbit.qa.automatron.resource.param.GetUserPath;
 import org.touchbit.qa.automatron.resource.param.LogoutQueryParameters;
 import org.touchbit.qa.automatron.resource.spec.GetUserListSpec;
 import org.touchbit.qa.automatron.resource.spec.GetUserSpec;
@@ -54,26 +54,24 @@ public class AccountingApiController {
     @LoginSpec()
     @PostRequest(path = "/api/accounting/login")
     public LoginResponseDTO login(@RequestBody @Valid LoginRequestDTO request) {
-        log.info("Request: User authentication by login {}", request.login());
-        return accountingService.authenticate(request.login(), request.password());
+        log.info(" --> User login request");
+        final LoginResponseDTO response = accountingService.authenticate(request.login(), request.password());
+        log.info(" <-- Completed successfully.");
+        return response;
     }
 
     @LogoutSpec()
     @GetRequest(path = "/api/accounting/logout", status = HttpStatus.NO_CONTENT)
-    public void logout(
-            @RequestHeader HttpHeaders headers,
-            @Valid LogoutQueryParameters logoutQueryParameters) {
+    public void logout(@RequestHeader HttpHeaders headers, @Valid LogoutQueryParameters parameters) {
         log.info(" --> User logout request");
         final Session session = accountingService.authorize(headers);
-        accountingService.logout(session, logoutQueryParameters);
+        accountingService.logout(session, parameters);
         log.info(" <-- Completed successfully (no response body)");
     }
 
     @GetUserListSpec()
     @GetRequest(path = "/api/accounting/users")
-    public List<GetUserResponseDTO> getUserList(
-            @RequestHeader HttpHeaders headers,
-            @Valid GetUserListQueryParameters search) {
+    public List<GetUserResponseDTO> getUserList(@RequestHeader HttpHeaders headers, @Valid GetUserListQuery search) {
         log.info(" --> Get users by filter");
         accountingService.authorize(headers);
         final List<GetUserResponseDTO> users = accountingService.getUsers(search);
@@ -83,12 +81,10 @@ public class AccountingApiController {
 
     @GetUserSpec()
     @GetRequest(path = "/api/accounting/users/{login}")
-    public GetUserResponseDTO getUser(
-            @RequestHeader HttpHeaders headers,
-            @Valid GetUserPathParameters pathParameters) {
-        log.info(" --> Get user by login: {}", pathParameters.getLogin());
+    public GetUserResponseDTO getUser(@RequestHeader HttpHeaders headers, @Valid GetUserPath parameters) {
+        log.info(" --> Get user by login: {}", parameters.getLogin());
         accountingService.authorize(headers);
-        final GetUserResponseDTO user = accountingService.getUser(pathParameters);
+        final GetUserResponseDTO user = accountingService.getUser(parameters);
         log.info(" <-- Completed successfully. Return user.");
         return user;
     }

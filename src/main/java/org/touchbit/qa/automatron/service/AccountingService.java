@@ -28,8 +28,8 @@ import org.touchbit.qa.automatron.interceptor.BugInterceptor;
 import org.touchbit.qa.automatron.pojo.accounting.GetUserResponseDTO;
 import org.touchbit.qa.automatron.pojo.accounting.LoginResponseDTO;
 import org.touchbit.qa.automatron.pojo.accounting.PhoneNumberDTO;
-import org.touchbit.qa.automatron.resource.param.GetUserListQueryParameters;
-import org.touchbit.qa.automatron.resource.param.GetUserPathParameters;
+import org.touchbit.qa.automatron.resource.param.GetUserListQuery;
+import org.touchbit.qa.automatron.resource.param.GetUserPath;
 import org.touchbit.qa.automatron.resource.param.LogoutQueryParameters;
 import org.touchbit.qa.automatron.util.AutomatronException;
 
@@ -53,6 +53,7 @@ public class AccountingService {
 
     @SuppressWarnings("unused")
     public LoginResponseDTO authenticate(final String login, final String password) {
+        log.debug("User authentication by login {}", login);
         final User user = dbFindUserByLogin(login);
         final String source401 = "login/password";
         if (user == null) {
@@ -75,7 +76,6 @@ public class AccountingService {
         if (user.status().equals(UserStatus.ACTIVE)) {
             final Session session = getSession(user);
             sessionRepository.save(session);
-            log.info("Authentication successful");
             return new LoginResponseDTO()
                     .accessToken(session.accessToken())
                     .refreshToken(session.refreshToken())
@@ -177,7 +177,7 @@ public class AccountingService {
         }
     }
 
-    public List<GetUserResponseDTO> getUsers(GetUserListQueryParameters filter) {
+    public List<GetUserResponseDTO> getUsers(GetUserListQuery filter) {
         log.debug("Get user list by filter: {}", filter);
         final List<User> users = dbFindAllByFilter(filter);
         log.debug("Found users: {}", users.size());
@@ -186,7 +186,7 @@ public class AccountingService {
                 .collect(Collectors.toList());
     }
 
-    private List<User> dbFindAllByFilter(GetUserListQueryParameters filter) {
+    private List<User> dbFindAllByFilter(GetUserListQuery filter) {
         log.debug("DB: Search users by filter: {}", filter);
         // TODO Bug
         // the password must be stored encrypted
@@ -194,7 +194,7 @@ public class AccountingService {
         return userRepository.findAllByFilter(filter.getLogin(), filter.getStatus(), filter.getRole());
     }
 
-    public GetUserResponseDTO getUser(GetUserPathParameters pathParameters) {
+    public GetUserResponseDTO getUser(GetUserPath pathParameters) {
         final User user = dbFindUserByLogin(pathParameters.getLogin());
         if (user == null) {
             BugInterceptor.addBug(BUG_0005);

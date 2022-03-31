@@ -29,7 +29,7 @@ import static org.touchbit.qa.automatron.constant.I18N.I18N_1648168739660;
 @ToString
 @PathPOJO
 @ParameterObject
-public class GetUserPathParameters {
+public class GetUserPath {
 
     @Parameter(name = "login", in = ParameterIn.PATH, description = I18N_1648168739660)
     @Size(min = 5, max = 25)
