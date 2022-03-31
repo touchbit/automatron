@@ -39,6 +39,7 @@ import org.touchbit.qa.automatron.resource.param.GetUserListQueryParameters;
 import org.touchbit.qa.automatron.resource.param.GetUserPathParameters;
 import org.touchbit.qa.automatron.resource.spec.GetUserListSpec;
 import org.touchbit.qa.automatron.resource.spec.GetUserSpec;
+import org.touchbit.qa.automatron.resource.spec.LogoutSpec;
 import org.touchbit.qa.automatron.service.AccountingService;
 
 import javax.validation.Valid;
@@ -77,13 +78,8 @@ public class AccountingApiController {
         return accountingService.authenticate(login, password);
     }
 
-    @ResponseStatus(HttpStatus.NO_CONTENT)
-    @GetMapping(path = "/api/accounting/logout", produces = MediaType.APPLICATION_JSON_VALUE)
-    @Operation(tags = ACCOUNTING_TAG, summary = I18N_1648397948840, responses = {
-            @ApiResponse(responseCode = "204", description = I18N_1648397690214),
-            @ApiResponse(responseCode = "4xx", description = I18N_1648168086907, content = {@Content(mediaType = APPLICATION_JSON_VALUE, array = @ArraySchema(schema = @Schema(implementation = ErrorDTO.class)), examples = {
-                    @ExampleObject(summary = EX_400_BAD_REQUEST_SUMMARY, value = EX_ACCOUNTING_LOGOUT_400, name = I18N_1648168095253),
-                    @ExampleObject(summary = EX_401_UNAUTHORIZED_SUMMARY, value = EX_CODE_401_002, name = I18N_1648168104107),})})})
+    @LogoutSpec()
+    @GetRequest(path = "/api/accounting/logout", status = HttpStatus.NO_CONTENT)
     public void logout(
             @RequestHeader(value = "Authorization", required = false) @Pattern(regexp = "^(?i)(bearer [a-f0-9-]{36})$") String bearerAuthorizationHeader,
             @Parameter(description = I18N_1648399645845, in = QUERY, schema = @Schema(implementation = LogoutMode.class)) @Nullable String mode) {

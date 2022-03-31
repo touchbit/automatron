@@ -22,14 +22,6 @@ public class APIExamples {
             }]
             """;
 
-    public static final String EX_ACCOUNTING_LOGOUT_400 = """
-            [{
-              "type": "CONTRACT",
-              "source": "*.bearerAuthorizationHeader",
-              "reason": "не должно равняться null"
-            }]
-            """;
-
     public static final String EX_CODE_401_001 = """
             [{
               "type": "ACCESS",
@@ -41,7 +33,7 @@ public class APIExamples {
     public static final String EX_CODE_401_002 = """
             [{
               "type": "ACCESS",
-              "source": "*.bearerAuthorizationHeader",
+              "source": "Header.Authorization",
               "reason": "I18N_1648168111078"
             }]
             """;
