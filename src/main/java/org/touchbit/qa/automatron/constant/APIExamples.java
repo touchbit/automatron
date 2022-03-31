@@ -14,18 +14,10 @@ package org.touchbit.qa.automatron.constant;
 
 public class APIExamples {
 
-    public static final String EX_CODE_401_002 = """
+    public static final String EX_CODE_403 = """
             [{
               "type": "ACCESS",
               "source": "Header.Authorization",
-              "reason": "I18N_1648168111078"
-            }]
-            """;
-
-    public static final String EX_CODE_403_001 = """
-            [{
-              "type": "ACCESS",
-              "source": "User{type=MEMBER}",
               "reason": "I18N_1648168132812"
             }]
             """;

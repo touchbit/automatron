@@ -30,7 +30,6 @@ import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 import static org.touchbit.qa.automatron.constant.I18N.*;
 import static org.touchbit.qa.automatron.constant.ResourceConstants.*;
 import static org.touchbit.qa.automatron.resource.spec.LogoutSpec.EXAMPLE_400;
-import static org.touchbit.qa.automatron.resource.spec.LogoutSpec.EXAMPLE_401;
 
 @Target({ElementType.METHOD})
 @Retention(RetentionPolicy.RUNTIME)
@@ -41,11 +40,10 @@ import static org.touchbit.qa.automatron.resource.spec.LogoutSpec.EXAMPLE_401;
                 @ArraySchema(schema =
                 @Schema(implementation = ErrorDTO.class)), examples = {
                         @ExampleObject(summary = EX_400_BAD_REQUEST_SUMMARY, value = EXAMPLE_400, name = I18N_1648168095253),
-                        @ExampleObject(summary = EX_401_UNAUTHORIZED_SUMMARY, value = EXAMPLE_401, name = I18N_1648168104107),
+                        @ExampleObject(summary = EX_403_FORBIDDEN_SUMMARY, value = APIExamples.EX_CODE_403, name = I18N_1648168125864),
                 })})})
 public @interface LogoutSpec {
 
-    String EXAMPLE_401 = APIExamples.EX_CODE_401_002;
     String EXAMPLE_400 = """
             [{
               "type": "CONTRACT",
