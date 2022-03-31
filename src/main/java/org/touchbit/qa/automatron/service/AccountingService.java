@@ -28,6 +28,7 @@ import org.touchbit.qa.automatron.pojo.accounting.AuthDTO;
 import org.touchbit.qa.automatron.pojo.accounting.GetUserResponseDTO;
 import org.touchbit.qa.automatron.pojo.accounting.PhoneNumberDTO;
 import org.touchbit.qa.automatron.resource.param.GetUserListQueryParameters;
+import org.touchbit.qa.automatron.resource.param.GetUserPathParameters;
 import org.touchbit.qa.automatron.util.AutomatronException;
 
 import java.util.Arrays;
@@ -36,7 +37,7 @@ import java.util.Objects;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
-import static org.touchbit.qa.automatron.constant.Bug.BUG_0004;
+import static org.touchbit.qa.automatron.constant.Bug.*;
 import static org.touchbit.qa.automatron.constant.I18N.I18N_1648168178176;
 import static org.touchbit.qa.automatron.util.AutomatronUtils.errSource;
 
@@ -163,7 +164,7 @@ public class AccountingService {
         final List<User> users = dbFindAllByFilter(filter);
         log.debug("Found users: {}", users.size());
         return users.stream()
-                .map(this::userToUserDTO)
+                .map(this::userToGetUserResponseDTO)
                 .collect(Collectors.toList());
     }
 
@@ -175,7 +176,17 @@ public class AccountingService {
         return userRepository.findAllByFilter(filter.getLogin(), filter.getStatus(), filter.getRole());
     }
 
-    private GetUserResponseDTO userToUserDTO(User user) {
+    public GetUserResponseDTO getUser(GetUserPathParameters pathParameters) {
+        final User user = dbFindUserByLogin(pathParameters.login);
+        if (user == null) {
+            BugInterceptor.addBug(BUG_0005);
+            BugInterceptor.addBug(BUG_0006);
+            return null;
+        }
+        return userToGetUserResponseDTO(user);
+    }
+
+    private GetUserResponseDTO userToGetUserResponseDTO(User user) {
         return GetUserResponseDTO.builder()
                 .login(user.login())
                 .status(user.status())

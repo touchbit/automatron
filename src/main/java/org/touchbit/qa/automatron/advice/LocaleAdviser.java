@@ -44,7 +44,6 @@ public class LocaleAdviser implements BodyAdvice {
 
     public static final String CURRENT_HOST_PORT = "current_host_port";
     public static final String OPENAPI_DESCRIPTION_LICENCE = "openapi_description_licence";
-    public static final String BUG_CONTRACT_COUNT = "bug_type_contract_count";
     public static final String BUG_SPECIFICATION_COUNT = "bug_type_specification_count";
     public static final String BUG_IMPLEMENTATION_COUNT = "bug_type_implementation_count";
     public static final String BUG_SECURITY_COUNT = "bug_type_security_count";
@@ -149,7 +148,6 @@ public class LocaleAdviser implements BodyAdvice {
                 }
             }
             result = result.replaceAll(CURRENT_HOST_PORT, String.valueOf(serverAddress));
-            result = result.replaceAll(BUG_CONTRACT_COUNT, String.valueOf(bugsCount.get(CONTRACT)));
             result = result.replaceAll(BUG_SPECIFICATION_COUNT, String.valueOf(bugsCount.get(SPECIFICATION)));
             result = result.replaceAll(BUG_IMPLEMENTATION_COUNT, String.valueOf(bugsCount.get(IMPLEMENTATION)));
             result = result.replaceAll(BUG_SECURITY_COUNT, String.valueOf(bugsCount.get(SECURITY)));

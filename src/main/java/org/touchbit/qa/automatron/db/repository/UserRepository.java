@@ -20,8 +20,7 @@ import org.touchbit.qa.automatron.db.entity.User;
 
 import java.util.List;
 
-public interface UserRepository extends JpaRepository<User, Long> {
-
+public interface UserRepository extends JpaRepository<User, String> {
 
     User findByLogin(String login);
 

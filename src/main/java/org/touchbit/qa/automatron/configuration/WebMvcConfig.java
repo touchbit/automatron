@@ -29,6 +29,7 @@ import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import org.springframework.web.servlet.i18n.FixedLocaleResolver;
 import org.touchbit.qa.automatron.Application;
+import org.touchbit.qa.automatron.annotation.PathPOJO;
 import org.touchbit.qa.automatron.annotation.QueryPOJO;
 import org.touchbit.qa.automatron.constant.Bug;
 import org.touchbit.qa.automatron.interceptor.BugInterceptor;
@@ -121,6 +122,19 @@ public class WebMvcConfig implements WebMvcConfigurer {
 
     @Bean(name = "queryPOJOClassSimpleNames")
     public Set<String> queryPOJOClassNames(@Qualifier("queryPOJOClasses") Set<Class<?>> queryPOJOClasses) {
+        return queryPOJOClasses.stream().map(Class::getSimpleName).collect(Collectors.toSet());
+    }
+
+    @Bean(name = "pathPOJOClasses")
+    public Set<Class<?>> pathPOJOClasses() {
+        log.info("Search query POJO classes with annotation @{}", PathPOJO.class.getSimpleName());
+        var scanner = new ClassPathScanningCandidateComponentProvider(false);
+        scanner.addIncludeFilter(new AnnotationTypeFilter(PathPOJO.class));
+        return AutomatronUtils.getBeanDefinitionClasses(scanner);
+    }
+
+    @Bean(name = "pathPOJOClassSimpleNames")
+    public Set<String> pathPOJOClassSimpleNames(@Qualifier("pathPOJOClasses") Set<Class<?>> queryPOJOClasses) {
         return queryPOJOClasses.stream().map(Class::getSimpleName).collect(Collectors.toSet());
     }
 

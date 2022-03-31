@@ -22,6 +22,13 @@ import java.util.stream.Collectors;
 
 public class I18N {
 
+    public static final String I18N_1648691345099 = "I18N_1648691345099";
+    public static final String I18N_1648691290758 = "I18N_1648691290758";
+    public static final String I18N_1648691079913 = "I18N_1648691079913";
+    public static final String I18N_1648691005453 = "I18N_1648691005453";
+    public static final String I18N_1648689343652 = "I18N_1648689343652";
+    public static final String I18N_1648688789502 = "I18N_1648688789502";
+    public static final String I18N_1648688724365 = "I18N_1648688724365";
     public static final String I18N_1648685296628 = "I18N_1648685296628";
     public static final String I18N_1648685056666 = "I18N_1648685056666";
     public static final String I18N_1648684256974 = "I18N_1648684256974";
@@ -30,7 +37,6 @@ public class I18N {
     public static final String I18N_1648678768714 = "I18N_1648678768714";
     public static final String I18N_1648673602540 = "I18N_1648673602540";
     public static final String I18N_1648673498876 = "I18N_1648673498876";
-    public static final String I18N_1648673246598 = "I18N_1648673246598";
     public static final String I18N_1648401737946 = "I18N_1648401737946";
     public static final String I18N_1648401705690 = "I18N_1648401705690";
     public static final String I18N_1648399645845 = "I18N_1648399645845";
@@ -43,11 +49,9 @@ public class I18N {
     public static final String I18N_1648168263223 = "I18N_1648168263223";
     public static final String I18N_1648168212897 = "I18N_1648168212897";
     public static final String I18N_1648168229890 = "I18N_1648168229890";
-    public static final String I18N_1648168250730 = "I18N_1648168250730";
     public static final String I18N_1648168270342 = "I18N_1648168270342";
     public static final String I18N_1648168278936 = "I18N_1648168278936";
     public static final String I18N_1648167967145 = "I18N_1648167967145";
-    public static final String I18N_1648168731910 = "I18N_1648168731910";
     public static final String I18N_1648168739660 = "I18N_1648168739660";
     public static final String I18N_1648168744616 = "I18N_1648168744616";
     public static final String I18N_1648168710928 = "I18N_1648168710928";
@@ -73,8 +77,13 @@ public class I18N {
     public static final String I18N_1648168162035 = "I18N_1648168162035";
     public static final String I18N_1648168167873 = "I18N_1648168167873";
     public static final String I18N_1648168178176 = "I18N_1648168178176";
+
+    // ---------------------------- EXAMPLES ----------------------------
+    public static final String I18N_1648673246598 = "I18N_1648673246598";
     public static final String I18N_1648168186580 = "I18N_1648168186580";
     public static final String I18N_1648168193476 = "I18N_1648168193476";
+    public static final String I18N_1648688495987 = "I18N_1648688495987";
+    public static final String I18N_1648168250730 = "I18N_1648168250730";
 
     public static List<String> getKeys() {
         return FieldUtils.getAllFieldsList(I18N.class).stream()

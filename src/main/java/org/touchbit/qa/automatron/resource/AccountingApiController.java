@@ -36,7 +36,9 @@ import org.touchbit.qa.automatron.pojo.accounting.GetUserResponseDTO;
 import org.touchbit.qa.automatron.pojo.error.ErrorDTO;
 import org.touchbit.qa.automatron.resource.mapping.GetRequest;
 import org.touchbit.qa.automatron.resource.param.GetUserListQueryParameters;
+import org.touchbit.qa.automatron.resource.param.GetUserPathParameters;
 import org.touchbit.qa.automatron.resource.spec.GetUserListSpec;
+import org.touchbit.qa.automatron.resource.spec.GetUserSpec;
 import org.touchbit.qa.automatron.service.AccountingService;
 
 import javax.validation.Valid;
@@ -71,7 +73,7 @@ public class AccountingApiController {
     public AuthDTO authentication(
             @Parameter(description = I18N_1648168739660, in = QUERY, example = "admin") @NotNull @Size(min = 5, max = 25) String login,
             @Parameter(description = I18N_1648168744616, in = QUERY, example = "admin") @NotNull @Size(min = 5, max = 25) String password) {
-        log.info("User authentication request with login {}", login);
+        log.info("Request: User authentication by login {}", login);
         return accountingService.authenticate(login, password);
     }
 
@@ -85,15 +87,22 @@ public class AccountingApiController {
     public void logout(
             @RequestHeader(value = "Authorization", required = false) @Pattern(regexp = "^(?i)(bearer [a-f0-9-]{36})$") String bearerAuthorizationHeader,
             @Parameter(description = I18N_1648399645845, in = QUERY, schema = @Schema(implementation = LogoutMode.class)) @Nullable String mode) {
-        log.info("User logout request");
+        log.info("Request: User logout request");
         accountingService.logout(bearerAuthorizationHeader, mode);
     }
 
     @GetUserListSpec()
     @GetRequest(path = "/api/accounting/user", status = HttpStatus.OK)
-    public @Size List<GetUserResponseDTO> getUserList(@Valid GetUserListQueryParameters search) {
-        log.info("Get users by filter");
+    public List<GetUserResponseDTO> getUserList(@Valid GetUserListQueryParameters search) {
+        log.info("Request: Get users by filter");
         return accountingService.getUsers(search);
+    }
+
+    @GetUserSpec()
+    @GetRequest(path = "/api/accounting/user/{login}", status = HttpStatus.OK)
+    public GetUserResponseDTO getUser(@Valid GetUserPathParameters pathParameters) {
+        log.info("Request: Get user by login");
+        return accountingService.getUser(pathParameters);
     }
 
 }

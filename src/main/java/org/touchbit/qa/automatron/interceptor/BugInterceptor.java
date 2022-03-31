@@ -49,14 +49,14 @@ public class BugInterceptor implements HandlerInterceptor {
                                 Exception arg3) {
         if (request.getServletPath().contains("/api/")) {
             final String rid = MDC.get(RID);
-            log.debug("Get bugs for request=id: {}", rid);
+            log.trace("Get bugs for request=id: {}", rid);
             if (rid != null) {
                 final List<Bug> bugs = BUGS.get(rid);
-                log.debug("Registered bugs: {}", bugs == null ? 0 : bugs.size());
+                log.trace("Registered bugs: {}", bugs == null ? 0 : bugs.size());
                 if (bugs != null && !bugs.isEmpty()) {
                     for (Bug bug : bugs) {
-                        log.info("Add bug header to the response: '{}: {}'", BID, bug.stringId());
-                        response.setHeader(BID, bug.stringId());
+                        log.trace("Add bug header to the response: '{}: {}'", BID, bug.stringId());
+                        response.addHeader(BID, bug.stringId());
                     }
                 }
                 BUGS.remove(rid);

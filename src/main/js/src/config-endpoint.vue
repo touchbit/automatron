@@ -109,9 +109,7 @@ export default {
     async patchConfig(body) {
       try {
         let response = await this.instance.axios.patch('actuator/config', body);
-        console.info(' >>>>>>> patch response >>>>>>>>>> '.concat(response.data))
         this.configs = response.data;
-        console.info(' >>>>>>> patch configs >>>>>>>>>> '.concat(this.configs))
       } catch (error) {
         console.warn('Configure failed:', error);
       }

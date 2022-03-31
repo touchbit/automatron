@@ -10,15 +10,18 @@
  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package org.touchbit.qa.automatron.pojo.error;
+package org.touchbit.qa.automatron.annotation;
 
-public enum ErrorType {
+import java.lang.annotation.Documented;
+import java.lang.annotation.Retention;
+import java.lang.annotation.Target;
 
-    ACCESS,
-    FUNCTIONAL,
-    CONDITION,
-    CONTRACT,
-    SYSTEM,
-    NETWORK,
+import static java.lang.annotation.ElementType.TYPE;
+import static java.lang.annotation.ElementType.TYPE_USE;
+import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
+@Target({TYPE, TYPE_USE})
+@Retention(RUNTIME)
+@Documented
+public @interface PathPOJO {
 }

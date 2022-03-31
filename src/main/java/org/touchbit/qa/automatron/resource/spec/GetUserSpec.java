@@ -29,31 +29,36 @@ import java.lang.annotation.Target;
 
 import static org.touchbit.qa.automatron.constant.I18N.*;
 import static org.touchbit.qa.automatron.constant.ResourceConstants.*;
-import static org.touchbit.qa.automatron.resource.spec.GetUserListSpec.EXAMPLE_400;
-import static org.touchbit.qa.automatron.resource.spec.GetUserListSpec.EXAMPLE_401;
+import static org.touchbit.qa.automatron.resource.spec.GetUserSpec.*;
 
 @Target({ElementType.METHOD})
 @Retention(RetentionPolicy.RUNTIME)
-@Operation(tags = ACCOUNTING_TAG, summary = I18N_1648684060672, responses = {
-        @ApiResponse(responseCode = "200", description = I18N_1648684256974, content = {
-                @Content(array =
-                @ArraySchema(minItems = 0, uniqueItems = true, schema =
-                @Schema(implementation = GetUserResponseDTO.class)))}),
+@Operation(tags = ACCOUNTING_TAG, summary = I18N_1648688724365, responses = {
+        @ApiResponse(responseCode = "200", description = I18N_1648688789502, content = {
+                @Content(schema = @Schema(implementation = GetUserResponseDTO.class))}),
         @ApiResponse(responseCode = "4xx", description = I18N_1648168086907, content = {
                 @Content(array =
                 @ArraySchema(schema =
                 @Schema(implementation = ErrorDTO.class)), examples = {
                         @ExampleObject(summary = EX_400_BAD_REQUEST_SUMMARY, value = EXAMPLE_400, name = I18N_1648168095253),
                         @ExampleObject(summary = EX_401_UNAUTHORIZED_SUMMARY, value = EXAMPLE_401, name = I18N_1648168104107),
+                        @ExampleObject(summary = EX_404_ENTITY_NOT_FOUND_SUMMARY, value = EXAMPLE_404, name = I18N_1648689343652),
                 })})})
-public @interface GetUserListSpec {
+public @interface GetUserSpec {
 
     String EXAMPLE_401 = APIExamples.EX_CODE_401_002;
     String EXAMPLE_400 = """
             [{
               "type": "CONTRACT",
-              "source": "Query.status",
-              "reason": "... No enum constant org.touchbit.qa.automatron.constant.UserStatus.ACTIVE1"
+              "source": "Path.login",
+              "reason": "size must be between 5 and 25"
+            }]
+            """;
+    String EXAMPLE_404 = """
+            [{
+              "type": "CONDITION",
+              "source": "login",
+              "reason": "I18N_1648688495987"
             }]
             """;
 

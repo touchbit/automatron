@@ -51,15 +51,18 @@ public class ExceptionAdviser {
     // ResponseEntityExceptionHandler
 
     private final Set<String> queryPOJOClassSimpleNames;
+    private final Set<String> pathPOJOClassSimpleNames;
 
-    public ExceptionAdviser(@Qualifier("queryPOJOClassSimpleNames") Set<String> queryPOJOClassSimpleNames) {
+    public ExceptionAdviser(@Qualifier("queryPOJOClassSimpleNames") Set<String> queryPOJOClassSimpleNames,
+                            @Qualifier("pathPOJOClassSimpleNames") Set<String> pathPOJOClassSimpleNames) {
         this.queryPOJOClassSimpleNames = queryPOJOClassSimpleNames;
+        this.pathPOJOClassSimpleNames = pathPOJOClassSimpleNames;
     }
 
     @ApiResponse(responseCode = "5xx", description = I18N_1648168141132, content =
     @Content(mediaType = APPLICATION_JSON_VALUE, examples = {
             @ExampleObject(name = "500 (SYSTEM)", value = API_SYSTEM_ERR_500, description = I18N_1648168152659),
-            @ExampleObject(name = "500 (LOGIC)", value = API_LOGICAL_ERR_500, description = I18N_1648168162035),
+            @ExampleObject(name = "500 (CONDITION)", value = API_CONDITION_ERR_500, description = I18N_1648168162035),
             @ExampleObject(name = "500 (NETWORK)", value = API_NETWORK_ERR_500, description = I18N_1648168167873),
     }))
     @ExceptionHandler({Exception.class, RuntimeException.class})
@@ -73,7 +76,6 @@ public class ExceptionAdviser {
 
     @ExceptionHandler({BindException.class, ConstraintViolationException.class})
     public ResponseEntity<List<ErrorDTO>> handleValidationExceptions(Exception exception) {
-        System.out.println(" >>>>>>>>>>>>>>> " + queryPOJOClassSimpleNames);
         List<ErrorDTO> errors = new ArrayList<>();
         if (exception instanceof BindException bindException) {
             for (ObjectError error : bindException.getAllErrors()) {
@@ -85,12 +87,18 @@ public class ExceptionAdviser {
                             final String[] codes = messageSourceResolvable.getCodes();
                             if (codes != null && codes.length > 0) {
                                 final String rawSource = StringUtils.capitalize(messageSourceResolvable.getCodes()[0]);
-                                final String target = queryPOJOClassSimpleNames.stream()
+                                final String query = queryPOJOClassSimpleNames.stream()
                                         .filter(rawSource::startsWith)
                                         .findFirst()
                                         .orElse(null);
-                                if (target != null) {
-                                    source = rawSource.replace(target, "Query");
+                                final String path = pathPOJOClassSimpleNames.stream()
+                                        .filter(rawSource::startsWith)
+                                        .findFirst()
+                                        .orElse(null);
+                                if (query != null) {
+                                    source = rawSource.replace(query, "Query");
+                                } else if (path != null) {
+                                    source = rawSource.replace(path, "Path");
                                 } else {
                                     source = rawSource;
                                 }

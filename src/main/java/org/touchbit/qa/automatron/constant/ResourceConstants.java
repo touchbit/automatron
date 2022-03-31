@@ -21,6 +21,8 @@ public class ResourceConstants {
     public static final String BID = "bug-id";
     public static final String EX_400_BAD_REQUEST_SUMMARY = "400 Bad Request";
     public static final String EX_401_UNAUTHORIZED_SUMMARY = "401 Unauthorized";
+    public static final String EX_404_NOT_FOUND_SUMMARY = "404 Not found";
+    public static final String EX_404_ENTITY_NOT_FOUND_SUMMARY = "404 Entity not found";
     public static final String EX_403_FORBIDDEN_SUMMARY = "403 Forbidden";
 
 }
