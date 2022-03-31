@@ -12,19 +12,21 @@
 
 package org.touchbit.qa.automatron.resource;
 
-import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RestController;
 import org.touchbit.qa.automatron.db.entity.Session;
 import org.touchbit.qa.automatron.pojo.accounting.GetUserResponseDTO;
+import org.touchbit.qa.automatron.pojo.accounting.LoginRequestDTO;
 import org.touchbit.qa.automatron.pojo.accounting.LoginResponseDTO;
 import org.touchbit.qa.automatron.resource.mapping.GetRequest;
+import org.touchbit.qa.automatron.resource.mapping.PostRequest;
 import org.touchbit.qa.automatron.resource.param.GetUserListQueryParameters;
 import org.touchbit.qa.automatron.resource.param.GetUserPathParameters;
 import org.touchbit.qa.automatron.resource.param.LogoutQueryParameters;
@@ -35,12 +37,9 @@ import org.touchbit.qa.automatron.resource.spec.LogoutSpec;
 import org.touchbit.qa.automatron.service.AccountingService;
 
 import javax.validation.Valid;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
 import java.util.List;
 
-import static io.swagger.v3.oas.annotations.enums.ParameterIn.QUERY;
-import static org.touchbit.qa.automatron.constant.I18N.*;
+import static org.touchbit.qa.automatron.constant.I18N.I18N_1648168206689;
 import static org.touchbit.qa.automatron.constant.ResourceConstants.ACCOUNTING_TAG;
 
 @Slf4j
@@ -53,12 +52,10 @@ public class AccountingApiController {
     private final AccountingService accountingService;
 
     @LoginSpec()
-    @GetRequest(path = "/api/accounting/login", status = HttpStatus.OK)
-    public LoginResponseDTO login(
-            @Parameter(description = I18N_1648168739660, in = QUERY, example = "admin") @NotNull @Size(min = 5, max = 25) String login,
-            @Parameter(description = I18N_1648168744616, in = QUERY, example = "admin") @NotNull @Size(min = 5, max = 25) String password) {
-        log.info("Request: User authentication by login {}", login);
-        return accountingService.authenticate(login, password);
+    @PostRequest(path = "/api/accounting/login")
+    public LoginResponseDTO login(@RequestBody @Valid LoginRequestDTO request) {
+        log.info("Request: User authentication by login {}", request.login());
+        return accountingService.authenticate(request.login(), request.password());
     }
 
     @LogoutSpec()
@@ -73,7 +70,7 @@ public class AccountingApiController {
     }
 
     @GetUserListSpec()
-    @GetRequest(path = "/api/accounting/user", status = HttpStatus.OK)
+    @GetRequest(path = "/api/accounting/user")
     public List<GetUserResponseDTO> getUserList(
             @RequestHeader HttpHeaders headers,
             @Valid GetUserListQueryParameters search) {
@@ -85,7 +82,7 @@ public class AccountingApiController {
     }
 
     @GetUserSpec()
-    @GetRequest(path = "/api/accounting/user/{login}", status = HttpStatus.OK)
+    @GetRequest(path = "/api/accounting/user/{login}")
     public GetUserResponseDTO getUser(
             @RequestHeader HttpHeaders headers,
             @Valid GetUserPathParameters pathParameters) {
