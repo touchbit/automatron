@@ -22,6 +22,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.validation.annotation.Validated;
@@ -29,6 +30,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
+import org.touchbit.qa.automatron.db.entity.Session;
 import org.touchbit.qa.automatron.pojo.accounting.AuthDTO;
 import org.touchbit.qa.automatron.pojo.accounting.GetUserResponseDTO;
 import org.touchbit.qa.automatron.pojo.error.ErrorDTO;
@@ -43,7 +45,6 @@ import org.touchbit.qa.automatron.service.AccountingService;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 import java.util.List;
 
@@ -80,24 +81,36 @@ public class AccountingApiController {
     @LogoutSpec()
     @GetRequest(path = "/api/accounting/logout", status = HttpStatus.NO_CONTENT)
     public void logout(
-            @RequestHeader(value = "Authorization", required = false) @Pattern(regexp = "^(?i)(bearer [a-f0-9-]{36})$") String bearerAuthorizationHeader,
-            LogoutQueryParameters logoutQueryParameters) {
-        log.info("Request: User logout request");
-        accountingService.logout(bearerAuthorizationHeader, logoutQueryParameters);
+            @RequestHeader HttpHeaders headers,
+            @Valid LogoutQueryParameters logoutQueryParameters) {
+        log.info(" --> User logout request");
+        final Session session = accountingService.authorize(headers);
+        accountingService.logout(session, logoutQueryParameters);
+        log.info(" <-- Completed successfully (no response body)");
     }
 
     @GetUserListSpec()
     @GetRequest(path = "/api/accounting/user", status = HttpStatus.OK)
-    public List<GetUserResponseDTO> getUserList(@Valid GetUserListQueryParameters search) {
-        log.info("Request: Get users by filter");
-        return accountingService.getUsers(search);
+    public List<GetUserResponseDTO> getUserList(
+            @RequestHeader HttpHeaders headers,
+            @Valid GetUserListQueryParameters search) {
+        log.info(" --> Get users by filter");
+        accountingService.authorize(headers);
+        final List<GetUserResponseDTO> users = accountingService.getUsers(search);
+        log.info(" <-- Completed successfully. Return {} users.", users.size());
+        return users;
     }
 
     @GetUserSpec()
     @GetRequest(path = "/api/accounting/user/{login}", status = HttpStatus.OK)
-    public GetUserResponseDTO getUser(@Valid GetUserPathParameters pathParameters) {
-        log.info("Request: Get user by login");
-        return accountingService.getUser(pathParameters);
+    public GetUserResponseDTO getUser(
+            @RequestHeader HttpHeaders headers,
+            @Valid GetUserPathParameters pathParameters) {
+        log.info(" --> Get user by login: {}", pathParameters.getLogin());
+        accountingService.authorize(headers);
+        final GetUserResponseDTO user = accountingService.getUser(pathParameters);
+        log.info(" <-- Completed successfully. Return user.");
+        return user;
     }
 
 }

@@ -14,6 +14,7 @@ package org.touchbit.qa.automatron.service;
 
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpHeaders;
 import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Service;
 import org.touchbit.qa.automatron.constant.Bug;
@@ -105,25 +106,39 @@ public class AccountingService {
         return user;
     }
 
-    public void logout(String bearerAuthorizationHeaderValue, LogoutQueryParameters logoutQueryParameters) {
-        if (bearerAuthorizationHeaderValue == null) {
-            throw AutomatronException.http403("Authorization header");
+    public Session authorize(HttpHeaders headers) {
+        log.debug("Authorization");
+        final List<String> authorization = headers.get("Authorization");
+        if (authorization == null || authorization.isEmpty()) {
+            throw AutomatronException.http403("Header.Authorization");
         }
-        final String accessToken = bearerAuthorizationHeaderValue.toLowerCase().replace("bearer ", "");
-        final Session session = dbFindSessionByAccessToken(accessToken);
+        final Session session = authorization.stream()
+                .map(String::toLowerCase)
+                .map(t -> t.replace("bearer ", ""))
+                .map(this::dbFindSessionByAccessToken)
+                .filter(Objects::nonNull)
+                .findFirst()
+                .orElse(null);
         if (session == null) {
-            log.debug("There is no session with the received access token.");
-            return;
+            throw AutomatronException.http403("Header.Authorization");
         }
+        log.debug("Session found. User: {}", session.user().login());
+        return session;
+    }
+
+    public void logout(Session session, LogoutQueryParameters logoutQueryParameters) {
         final String mode = logoutQueryParameters == null ? null : logoutQueryParameters.getMode();
+        log.debug("Logout: login={}, mode={}", session.user().login(), mode);
         final LogoutMode logoutMode = Arrays.stream(LogoutMode.values())
                 .filter(lm -> lm.name().equalsIgnoreCase(mode))
                 .findAny()
                 .orElse(null);
         if (mode == null || LogoutMode.CURRENT.equals(logoutMode)) {
+            log.debug("Delete current session");
             dbDeleteSession(session);
             return;
         }
+        log.debug("Delete all sessions");
         if (!LogoutMode.ALL.equals(logoutMode)) {
             BugInterceptor.addBug(BUG_0004);
         }
@@ -163,6 +178,7 @@ public class AccountingService {
     }
 
     public List<GetUserResponseDTO> getUsers(GetUserListQueryParameters filter) {
+        log.debug("Get user list by filter: {}", filter);
         final List<User> users = dbFindAllByFilter(filter);
         log.debug("Found users: {}", users.size());
         return users.stream()
@@ -179,7 +195,7 @@ public class AccountingService {
     }
 
     public GetUserResponseDTO getUser(GetUserPathParameters pathParameters) {
-        final User user = dbFindUserByLogin(pathParameters.login);
+        final User user = dbFindUserByLogin(pathParameters.getLogin());
         if (user == null) {
             BugInterceptor.addBug(BUG_0005);
             BugInterceptor.addBug(BUG_0006);

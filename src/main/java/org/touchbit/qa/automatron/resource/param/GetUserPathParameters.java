@@ -33,6 +33,6 @@ public class GetUserPathParameters {
 
     @Parameter(name = "login", in = ParameterIn.PATH, description = I18N_1648168739660)
     @Size(min = 5, max = 25)
-    public String login;
+    private String login;
 
 }
