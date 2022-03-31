@@ -252,21 +252,21 @@
                             <workingDirectory>src/main/js</workingDirectory>
                         </configuration>
                         <executions>
-<!--                            <execution>-->
-<!--                                <id>install-node-and-npm</id>-->
-<!--                                <goals>-->
-<!--                                    <goal>install-node-and-npm</goal>-->
-<!--                                </goals>-->
-<!--                            </execution>-->
-<!--                            <execution>-->
-<!--                                <id>npm-install</id>-->
-<!--                                <goals>-->
-<!--                                    <goal>npm</goal>-->
-<!--                                </goals>-->
-<!--                                <configuration>-->
-<!--                                    <arguments>ci</arguments>-->
-<!--                                </configuration>-->
-<!--                            </execution>-->
+                            <execution>
+                                <id>install-node-and-npm</id>
+                                <goals>
+                                    <goal>install-node-and-npm</goal>
+                                </goals>
+                            </execution>
+                            <execution>
+                                <id>npm-install</id>
+                                <goals>
+                                    <goal>npm</goal>
+                                </goals>
+                                <configuration>
+                                    <arguments>ci</arguments>
+                                </configuration>
+                            </execution>
                             <execution>
                                 <id>npm-build</id>
                                 <goals>
