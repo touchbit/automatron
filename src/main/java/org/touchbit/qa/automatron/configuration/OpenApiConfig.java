@@ -28,14 +28,12 @@ import org.springdoc.core.customizers.OperationCustomizer;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.DependsOn;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.method.HandlerMethod;
+import org.touchbit.qa.automatron.resource.mapping.GetRequest;
+import org.touchbit.qa.automatron.resource.mapping.PostRequest;
 import org.touchbit.qa.automatron.service.ConfigService;
 
-import java.util.Arrays;
-import java.util.List;
-import java.util.Set;
-import java.util.TreeSet;
+import java.util.*;
 
 import static io.swagger.v3.oas.models.security.SecurityScheme.In.HEADER;
 import static io.swagger.v3.oas.models.security.SecurityScheme.Type.HTTP;
@@ -95,22 +93,29 @@ public class OpenApiConfig {
 
     private OperationCustomizer addSecurityItem() {
         return (Operation operation, HandlerMethod handlerMethod) -> {
-            final List<Parameter> parameters = operation.getParameters();
-            if (parameters != null) {
+            if (operation.getParameters() != null) {
                 operation.getParameters().removeIf(p ->
-                        HEADER.toString().equals(p.getIn()) && SECURITY_SCHEME_HEADER.equalsIgnoreCase(p.getName()));
-                final GetMapping get = handlerMethod.getMethodAnnotation(GetMapping.class);
-                if (get != null) {
-                    final List<String> paths = Arrays.asList(get.path());
-                    if (paths.contains("/api/bug") ||
-                        paths.contains("/api/bugs") ||
-                        paths.contains("/api/accounting/login")) {
-                        return operation;
-                    }
-                }
+                        HEADER.toString().equals(p.getIn()) &&
+                        SECURITY_SCHEME_HEADER.equalsIgnoreCase(p.getName()));
+            }
+            if (getOperationPaths(handlerMethod).stream()
+                    .anyMatch(path -> path.contains("/api/bugs") || path.contains("/api/accounting/login"))) {
+                return operation;
             }
             return operation.addSecurityItem(new SecurityRequirement().addList(SECURITY_SCHEME_KEY));
         };
+    }
+
+    private List<String> getOperationPaths(HandlerMethod handlerMethod) {
+        final GetRequest get = handlerMethod.getMethodAnnotation(GetRequest.class);
+        if (get != null) {
+            return Arrays.asList(get.path());
+        }
+        final PostRequest post = handlerMethod.getMethodAnnotation(PostRequest.class);
+        if (post != null) {
+            return Arrays.asList(post.path());
+        }
+        return new ArrayList<>();
     }
 
     private OpenApiCustomiser openApiInfoCustomiser(String appVersion) {
