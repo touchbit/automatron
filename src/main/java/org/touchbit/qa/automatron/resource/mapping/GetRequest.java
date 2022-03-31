@@ -27,7 +27,7 @@ import static org.springframework.web.bind.annotation.RequestMethod.GET;
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
 @Mapping
-@RequestMapping(method = GET, produces = MediaType.APPLICATION_JSON_VALUE)
+@RequestMapping(method = GET)
 @ResponseStatus()
 public @interface GetRequest {
 
@@ -36,5 +36,11 @@ public @interface GetRequest {
 
     @AliasFor(annotation = ResponseStatus.class, attribute = "code")
     HttpStatus status() default HttpStatus.OK;
+
+    @AliasFor(annotation = RequestMapping.class, attribute = "consumes")
+    String[] requestMediaType() default {};
+
+    @AliasFor(annotation = RequestMapping.class, attribute = "produces")
+    String[] responseMediaType() default MediaType.APPLICATION_JSON_VALUE;
 
 }

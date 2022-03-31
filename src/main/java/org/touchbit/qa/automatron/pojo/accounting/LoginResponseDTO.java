@@ -13,56 +13,52 @@
 package org.touchbit.qa.automatron.pojo.accounting;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.JsonPropertyDescription;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 import lombok.experimental.Accessors;
 import org.touchbit.qa.automatron.pojo.POJO;
 
-import javax.validation.constraints.DecimalMax;
-import javax.validation.constraints.DecimalMin;
+import javax.validation.constraints.Max;
+import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
+
+import static org.touchbit.qa.automatron.constant.I18N.*;
 
 @Setter
 @Getter
 @Accessors(chain = true, fluent = true)
 @ToString
-public class AuthDTO extends POJO {
+public class LoginResponseDTO extends POJO {
 
     @JsonProperty("access_token")
-    @JsonPropertyDescription("auth.dto.object.description")
     @NotNull
+    @Schema(description = I18N_1648700259699, example = "d0b8b863-3f47-4881-96b8-68c4b4e4f892")
     private String accessToken;
 
     @JsonProperty("access_expires_in")
-    @DecimalMin("1")
-    @DecimalMax("86400")
+    @Min(60)
+    @Max(86400)
     @NotNull
+    @Schema(description = I18N_1648700334011, example = "86400")
     private Long accessExpiresIn;
 
     @JsonProperty("refresh_token")
     @NotNull
+    @Schema(description = I18N_1648700575095, example = "bfb35bf5-311b-4e77-8b04-82582cc5a5f2")
     private String refreshToken;
 
     @JsonProperty("refresh_expires_in")
+    @Min(86400)
+    @Max(604800)
     @NotNull
+    @Schema(description = I18N_1648700640862, example = "86400")
     private Long refreshExpiresIn;
 
     @JsonProperty("token_type")
     @NotNull
+    @Schema(description = I18N_1648700713896, defaultValue = "bearer", example = "bearer")
     private String tokenType;
-
-//    @JsonProperty("not-before-policy")
-//    @NotNull
-//    private Long notBeforePolicy;
-//
-//    @JsonProperty("session_state")
-//    @NotNull
-//    private String sessionState;
-
-//    @JsonProperty("scope")
-//    @NotNull
-//    private String scope;
 
 }

@@ -25,8 +25,8 @@ import org.touchbit.qa.automatron.db.entity.User;
 import org.touchbit.qa.automatron.db.repository.SessionRepository;
 import org.touchbit.qa.automatron.db.repository.UserRepository;
 import org.touchbit.qa.automatron.interceptor.BugInterceptor;
-import org.touchbit.qa.automatron.pojo.accounting.AuthDTO;
 import org.touchbit.qa.automatron.pojo.accounting.GetUserResponseDTO;
+import org.touchbit.qa.automatron.pojo.accounting.LoginResponseDTO;
 import org.touchbit.qa.automatron.pojo.accounting.PhoneNumberDTO;
 import org.touchbit.qa.automatron.resource.param.GetUserListQueryParameters;
 import org.touchbit.qa.automatron.resource.param.GetUserPathParameters;
@@ -52,7 +52,7 @@ public class AccountingService {
     private SessionRepository sessionRepository;
 
     @SuppressWarnings("unused")
-    public AuthDTO authenticate(final String login, final String password) {
+    public LoginResponseDTO authenticate(final String login, final String password) {
         final User user = dbFindUserByLogin(login);
         final String source401 = "login/password";
         if (user == null) {
@@ -76,7 +76,7 @@ public class AccountingService {
             final Session session = getSession(user);
             sessionRepository.save(session);
             log.info("Authentication successful");
-            return new AuthDTO()
+            return new LoginResponseDTO()
                     .accessToken(session.accessToken())
                     .refreshToken(session.refreshToken())
                     .accessExpiresIn(session.accessExpiresIn())

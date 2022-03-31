@@ -14,22 +14,6 @@ package org.touchbit.qa.automatron.constant;
 
 public class APIExamples {
 
-    public static final String EX_ACCOUNTING_LOGIN_400 = """
-            [{
-              "type": "CONTRACT",
-              "source": "authentication.password",
-              "reason": "must not be null"
-            }]
-            """;
-
-    public static final String EX_CODE_401_001 = """
-            [{
-              "type": "ACCESS",
-              "source": "login/password",
-              "reason": "I18N_1648168111078"
-            }]
-            """;
-
     public static final String EX_CODE_401_002 = """
             [{
               "type": "ACCESS",
@@ -42,14 +26,6 @@ public class APIExamples {
             [{
               "type": "ACCESS",
               "source": "User{type=MEMBER}",
-              "reason": "I18N_1648168132812"
-            }]
-            """;
-
-    public static final String EX_CODE_403_002 = """
-            [{
-              "type": "ACCESS",
-              "source": "User{status=BLOCKED}",
               "reason": "I18N_1648168132812"
             }]
             """;
@@ -76,16 +52,6 @@ public class APIExamples {
               "source": "TransactionSystemException",
               "reason": "I18N_1648168193476"
             }]
-            """;
-
-    public static final String AUTH_DTO = """
-            {
-              "access_token": "d0b8b863-3f47-4881-96b8-68c4b4e4f892",
-              "access_expires_in": 86400,
-              "refresh_expires_in": 86400,
-              "refresh_token": "bfb35bf5-311b-4e77-8b04-82582cc5a5f2",
-              "token_type": "bearer"
-            }
             """;
 
     public static final String BUG_LIST = """
