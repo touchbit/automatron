@@ -29,6 +29,7 @@ import org.touchbit.qa.automatron.pojo.accounting.GetUserResponseDTO;
 import org.touchbit.qa.automatron.pojo.accounting.PhoneNumberDTO;
 import org.touchbit.qa.automatron.resource.param.GetUserListQueryParameters;
 import org.touchbit.qa.automatron.resource.param.GetUserPathParameters;
+import org.touchbit.qa.automatron.resource.param.LogoutQueryParameters;
 import org.touchbit.qa.automatron.util.AutomatronException;
 
 import java.util.Arrays;
@@ -104,7 +105,7 @@ public class AccountingService {
         return user;
     }
 
-    public void logout(String bearerAuthorizationHeaderValue, String mode) {
+    public void logout(String bearerAuthorizationHeaderValue, LogoutQueryParameters logoutQueryParameters) {
         if (bearerAuthorizationHeaderValue == null) {
             throw AutomatronException.http403("Authorization header");
         }
@@ -114,6 +115,7 @@ public class AccountingService {
             log.debug("There is no session with the received access token.");
             return;
         }
+        final String mode = logoutQueryParameters == null ? null : logoutQueryParameters.getMode();
         final LogoutMode logoutMode = Arrays.stream(LogoutMode.values())
                 .filter(lm -> lm.name().equalsIgnoreCase(mode))
                 .findAny()

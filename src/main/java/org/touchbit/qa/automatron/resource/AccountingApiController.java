@@ -24,19 +24,18 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
-import org.springframework.lang.Nullable;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
-import org.touchbit.qa.automatron.constant.LogoutMode;
 import org.touchbit.qa.automatron.pojo.accounting.AuthDTO;
 import org.touchbit.qa.automatron.pojo.accounting.GetUserResponseDTO;
 import org.touchbit.qa.automatron.pojo.error.ErrorDTO;
 import org.touchbit.qa.automatron.resource.mapping.GetRequest;
 import org.touchbit.qa.automatron.resource.param.GetUserListQueryParameters;
 import org.touchbit.qa.automatron.resource.param.GetUserPathParameters;
+import org.touchbit.qa.automatron.resource.param.LogoutQueryParameters;
 import org.touchbit.qa.automatron.resource.spec.GetUserListSpec;
 import org.touchbit.qa.automatron.resource.spec.GetUserSpec;
 import org.touchbit.qa.automatron.resource.spec.LogoutSpec;
@@ -82,9 +81,9 @@ public class AccountingApiController {
     @GetRequest(path = "/api/accounting/logout", status = HttpStatus.NO_CONTENT)
     public void logout(
             @RequestHeader(value = "Authorization", required = false) @Pattern(regexp = "^(?i)(bearer [a-f0-9-]{36})$") String bearerAuthorizationHeader,
-            @Parameter(description = I18N_1648399645845, in = QUERY, schema = @Schema(implementation = LogoutMode.class)) @Nullable String mode) {
+            LogoutQueryParameters logoutQueryParameters) {
         log.info("Request: User logout request");
-        accountingService.logout(bearerAuthorizationHeader, mode);
+        accountingService.logout(bearerAuthorizationHeader, logoutQueryParameters);
     }
 
     @GetUserListSpec()
