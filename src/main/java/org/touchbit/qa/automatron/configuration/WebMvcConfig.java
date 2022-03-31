@@ -22,6 +22,7 @@ import org.springframework.context.annotation.ClassPathScanningCandidateComponen
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.support.ResourceBundleMessageSource;
 import org.springframework.core.type.filter.AnnotationTypeFilter;
+import org.springframework.format.FormatterRegistry;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.LocaleResolver;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
@@ -34,6 +35,7 @@ import org.touchbit.qa.automatron.interceptor.BugInterceptor;
 import org.touchbit.qa.automatron.interceptor.LocaleInterceptor;
 import org.touchbit.qa.automatron.interceptor.XRequestIdInterceptor;
 import org.touchbit.qa.automatron.util.AutomatronUtils;
+import org.touchbit.qa.automatron.util.UpperCaseSourceEnumConverterFactory;
 
 import java.net.InetAddress;
 import java.net.MalformedURLException;
@@ -48,7 +50,12 @@ import static org.touchbit.qa.automatron.constant.Bug.BugType;
  */
 @Slf4j
 @Configuration
-public class WebMvcConfig {
+public class WebMvcConfig implements WebMvcConfigurer {
+
+    @Override
+    public void addFormatters(FormatterRegistry registry) {
+        registry.addConverterFactory(new UpperCaseSourceEnumConverterFactory());
+    }
 
     @Bean("appVersion")
     public String appVersion() {

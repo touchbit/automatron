@@ -15,6 +15,8 @@ package org.touchbit.qa.automatron.db.entity;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
+import org.touchbit.qa.automatron.constant.UserRole;
+import org.touchbit.qa.automatron.constant.UserStatus;
 
 import javax.persistence.*;
 import java.util.Set;
@@ -27,10 +29,6 @@ import java.util.Set;
 public class User {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE)
-    private long id;
-
-    @Column(unique = true)
     private String login;
 
     private String password;
@@ -39,7 +37,7 @@ public class User {
     private UserStatus status;
 
     @Enumerated(EnumType.STRING)
-    private UserType type;
+    private UserRole type;
 
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(name = "users_phones")

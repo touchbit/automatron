@@ -18,15 +18,16 @@ import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Service;
 import org.touchbit.qa.automatron.constant.Bug;
 import org.touchbit.qa.automatron.constant.LogoutMode;
+import org.touchbit.qa.automatron.constant.UserStatus;
 import org.touchbit.qa.automatron.db.entity.Session;
 import org.touchbit.qa.automatron.db.entity.User;
-import org.touchbit.qa.automatron.db.entity.UserStatus;
 import org.touchbit.qa.automatron.db.repository.SessionRepository;
 import org.touchbit.qa.automatron.db.repository.UserRepository;
 import org.touchbit.qa.automatron.interceptor.BugInterceptor;
 import org.touchbit.qa.automatron.pojo.accounting.AuthDTO;
-import org.touchbit.qa.automatron.pojo.accounting.UserDTO;
-import org.touchbit.qa.automatron.resource.param.GetUserQueryParameters;
+import org.touchbit.qa.automatron.pojo.accounting.GetUserResponseDTO;
+import org.touchbit.qa.automatron.pojo.accounting.PhoneNumberDTO;
+import org.touchbit.qa.automatron.resource.param.GetUserListQueryParameters;
 import org.touchbit.qa.automatron.util.AutomatronException;
 
 import java.util.Arrays;
@@ -158,7 +159,7 @@ public class AccountingService {
         }
     }
 
-    public List<UserDTO> getUsers(GetUserQueryParameters filter) {
+    public List<GetUserResponseDTO> getUsers(GetUserListQueryParameters filter) {
         final List<User> users = dbFindAllByFilter(filter);
         log.debug("Found users: {}", users.size());
         return users.stream()
@@ -166,21 +167,22 @@ public class AccountingService {
                 .collect(Collectors.toList());
     }
 
-    private List<User> dbFindAllByFilter(GetUserQueryParameters filter) {
+    private List<User> dbFindAllByFilter(GetUserListQueryParameters filter) {
         log.debug("DB: Search users by filter: {}", filter);
-        // TODO Bug return self password for Admin / Owner
+        // TODO Bug
         // the password must be stored encrypted
         // the password should under no circumstances be returned to the user
-        return userRepository.findAllByFilter(filter.getId(), filter.getLogin(), filter.getStatus(), filter.getType());
+        return userRepository.findAllByFilter(filter.getLogin(), filter.getStatus(), filter.getRole());
     }
 
-    private UserDTO userToUserDTO(User user) {
-        return UserDTO.builder()
-                .id(user.id())
+    private GetUserResponseDTO userToUserDTO(User user) {
+        return GetUserResponseDTO.builder()
                 .login(user.login())
                 .status(user.status())
-                .type(user.type())
-                .phones(user.phones())
+                .role(user.type())
+                .phones(user.phones().stream()
+                        .map(p -> new PhoneNumberDTO(p.phone(), p.type()))
+                        .collect(Collectors.toSet()))
                 .build();
     }
 

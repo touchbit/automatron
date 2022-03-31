@@ -22,6 +22,15 @@ import java.util.stream.Collectors;
 
 public class I18N {
 
+    public static final String I18N_1648685296628 = "I18N_1648685296628";
+    public static final String I18N_1648685056666 = "I18N_1648685056666";
+    public static final String I18N_1648684256974 = "I18N_1648684256974";
+    public static final String I18N_1648684060672 = "I18N_1648684060672";
+    public static final String I18N_1648678859481 = "I18N_1648678859481";
+    public static final String I18N_1648678768714 = "I18N_1648678768714";
+    public static final String I18N_1648673602540 = "I18N_1648673602540";
+    public static final String I18N_1648673498876 = "I18N_1648673498876";
+    public static final String I18N_1648673246598 = "I18N_1648673246598";
     public static final String I18N_1648401737946 = "I18N_1648401737946";
     public static final String I18N_1648401705690 = "I18N_1648401705690";
     public static final String I18N_1648399645845 = "I18N_1648399645845";

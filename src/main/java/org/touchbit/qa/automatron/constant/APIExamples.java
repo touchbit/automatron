@@ -79,7 +79,7 @@ public class APIExamples {
               {
                 "type": "LOGICAL",
                 "source": "User{id=1, status=null}",
-                "reason": "i18n_error_500_001_message"
+                "reason": "I18N_1648168178176"
               }
             ]
             """;

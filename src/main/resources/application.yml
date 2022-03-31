@@ -55,6 +55,9 @@ spring:
             enabled: true
             paths: /**
         cache: false
+  jackson:
+    mapper:
+      accept-case-insensitive-enums: true
 
 server:
   port: 8080

@@ -14,9 +14,9 @@ package org.touchbit.qa.automatron.db.repository;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.touchbit.qa.automatron.constant.UserRole;
+import org.touchbit.qa.automatron.constant.UserStatus;
 import org.touchbit.qa.automatron.db.entity.User;
-import org.touchbit.qa.automatron.db.entity.UserStatus;
-import org.touchbit.qa.automatron.db.entity.UserType;
 
 import java.util.List;
 
@@ -28,12 +28,11 @@ public interface UserRepository extends JpaRepository<User, Long> {
     boolean existsByLogin(String login);
 
     @Query("""
-           SELECT c FROM User c WHERE
-             (:id is null or c.id = :id) and
-             (:login is null or c.login = :login) and
-             (:status is null or c.status = :status) and
-             (:type is null or c.type = :type)
-           """)
-    List<User> findAllByFilter(Long id, String login, UserStatus status, UserType type);
+            SELECT c FROM User c WHERE
+              (:login is null or c.login = :login) and
+              (:status is null or c.status = :status) and
+              (:type is null or c.type = :type)
+            """)
+    List<User> findAllByFilter(String login, UserStatus status, UserRole type);
 
 }

@@ -32,9 +32,11 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 import org.touchbit.qa.automatron.constant.LogoutMode;
 import org.touchbit.qa.automatron.pojo.accounting.AuthDTO;
-import org.touchbit.qa.automatron.pojo.accounting.UserDTO;
+import org.touchbit.qa.automatron.pojo.accounting.GetUserResponseDTO;
 import org.touchbit.qa.automatron.pojo.error.ErrorDTO;
-import org.touchbit.qa.automatron.resource.param.GetUserQueryParameters;
+import org.touchbit.qa.automatron.resource.mapping.GetRequest;
+import org.touchbit.qa.automatron.resource.param.GetUserListQueryParameters;
+import org.touchbit.qa.automatron.resource.spec.GetUserListSpec;
 import org.touchbit.qa.automatron.service.AccountingService;
 
 import javax.validation.Valid;
@@ -87,8 +89,9 @@ public class AccountingApiController {
         accountingService.logout(bearerAuthorizationHeader, mode);
     }
 
-    @GetMapping(path = "/api/accounting/user", produces = MediaType.APPLICATION_JSON_VALUE)
-    public List<UserDTO> user(@Valid GetUserQueryParameters search) {
+    @GetUserListSpec()
+    @GetRequest(path = "/api/accounting/user", status = HttpStatus.OK)
+    public @Size List<GetUserResponseDTO> getUserList(@Valid GetUserListQueryParameters search) {
         log.info("Get users by filter");
         return accountingService.getUsers(search);
     }

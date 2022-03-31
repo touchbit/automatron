@@ -1,0 +1,40 @@
+/*
+ * Copyright (c) 2022 Shaburov Oleg
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+ * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
+ * OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
+ * IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR
+ * ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
+ * TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
+ * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+ */
+
+package org.touchbit.qa.automatron.resource.mapping;
+
+import org.springframework.core.annotation.AliasFor;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.web.bind.annotation.Mapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseStatus;
+
+import java.lang.annotation.*;
+
+import static org.springframework.web.bind.annotation.RequestMethod.GET;
+
+@Target({ElementType.TYPE, ElementType.METHOD})
+@Retention(RetentionPolicy.RUNTIME)
+@Documented
+@Mapping
+@RequestMapping(method = GET, produces = MediaType.APPLICATION_JSON_VALUE)
+@ResponseStatus()
+public @interface GetRequest {
+
+    @AliasFor(annotation = RequestMapping.class, attribute = "path")
+    String[] path();
+
+    @AliasFor(annotation = ResponseStatus.class, attribute = "code")
+    HttpStatus status() default HttpStatus.OK;
+
+}

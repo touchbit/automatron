@@ -25,9 +25,9 @@ import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import static org.touchbit.qa.automatron.db.entity.UserStatus.ACTIVE;
-import static org.touchbit.qa.automatron.db.entity.UserType.ADMIN;
-import static org.touchbit.qa.automatron.db.entity.UserType.OWNER;
+import static org.touchbit.qa.automatron.constant.UserRole.ADMIN;
+import static org.touchbit.qa.automatron.constant.UserRole.OWNER;
+import static org.touchbit.qa.automatron.constant.UserStatus.ACTIVE;
 
 @Slf4j
 @Configuration

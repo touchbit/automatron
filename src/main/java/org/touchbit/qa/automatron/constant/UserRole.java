@@ -10,9 +10,14 @@
  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package org.touchbit.qa.automatron.db.entity;
+package org.touchbit.qa.automatron.constant;
 
-public enum UserType {
+import io.swagger.v3.oas.annotations.media.Schema;
+
+import static org.touchbit.qa.automatron.constant.I18N.I18N_1648673602540;
+
+@Schema(description = I18N_1648673602540, example = "MEMBER")
+public enum UserRole {
 
     MEMBER,
     ADMIN,

@@ -10,8 +10,13 @@
  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package org.touchbit.qa.automatron.db.entity;
+package org.touchbit.qa.automatron.constant;
 
+import io.swagger.v3.oas.annotations.media.Schema;
+
+import static org.touchbit.qa.automatron.constant.I18N.I18N_1648673498876;
+
+@Schema(description = I18N_1648673498876, example = "ACTIVE")
 public enum UserStatus {
 
     ACTIVE,
