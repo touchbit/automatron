@@ -18,10 +18,8 @@ import org.springframework.http.HttpStatus;
 import org.touchbit.qa.automatron.pojo.error.ErrorType;
 
 import static org.springframework.http.HttpStatus.*;
-import static org.touchbit.qa.automatron.constant.I18N.I18N_1648168111078;
-import static org.touchbit.qa.automatron.constant.I18N.I18N_1648168132812;
-import static org.touchbit.qa.automatron.pojo.error.ErrorType.ACCESS;
-import static org.touchbit.qa.automatron.pojo.error.ErrorType.SYSTEM;
+import static org.touchbit.qa.automatron.constant.I18N.*;
+import static org.touchbit.qa.automatron.pojo.error.ErrorType.*;
 
 @Getter
 @Accessors(chain = true, fluent = true)
@@ -45,6 +43,10 @@ public class AutomatronException extends RuntimeException {
 
     public static AutomatronException http403(String source) {
         return new AutomatronException(FORBIDDEN, ACCESS, source, I18N_1648168132812);
+    }
+
+    public static AutomatronException http404(String source) {
+        return new AutomatronException(NOT_FOUND, CONDITION, source, I18N_1648704047156);
     }
 
     public static AutomatronException http500(String source, String reason) {

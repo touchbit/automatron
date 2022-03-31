@@ -54,25 +54,4 @@ public class APIExamples {
             }]
             """;
 
-    public static final String BUG_LIST = """
-            [
-              {
-                "id": 42,
-                "type": "UNPROCESSABLE",
-                "info": "The answer to life, universe and everything."
-              }
-            ]
-            """;
-
-    public static final String BUG_INFO_EXAMPLE = """
-            ID: 42
-            Type: UNPROCESSABLE
-            Info: The answer to life, universe and everything.
-            Description:
-            The number 42 is especially significant to fans of science fiction
-            novelist Douglas Adams’ “The Hitchhiker’s Guide to the Galaxy,”
-            because that number is the answer given by a supercomputer to
-            “the Ultimate Question of Life, the Universe, and Everything.”
-            """;
-
 }
