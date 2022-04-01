@@ -22,7 +22,7 @@ import org.springframework.http.server.ServerHttpRequest;
 import org.springframework.http.server.ServerHttpResponse;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.touchbit.qa.automatron.constant.Bug;
-import org.touchbit.qa.automatron.pojo.accounting.LoginRequestDTO;
+import org.touchbit.qa.automatron.pojo.accounting.login.LoginRequestDTO;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.Type;

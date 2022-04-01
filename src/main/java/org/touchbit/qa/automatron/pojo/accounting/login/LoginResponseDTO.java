@@ -10,7 +10,7 @@
  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package org.touchbit.qa.automatron.pojo.accounting;
+package org.touchbit.qa.automatron.pojo.accounting.login;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;

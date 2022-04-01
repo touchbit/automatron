@@ -25,9 +25,10 @@ import org.touchbit.qa.automatron.db.entity.Session;
 import org.touchbit.qa.automatron.db.entity.User;
 import org.touchbit.qa.automatron.db.repository.SessionRepository;
 import org.touchbit.qa.automatron.db.repository.UserRepository;
-import org.touchbit.qa.automatron.pojo.accounting.LoginResponseDTO;
-import org.touchbit.qa.automatron.pojo.accounting.PostUserRequestDTO;
-import org.touchbit.qa.automatron.pojo.accounting.UserResponseDTO;
+import org.touchbit.qa.automatron.pojo.accounting.login.LoginResponseDTO;
+import org.touchbit.qa.automatron.pojo.accounting.user.CreateUserRequestDTO;
+import org.touchbit.qa.automatron.pojo.accounting.user.UpdateUserRequestDTO;
+import org.touchbit.qa.automatron.pojo.accounting.user.UserResponseDTO;
 import org.touchbit.qa.automatron.resource.param.GetUserListQuery;
 import org.touchbit.qa.automatron.resource.param.GetUserPath;
 import org.touchbit.qa.automatron.resource.param.LogoutQueryParameters;
@@ -68,7 +69,7 @@ public class AccountingService {
         }
         if (user.status().equals(UserStatus.DELETED)) {
             log.error("Authentication is denied. The user status: {}", UserStatus.DELETED);
-            throw AutomatronException.http403(errSource(user, User::status, "status"));
+            throw AutomatronException.http403AccessDenied(errSource(user, User::status, "status"));
         }
         if (user.status().equals(UserStatus.BLOCKED)) {
             log.error("Authentication is denied. User status: {}", UserStatus.BLOCKED);
@@ -112,7 +113,7 @@ public class AccountingService {
         log.debug("Authorization");
         final List<String> authorization = headers.get("Authorization");
         if (authorization == null || authorization.isEmpty()) {
-            throw AutomatronException.http403("Header.Authorization");
+            throw AutomatronException.http403AccessDenied("Header.Authorization");
         }
         final Session session = authorization.stream()
                 .map(String::toLowerCase)
@@ -122,7 +123,7 @@ public class AccountingService {
                 .findFirst()
                 .orElse(null);
         if (session == null) {
-            throw AutomatronException.http403("Header.Authorization");
+            throw AutomatronException.http403AccessDenied("Header.Authorization");
         }
         log.debug("Session found. User: {}", session.user().login());
         return session;
@@ -219,46 +220,89 @@ public class AccountingService {
         final User user = session.user();
         final UserRole role = user.role();
         if (!ADMIN.equals(role) && !OWNER.equals(role)) {
-            throw AutomatronException.http403(AutomatronUtils.errSource(user, role, "role"));
+            throw AutomatronException.http403AccessDenied(AutomatronUtils.errSource(user, role, "role"));
         }
         return session;
     }
 
-    public UserResponseDTO addNewUser(final Session session, PostUserRequestDTO request) {
+    public UserResponseDTO addNewUser(final Session session, CreateUserRequestDTO request) {
         log.debug("Creating a new user in the system with a login: {}", request.login());
-        final UserRole sessionRole = session.user().role();
-        if (sessionRole.equals(MEMBER)) {
-            throw AutomatronException.http403("Authorized user role");
-        }
-        final UserRole userRole = request.role();
-        if (sessionRole.equals(ADMIN) && (ADMIN.equals(userRole) || OWNER.equals(userRole))) {
-            throw AutomatronException.http403("Authorized user role");
-        }
-        if (sessionRole.equals(OWNER) && OWNER.equals(userRole)) {
-            throw AutomatronException.http403("Authorized user role");
+        final UserRole changerRole = session.user().role();
+        final UserRole targetRole = request.role();
+        if (isNotUpdatable(changerRole, targetRole)) {
+            throw AutomatronException.http403AccessDenied("Authorized user role");
         }
         if (userRepository.existsById(request.login())) {
             log.error("User with login '{}' already exists", request.login());
-            throw AutomatronException.http409(AutomatronUtils.errSource(request, PostUserRequestDTO::login, "login"));
+            throw AutomatronException.http409(AutomatronUtils.errSource(request, CreateUserRequestDTO::login, "login"));
         }
         final User savedUser = saveUser(request);
         Bug.register(BUG_0007);
-        final UserResponseDTO result = new UserResponseDTO()
-                .login(savedUser.login())
-                .role(savedUser.role())
-                .status(savedUser.status());
         log.debug("Response body is formed");
-        return result;
+        return userToGetUserResponseDTO(savedUser);
     }
 
-    private User saveUser(PostUserRequestDTO request) {
-        log.debug("DB: save user: {}", request.login());
+    private boolean isNotUpdatable(UserRole changerRole, UserRole targetRole) {
+        if (changerRole.equals(MEMBER)) {
+            return true;
+        }
+        if (changerRole.equals(ADMIN) && (ADMIN.equals(targetRole) || OWNER.equals(targetRole))) {
+            return true;
+        }
+        return changerRole.equals(OWNER) && OWNER.equals(targetRole);
+    }
+
+    public UserResponseDTO putUser(Session session, UpdateUserRequestDTO request) {
+        log.debug("Creating a new user in the system with a login: {}", request.login());
+        final User sessionUser = session.user();
+        final UserRole changerRole = sessionUser.role();
+        final UserRole targetRole = request.role();
+        final boolean isSelfChange = sessionUser.login().equals(request.login());
+        log.debug("Session user: {login: {}, role: {}}", sessionUser.login(), changerRole);
+        log.debug("Updated user: {login: {}, role: {}}", request.login(), targetRole);
+        final boolean isCanUpdateUser = changerRole.canChangeUserRoleTo(targetRole, isSelfChange);
+        log.debug("Is self update: {}", isSelfChange);
+        log.debug("Is can update user: {}", isCanUpdateUser);
+        if (!isCanUpdateUser) {
+            final String source = errSource(session, changerRole, "role");
+            throw AutomatronException.http403InsufficientRights(source);
+        }
+        if (!userRepository.existsById(request.login())) {
+            log.error("User with login '{}' not exists", request.login());
+            throw AutomatronException.http404(AutomatronUtils.errSource(request, UpdateUserRequestDTO::login, "login"));
+        }
+        final User userDAO = dbGetByLogin(request.login());
+        final UserRole currentRole = userDAO.role();
+        if (isNotUpdatable(changerRole, currentRole)) {
+            Bug.register(BUG_0009);
+        }
+        if (request.password() != null) {
+            Bug.register(BUG_0010);
+            userDAO.password(request.password());
+        }
+        userDAO.status(request.status());
+        userDAO.role(request.role());
+        final User result = dbSaveUser(userDAO);
+        return userToGetUserResponseDTO(result);
+    }
+
+    private User dbGetByLogin(String login) {
+        final User proxy = userRepository.getById(login);
+        return new User(proxy);
+    }
+
+    private User saveUser(CreateUserRequestDTO request) {
         final User user = new User().login(request.login())
                 .password(request.password())
                 .status(request.status())
                 .role(request.role());
+        return dbSaveUser(user);
+    }
+
+    private User dbSaveUser(final User userDAO) {
+        log.debug("DB: save user: {}", userDAO.login());
         try {
-            final User result = userRepository.saveAndFlush(user);
+            final User result = userRepository.saveAndFlush(userDAO);
             log.debug("DB: successfully saved");
             return result;
         } catch (Exception e) {

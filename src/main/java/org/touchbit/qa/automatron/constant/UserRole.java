@@ -22,5 +22,22 @@ public enum UserRole {
     MEMBER,
     ADMIN,
     OWNER,
+    ;
+
+    public boolean canChangeUserRoleTo(UserRole target, boolean isSelfChange) {
+        if (this.equals(MEMBER) && target.equals(MEMBER) && isSelfChange) {
+            return true;
+        }
+        if (this.equals(ADMIN) && (target.equals(MEMBER))) {
+            return true;
+        }
+        if (this.equals(ADMIN) && target.equals(ADMIN) && isSelfChange) {
+            return true;
+        }
+        if (this.equals(OWNER) && (target.equals(ADMIN) || target.equals(MEMBER))) {
+            return true;
+        }
+        return this.equals(OWNER) && target.equals(OWNER) && isSelfChange;
+    }
 
 }

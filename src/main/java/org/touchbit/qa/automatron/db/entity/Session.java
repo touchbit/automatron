@@ -29,12 +29,16 @@ public class Session {
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
     private long id;
 
+    @Column(nullable = false)
     private String accessToken;
 
+    @Column(nullable = false)
     private long accessExpiresIn;
 
+    @Column(nullable = false)
     private String refreshToken;
 
+    @Column(nullable = false)
     private long refreshExpiresIn;
 
     @ManyToOne(fetch = FetchType.EAGER)

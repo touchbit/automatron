@@ -10,16 +10,19 @@
  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package org.touchbit.qa.automatron.pojo.accounting;
+package org.touchbit.qa.automatron.pojo.accounting.user;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
-import io.swagger.v3.oas.annotations.Parameter;
-import io.swagger.v3.oas.annotations.enums.ParameterStyle;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.v3.oas.annotations.media.Schema;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 import lombok.experimental.Accessors;
+import org.touchbit.qa.automatron.constant.UserRole;
+import org.touchbit.qa.automatron.constant.UserStatus;
+import org.touchbit.qa.automatron.pojo.POJO;
 
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
@@ -27,24 +30,26 @@ import javax.validation.constraints.Size;
 import static org.touchbit.qa.automatron.constant.I18N.I18N_1648168739660;
 import static org.touchbit.qa.automatron.constant.I18N.I18N_1648168744616;
 
-@Setter
 @Getter
+@Setter
 @Accessors(chain = true, fluent = true)
+@Builder
 @ToString
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class LoginDTO {
+public class CreateUserRequestDTO extends POJO {
 
-    @Parameter(name = "login",
-            style = ParameterStyle.FORM,
-            required = true,
-            schema = @Schema(description = I18N_1648168739660, example = "admin"))
+    @JsonProperty("login")
+    @Schema(description = I18N_1648168739660, example = "touchbit")
     private @NotNull @Size(min = 2, max = 20) String login;
 
-    @Parameter(
-            name = "password",
-            style = ParameterStyle.FORM,
-            required = true,
-            schema = @Schema(description = I18N_1648168744616, example = "IDDQD"))
+    @JsonProperty("password")
+    @Schema(description = I18N_1648168744616, example = "touchbit")
     private @NotNull @Size(min = 5, max = 36) String password;
+
+    @JsonProperty("status")
+    private @NotNull UserStatus status;
+
+    @JsonProperty("role")
+    private @NotNull UserRole role;
 
 }

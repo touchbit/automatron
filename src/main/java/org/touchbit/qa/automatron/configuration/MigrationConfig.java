@@ -25,8 +25,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import static org.touchbit.qa.automatron.constant.UserRole.ADMIN;
-import static org.touchbit.qa.automatron.constant.UserRole.OWNER;
+import static org.touchbit.qa.automatron.constant.UserRole.*;
 import static org.touchbit.qa.automatron.constant.UserStatus.ACTIVE;
 
 @Slf4j
@@ -50,8 +49,9 @@ public class MigrationConfig {
                         .type(p.getType()))
                 .collect(Collectors.toSet());
         configRepository.saveAll(configs);
-        Stream.of(new User().login("automatron").password("IDDQD").status(ACTIVE).role(OWNER),
-                        new User().login("admin").password("admin").status(ACTIVE).role(ADMIN))
+        Stream.of(new User().login("owner").password("owner").status(ACTIVE).role(OWNER),
+                        new User().login("admin").password("admin").status(ACTIVE).role(ADMIN),
+                        new User().login("member").password("member").status(ACTIVE).role(MEMBER))
                 .filter(user -> !userRepository.existsByLogin(user.login()))
                 .forEach(userRepository::save);
         return null;

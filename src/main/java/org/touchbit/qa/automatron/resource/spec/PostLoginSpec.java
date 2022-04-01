@@ -19,8 +19,8 @@ import io.swagger.v3.oas.annotations.media.ExampleObject;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.parameters.RequestBody;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import org.touchbit.qa.automatron.pojo.accounting.LoginRequestDTO;
-import org.touchbit.qa.automatron.pojo.accounting.LoginResponseDTO;
+import org.touchbit.qa.automatron.pojo.accounting.login.LoginRequestDTO;
+import org.touchbit.qa.automatron.pojo.accounting.login.LoginResponseDTO;
 import org.touchbit.qa.automatron.pojo.error.ErrorDTO;
 
 import java.lang.annotation.ElementType;
@@ -37,7 +37,11 @@ import static org.touchbit.qa.automatron.resource.spec.PostLoginSpec.*;
 @Retention(RetentionPolicy.RUNTIME)
 @Operation(tags = ACCOUNTING_TAG, summary = I18N_1648168212897, requestBody =
 @RequestBody(content = @Content(mediaType = APPLICATION_JSON_VALUE, schema =
-@Schema(implementation = LoginRequestDTO.class))), responses = {
+@Schema(implementation = LoginRequestDTO.class), examples = {
+        @ExampleObject(summary = "OWNER", value = OWNER_EXAMPLE, name = I18N_1648790344577),
+        @ExampleObject(summary = "ADMIN", value = ADMIN_EXAMPLE, name = I18N_1648790432413),
+        @ExampleObject(summary = "MEMBER", value = MEMBER_EXAMPLE, name = I18N_1648790529844),
+})), responses = {
         @ApiResponse(responseCode = "200", description = I18N_1648168229890, content = {
                 @Content(mediaType = APPLICATION_JSON_VALUE, schema =
                 @Schema(implementation = LoginResponseDTO.class))}),
@@ -50,6 +54,27 @@ import static org.touchbit.qa.automatron.resource.spec.PostLoginSpec.*;
                         @ExampleObject(summary = EX_403_FORBIDDEN_SUMMARY, value = EXAMPLE_403, name = I18N_1648168125864),
                 })})})
 public @interface PostLoginSpec {
+
+    String OWNER_EXAMPLE = """
+            {
+              "login": "owner",
+              "password": "owner"
+            }
+            """;
+
+    String ADMIN_EXAMPLE = """
+            {
+              "login": "admin",
+              "password": "admin"
+            }
+            """;
+
+    String MEMBER_EXAMPLE = """
+            {
+              "login": "member",
+              "password": "member"
+            }
+            """;
 
     String EXAMPLE_400 = """
             [{

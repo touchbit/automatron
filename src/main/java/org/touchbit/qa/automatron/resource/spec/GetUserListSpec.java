@@ -19,7 +19,7 @@ import io.swagger.v3.oas.annotations.media.ExampleObject;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import org.touchbit.qa.automatron.constant.APIExamples;
-import org.touchbit.qa.automatron.pojo.accounting.UserResponseDTO;
+import org.touchbit.qa.automatron.pojo.accounting.user.UserResponseDTO;
 import org.touchbit.qa.automatron.pojo.error.ErrorDTO;
 
 import java.lang.annotation.ElementType;

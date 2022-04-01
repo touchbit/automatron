@@ -22,12 +22,14 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RestController;
 import org.touchbit.qa.automatron.db.entity.Session;
-import org.touchbit.qa.automatron.pojo.accounting.LoginRequestDTO;
-import org.touchbit.qa.automatron.pojo.accounting.LoginResponseDTO;
-import org.touchbit.qa.automatron.pojo.accounting.PostUserRequestDTO;
-import org.touchbit.qa.automatron.pojo.accounting.UserResponseDTO;
+import org.touchbit.qa.automatron.pojo.accounting.login.LoginRequestDTO;
+import org.touchbit.qa.automatron.pojo.accounting.login.LoginResponseDTO;
+import org.touchbit.qa.automatron.pojo.accounting.user.CreateUserRequestDTO;
+import org.touchbit.qa.automatron.pojo.accounting.user.UpdateUserRequestDTO;
+import org.touchbit.qa.automatron.pojo.accounting.user.UserResponseDTO;
 import org.touchbit.qa.automatron.resource.mapping.GetRequest;
 import org.touchbit.qa.automatron.resource.mapping.PostRequest;
+import org.touchbit.qa.automatron.resource.mapping.PutRequest;
 import org.touchbit.qa.automatron.resource.param.GetUserListQuery;
 import org.touchbit.qa.automatron.resource.param.GetUserPath;
 import org.touchbit.qa.automatron.resource.param.LogoutQueryParameters;
@@ -92,12 +94,23 @@ public class AccountingApiController {
     }
 
     @PostUserSpec()
-    @PostRequest(path = "/api/accounting/users/")
+    @PostRequest(path = "/api/accounting/users")
     public Response<UserResponseDTO> postUser(@RequestHeader HttpHeaders headers,
-                                              @RequestBody @Valid PostUserRequestDTO request) {
+                                              @RequestBody @Valid CreateUserRequestDTO request) {
         log.info(" --> Add user request");
         final Session session = accountingService.authorizeAdmin(headers);
         final UserResponseDTO responseBody = accountingService.addNewUser(session, request);
+        log.info(" <-- Completed successfully. Return user with login: {}", responseBody.login());
+        return new Response<>(responseBody, HttpStatus.OK);
+    }
+
+    //    @PostUserSpec()
+    @PutRequest(path = "/api/accounting/users")
+    public Response<UserResponseDTO> putUser(@RequestHeader HttpHeaders headers,
+                                             @RequestBody @Valid UpdateUserRequestDTO request) {
+        log.info(" --> Replace user request");
+        final Session session = accountingService.authorize(headers);
+        final UserResponseDTO responseBody = accountingService.putUser(session, request);
         log.info(" <-- Completed successfully. Return user with login: {}", responseBody.login());
         return new Response<>(responseBody, HttpStatus.OK);
     }

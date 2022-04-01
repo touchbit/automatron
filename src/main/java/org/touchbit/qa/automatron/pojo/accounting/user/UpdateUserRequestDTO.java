@@ -10,12 +10,15 @@
  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package org.touchbit.qa.automatron.pojo.accounting;
+package org.touchbit.qa.automatron.pojo.accounting.user;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.v3.oas.annotations.media.Schema;
-import lombok.*;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
 import lombok.experimental.Accessors;
 import org.touchbit.qa.automatron.constant.UserRole;
 import org.touchbit.qa.automatron.constant.UserStatus;
@@ -31,24 +34,22 @@ import static org.touchbit.qa.automatron.constant.I18N.I18N_1648168744616;
 @Setter
 @Accessors(chain = true, fluent = true)
 @Builder
-@AllArgsConstructor
-@NoArgsConstructor
 @ToString
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class UserResponseDTO extends POJO {
+public class UpdateUserRequestDTO extends POJO {
 
     @JsonProperty("login")
     @Schema(description = I18N_1648168739660, example = "touchbit")
     private @NotNull @Size(min = 2, max = 20) String login;
 
     @JsonProperty("password")
-    @Schema(description = I18N_1648168744616, example = "IDDQD", hidden = true)
-    private @NotNull @Size(min = 5, max = 36) String password;
+    @Schema(description = I18N_1648168744616, example = "touchbit", hidden = true) // bug
+    private @Size(min = 5, max = 36) String password;
 
     @JsonProperty("status")
-    private @NotNull UserStatus status;
+    private UserStatus status;
 
     @JsonProperty("role")
-    private @NotNull UserRole role;
+    private UserRole role;
 
 }

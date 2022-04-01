@@ -14,6 +14,7 @@ package org.touchbit.qa.automatron.util;
 
 import lombok.Getter;
 import lombok.experimental.Accessors;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.touchbit.qa.automatron.pojo.error.ErrorType;
 
@@ -21,6 +22,7 @@ import static org.springframework.http.HttpStatus.*;
 import static org.touchbit.qa.automatron.constant.I18N.*;
 import static org.touchbit.qa.automatron.pojo.error.ErrorType.*;
 
+@Slf4j
 @Getter
 @Accessors(chain = true, fluent = true)
 public class AutomatronException extends RuntimeException {
@@ -35,14 +37,21 @@ public class AutomatronException extends RuntimeException {
         this.type = type;
         this.source = source;
         this.reason = reason;
+        if (log.isTraceEnabled()) {
+            log.error("Debug stacktrace", this);
+        }
     }
 
     public static AutomatronException http401(String source) {
         return new AutomatronException(UNAUTHORIZED, ACCESS, source, I18N_1648168111078);
     }
 
-    public static AutomatronException http403(String source) {
+    public static AutomatronException http403AccessDenied(String source) {
         return new AutomatronException(FORBIDDEN, ACCESS, source, I18N_1648168132812);
+    }
+
+    public static AutomatronException http403InsufficientRights(String source) {
+        return new AutomatronException(FORBIDDEN, ACCESS, source, I18N_1648787155513);
     }
 
     public static AutomatronException http404(String source) {

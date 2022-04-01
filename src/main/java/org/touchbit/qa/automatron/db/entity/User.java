@@ -13,6 +13,7 @@
 package org.touchbit.qa.automatron.db.entity;
 
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 import org.touchbit.qa.automatron.constant.UserRole;
@@ -25,18 +26,29 @@ import javax.persistence.*;
 @Setter
 @Accessors(chain = true, fluent = true)
 @Table(name = "user")
+@NoArgsConstructor
 public class User {
 
     @Id
+    @Column(nullable = false)
     private String login;
 
-    @Column(unique = true) // for bug
+    @Column(nullable = false, unique = true) // for bug
     private String password;
 
+    @Column(nullable = false)
     @Enumerated(EnumType.STRING)
     private UserStatus status;
 
+    @Column(nullable = false)
     @Enumerated(EnumType.STRING)
     private UserRole role;
+
+    public User(User source) {
+        this.login = source.login();
+        this.password = source.password();
+        this.status = source.status();
+        this.role = source.role();
+    }
 
 }
