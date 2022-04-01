@@ -30,8 +30,8 @@ public interface UserRepository extends JpaRepository<User, String> {
             SELECT c FROM User c WHERE
               (:login is null or c.login = :login) and
               (:status is null or c.status = :status) and
-              (:type is null or c.type = :type)
+              (:role is null or c.role = :role)
             """)
-    List<User> findAllByFilter(String login, UserStatus status, UserRole type);
+    List<User> findAllByFilter(String login, UserStatus status, UserRole role);
 
 }

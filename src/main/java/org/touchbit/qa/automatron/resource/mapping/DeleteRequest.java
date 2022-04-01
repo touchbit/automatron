@@ -13,11 +13,9 @@
 package org.touchbit.qa.automatron.resource.mapping;
 
 import org.springframework.core.annotation.AliasFor;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.Mapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseStatus;
 
 import java.lang.annotation.*;
 
@@ -28,14 +26,10 @@ import static org.springframework.web.bind.annotation.RequestMethod.DELETE;
 @Documented
 @Mapping
 @RequestMapping(method = DELETE)
-@ResponseStatus()
 public @interface DeleteRequest {
 
     @AliasFor(annotation = RequestMapping.class, attribute = "path")
     String[] path() default {};
-
-    @AliasFor(annotation = ResponseStatus.class, attribute = "code")
-    HttpStatus status() default HttpStatus.OK;
 
     @AliasFor(annotation = RequestMapping.class, attribute = "consumes")
     String[] requestMediaType() default {};

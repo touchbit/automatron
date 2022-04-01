@@ -22,9 +22,10 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RestController;
 import org.touchbit.qa.automatron.db.entity.Session;
-import org.touchbit.qa.automatron.pojo.accounting.GetUserResponseDTO;
 import org.touchbit.qa.automatron.pojo.accounting.LoginRequestDTO;
 import org.touchbit.qa.automatron.pojo.accounting.LoginResponseDTO;
+import org.touchbit.qa.automatron.pojo.accounting.UserRequestDTO;
+import org.touchbit.qa.automatron.pojo.accounting.UserResponseDTO;
 import org.touchbit.qa.automatron.resource.mapping.GetRequest;
 import org.touchbit.qa.automatron.resource.mapping.PostRequest;
 import org.touchbit.qa.automatron.resource.param.GetUserListQuery;
@@ -53,40 +54,55 @@ public class AccountingApiController {
 
     @LoginSpec()
     @PostRequest(path = "/api/accounting/login")
-    public LoginResponseDTO login(@RequestBody @Valid LoginRequestDTO request) {
+    public Response<LoginResponseDTO> login(@RequestBody @Valid LoginRequestDTO request) {
         log.info(" --> User login request");
-        final LoginResponseDTO response = accountingService.authenticate(request.login(), request.password());
+        final LoginResponseDTO responseBody = accountingService.authenticate(request.login(), request.password());
         log.info(" <-- Completed successfully.");
-        return response;
+        return new Response<>(responseBody, HttpStatus.OK);
     }
 
     @LogoutSpec()
-    @GetRequest(path = "/api/accounting/logout", status = HttpStatus.NO_CONTENT)
-    public void logout(@RequestHeader HttpHeaders headers, @Valid LogoutQueryParameters parameters) {
+    @GetRequest(path = "/api/accounting/logout")
+    public Response<Void> logout(@RequestHeader HttpHeaders headers,
+                                 @Valid LogoutQueryParameters parameters) {
         log.info(" --> User logout request");
         final Session session = accountingService.authorize(headers);
         accountingService.logout(session, parameters);
         log.info(" <-- Completed successfully (no response body)");
+        return new Response<>(null, HttpStatus.NO_CONTENT);
     }
 
     @GetUserListSpec()
     @GetRequest(path = "/api/accounting/users")
-    public List<GetUserResponseDTO> getUserList(@RequestHeader HttpHeaders headers, @Valid GetUserListQuery search) {
+    public Response<List<UserResponseDTO>> getUserList(@RequestHeader HttpHeaders headers,
+                                                       @Valid GetUserListQuery search) {
         log.info(" --> Get users by filter");
         accountingService.authorize(headers);
-        final List<GetUserResponseDTO> users = accountingService.getUsers(search);
-        log.info(" <-- Completed successfully. Return {} users.", users.size());
-        return users;
+        final List<UserResponseDTO> responseBody = accountingService.getUsers(search);
+        log.info(" <-- Completed successfully. Return {} users.", responseBody.size());
+        return new Response<>(responseBody, HttpStatus.OK);
     }
 
     @GetUserSpec()
     @GetRequest(path = "/api/accounting/users/{login}")
-    public GetUserResponseDTO getUser(@RequestHeader HttpHeaders headers, @Valid GetUserPath parameters) {
+    public Response<UserResponseDTO> getUser(@RequestHeader HttpHeaders headers,
+                                             @Valid GetUserPath parameters) {
         log.info(" --> Get user by login: {}", parameters.getLogin());
         accountingService.authorize(headers);
-        final GetUserResponseDTO user = accountingService.getUser(parameters);
-        log.info(" <-- Completed successfully. Return user.");
-        return user;
+        final UserResponseDTO responseBody = accountingService.getUser(parameters);
+        log.info(" <-- Completed successfully. Return user with login: {}", responseBody.login());
+        return new Response<>(responseBody, HttpStatus.OK);
+    }
+
+    @GetUserSpec()
+    @PostRequest(path = "/api/accounting/users/")
+    public Response<UserResponseDTO> postUser(@RequestHeader HttpHeaders headers,
+                                              @RequestBody @Valid UserRequestDTO request) {
+        log.info(" --> Add user request");
+//        accountingService.authorizeAdmin(headers);
+        final UserResponseDTO responseBody = accountingService.addNewUser(request);
+        log.info(" <-- Completed successfully. Return user with login: {}", responseBody.login());
+        return new Response<>(responseBody, HttpStatus.OK);
     }
 
 }

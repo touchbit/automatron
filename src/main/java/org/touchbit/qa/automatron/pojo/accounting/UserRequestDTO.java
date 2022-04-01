@@ -12,11 +12,13 @@
 
 package org.touchbit.qa.automatron.pojo.accounting;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.ToString;
 import lombok.experimental.Accessors;
 import org.touchbit.qa.automatron.constant.UserRole;
 import org.touchbit.qa.automatron.constant.UserStatus;
@@ -24,29 +26,30 @@ import org.touchbit.qa.automatron.pojo.POJO;
 
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
-import java.util.Set;
 
 import static org.touchbit.qa.automatron.constant.I18N.I18N_1648168739660;
-import static org.touchbit.qa.automatron.constant.I18N.I18N_1648678859481;
+import static org.touchbit.qa.automatron.constant.I18N.I18N_1648168744616;
 
 @Getter
 @Setter
 @Accessors(chain = true, fluent = true)
 @Builder
-public class GetUserResponseDTO extends POJO {
+@ToString
+@JsonInclude(JsonInclude.Include.NON_NULL)
+public class UserRequestDTO extends POJO {
 
     @JsonProperty("login")
     @Schema(description = I18N_1648168739660, example = "touchbit")
     private @NotNull @Size(min = 2, max = 20) String login;
+
+    @JsonProperty("password")
+    @Schema(description = I18N_1648168744616, example = "IDDQD")
+    private @NotNull @Size(min = 5, max = 36) String password;
 
     @JsonProperty("status")
     private @NotNull UserStatus status;
 
     @JsonProperty("role")
     private @NotNull UserRole role;
-
-    @JsonProperty("phones")
-    @Schema(description = I18N_1648678859481)
-    private @NotNull @Size(max = 2) Set<PhoneNumberDTO> phones;
 
 }

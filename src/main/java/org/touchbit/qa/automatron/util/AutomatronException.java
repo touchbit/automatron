@@ -49,6 +49,10 @@ public class AutomatronException extends RuntimeException {
         return new AutomatronException(NOT_FOUND, CONDITION, source, I18N_1648704047156);
     }
 
+    public static AutomatronException http409(String source) {
+        return new AutomatronException(CONFLICT, CONDITION, source, I18N_1648765587105);
+    }
+
     public static AutomatronException http500(String source, String reason) {
         return new AutomatronException(INTERNAL_SERVER_ERROR, SYSTEM, source, reason);
     }

@@ -19,19 +19,20 @@ import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Service;
 import org.touchbit.qa.automatron.constant.Bug;
 import org.touchbit.qa.automatron.constant.LogoutMode;
+import org.touchbit.qa.automatron.constant.UserRole;
 import org.touchbit.qa.automatron.constant.UserStatus;
 import org.touchbit.qa.automatron.db.entity.Session;
 import org.touchbit.qa.automatron.db.entity.User;
 import org.touchbit.qa.automatron.db.repository.SessionRepository;
 import org.touchbit.qa.automatron.db.repository.UserRepository;
-import org.touchbit.qa.automatron.interceptor.BugInterceptor;
-import org.touchbit.qa.automatron.pojo.accounting.GetUserResponseDTO;
 import org.touchbit.qa.automatron.pojo.accounting.LoginResponseDTO;
-import org.touchbit.qa.automatron.pojo.accounting.PhoneNumberDTO;
+import org.touchbit.qa.automatron.pojo.accounting.UserRequestDTO;
+import org.touchbit.qa.automatron.pojo.accounting.UserResponseDTO;
 import org.touchbit.qa.automatron.resource.param.GetUserListQuery;
 import org.touchbit.qa.automatron.resource.param.GetUserPath;
 import org.touchbit.qa.automatron.resource.param.LogoutQueryParameters;
 import org.touchbit.qa.automatron.util.AutomatronException;
+import org.touchbit.qa.automatron.util.AutomatronUtils;
 
 import java.util.Arrays;
 import java.util.List;
@@ -41,6 +42,8 @@ import java.util.stream.Collectors;
 
 import static org.touchbit.qa.automatron.constant.Bug.*;
 import static org.touchbit.qa.automatron.constant.I18N.I18N_1648168178176;
+import static org.touchbit.qa.automatron.constant.UserRole.ADMIN;
+import static org.touchbit.qa.automatron.constant.UserRole.OWNER;
 import static org.touchbit.qa.automatron.util.AutomatronUtils.errSource;
 
 @Slf4j
@@ -70,7 +73,7 @@ public class AccountingService {
         }
         if (user.status().equals(UserStatus.BLOCKED)) {
             log.error("Authentication is denied. User status: {}", UserStatus.BLOCKED);
-            BugInterceptor.addBug(Bug.BUG_0003);
+            Bug.register(Bug.BUG_0003);
             throw AutomatronException.http401(errSource(user, User::status, "status"));
         }
         if (user.status().equals(UserStatus.ACTIVE)) {
@@ -140,7 +143,7 @@ public class AccountingService {
         }
         log.debug("Delete all sessions");
         if (!LogoutMode.ALL.equals(logoutMode)) {
-            BugInterceptor.addBug(BUG_0004);
+            Bug.register(BUG_0004);
         }
         dbDeleteSessionByUser(session.user());
     }
@@ -177,7 +180,7 @@ public class AccountingService {
         }
     }
 
-    public List<GetUserResponseDTO> getUsers(GetUserListQuery filter) {
+    public List<UserResponseDTO> getUsers(GetUserListQuery filter) {
         log.debug("Get user list by filter: {}", filter);
         final List<User> users = dbFindAllByFilter(filter);
         log.debug("Found users: {}", users.size());
@@ -194,25 +197,66 @@ public class AccountingService {
         return userRepository.findAllByFilter(filter.getLogin(), filter.getStatus(), filter.getRole());
     }
 
-    public GetUserResponseDTO getUser(GetUserPath pathParameters) {
+    public UserResponseDTO getUser(GetUserPath pathParameters) {
         final User user = dbFindUserByLogin(pathParameters.getLogin());
         if (user == null) {
-            BugInterceptor.addBug(BUG_0005);
-            BugInterceptor.addBug(BUG_0006);
+            Bug.register(BUG_0005);
+            Bug.register(BUG_0006);
             return null;
         }
         return userToGetUserResponseDTO(user);
     }
 
-    private GetUserResponseDTO userToGetUserResponseDTO(User user) {
-        return GetUserResponseDTO.builder()
+    private UserResponseDTO userToGetUserResponseDTO(User user) {
+        return UserResponseDTO.builder()
                 .login(user.login())
                 .status(user.status())
-                .role(user.type())
-                .phones(user.phones().stream()
-                        .map(p -> new PhoneNumberDTO(p.phone(), p.type()))
-                        .collect(Collectors.toSet()))
+                .role(user.role())
                 .build();
+    }
+
+    public void authorizeAdmin(HttpHeaders headers) {
+        final Session session = this.authorize(headers);
+        final User user = session.user();
+        final UserRole role = user.role();
+        if (!ADMIN.equals(role) && !OWNER.equals(role)) {
+            throw AutomatronException.http403(AutomatronUtils.errSource(user, role, "role"));
+        }
+    }
+
+    public UserResponseDTO addNewUser(UserRequestDTO request) {
+        log.debug("Creating a new user in the system with a login: {}", request.login());
+        if (userRepository.existsById(request.login())) {
+            log.error("User with login '{}' already exists", request.login());
+            throw AutomatronException.http409(AutomatronUtils.errSource(request, UserRequestDTO::login, "login"));
+        }
+        final User savedUser = saveUser(request);
+        Bug.register(BUG_0007);
+        final UserResponseDTO result = new UserResponseDTO()
+                .login(savedUser.login())
+                .role(savedUser.role())
+                .status(savedUser.status());
+        log.debug("Response body is formed");
+        return result;
+    }
+
+    private User saveUser(UserRequestDTO request) {
+        log.debug("DB: save user: {}", request.login());
+        final User user = new User().login(request.login())
+                .password(request.password())
+                .status(request.status())
+                .role(request.role());
+        try {
+            final User result = userRepository.saveAndFlush(user);
+            log.debug("DB: successfully saved");
+            return result;
+        } catch (Exception e) {
+            final String msg = e.getMessage().toLowerCase();
+            if (msg.contains("on public.user(password)") && msg.contains("constraint")) {
+                Bug.register(BUG_0008);
+            }
+            throw e;
+        }
     }
 
 }

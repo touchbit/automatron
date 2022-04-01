@@ -17,7 +17,6 @@ import io.swagger.v3.oas.annotations.media.ExampleObject;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
-import org.slf4j.MDC;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.MessageSourceResolvable;
 import org.springframework.http.HttpHeaders;
@@ -28,6 +27,7 @@ import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.touchbit.qa.automatron.pojo.error.ErrorDTO;
+import org.touchbit.qa.automatron.resource.Response;
 import org.touchbit.qa.automatron.util.AutomatronException;
 
 import javax.validation.ConstraintViolation;
@@ -41,7 +41,6 @@ import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 import static org.touchbit.qa.automatron.constant.APIExamples.*;
 import static org.touchbit.qa.automatron.constant.I18N.*;
-import static org.touchbit.qa.automatron.constant.ResourceConstants.RID;
 import static org.touchbit.qa.automatron.pojo.error.ErrorType.CONTRACT;
 import static org.touchbit.qa.automatron.pojo.error.ErrorType.SYSTEM;
 
@@ -127,14 +126,10 @@ public class ExceptionAdviser {
         return buildResponseEntity(errors, e.status());
     }
 
-    private <B> ResponseEntity<B> buildResponseEntity(final B body, final HttpStatus status) {
+    private <B> Response<B> buildResponseEntity(final B body, final HttpStatus status) {
         final HttpHeaders headers = new HttpHeaders();
         headers.setContentType(APPLICATION_JSON);
-        final String xRequestIdValue = MDC.get(RID);
-        if (xRequestIdValue != null && !xRequestIdValue.isBlank()) {
-            headers.add(RID, xRequestIdValue);
-        }
-        return new ResponseEntity<>(body, headers, status);
+        return new Response<>(body, headers, status);
     }
 
 }

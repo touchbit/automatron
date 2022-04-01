@@ -32,7 +32,6 @@ import org.touchbit.qa.automatron.Application;
 import org.touchbit.qa.automatron.annotation.PathPOJO;
 import org.touchbit.qa.automatron.annotation.QueryPOJO;
 import org.touchbit.qa.automatron.constant.Bug;
-import org.touchbit.qa.automatron.interceptor.BugInterceptor;
 import org.touchbit.qa.automatron.interceptor.LocaleInterceptor;
 import org.touchbit.qa.automatron.interceptor.XRequestIdInterceptor;
 import org.touchbit.qa.automatron.util.AutomatronUtils;
@@ -95,8 +94,6 @@ public class WebMvcConfig implements WebMvcConfigurer {
             public void addInterceptors(InterceptorRegistry registry) {
                 log.info("Add {} to {}", XRequestIdInterceptor.class.getSimpleName(), registry.getClass().getSimpleName());
                 registry.addInterceptor(new XRequestIdInterceptor());
-                log.info("Add {} to {}", BugInterceptor.class.getSimpleName(), registry.getClass().getSimpleName());
-                registry.addInterceptor(new BugInterceptor());
                 log.info("Add {} to {}", LocaleInterceptor.class.getSimpleName(), registry.getClass().getSimpleName());
                 registry.addInterceptor(new LocaleInterceptor());
             }

@@ -50,8 +50,8 @@ public class MigrationConfig {
                         .type(p.getType()))
                 .collect(Collectors.toSet());
         configRepository.saveAll(configs);
-        Stream.of(new User().login("automatron").password("IDDQD").status(ACTIVE).type(OWNER),
-                        new User().login("admin").password("admin").status(ACTIVE).type(ADMIN))
+        Stream.of(new User().login("automatron").password("IDDQD").status(ACTIVE).role(OWNER),
+                        new User().login("admin").password("admin").status(ACTIVE).role(ADMIN))
                 .filter(user -> !userRepository.existsByLogin(user.login()))
                 .forEach(userRepository::save);
         return null;

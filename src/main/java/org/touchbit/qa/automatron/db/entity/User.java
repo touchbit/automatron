@@ -19,7 +19,6 @@ import org.touchbit.qa.automatron.constant.UserRole;
 import org.touchbit.qa.automatron.constant.UserStatus;
 
 import javax.persistence.*;
-import java.util.Set;
 
 @Entity
 @Getter
@@ -31,16 +30,13 @@ public class User {
     @Id
     private String login;
 
+    @Column(unique = true) // for bug
     private String password;
 
     @Enumerated(EnumType.STRING)
     private UserStatus status;
 
     @Enumerated(EnumType.STRING)
-    private UserRole type;
-
-    @ManyToMany(fetch = FetchType.EAGER)
-    @JoinTable(name = "users_phones")
-    private Set<PhoneNumber> phones;
+    private UserRole role;
 
 }

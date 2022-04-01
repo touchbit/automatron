@@ -12,6 +12,7 @@
 
 package org.touchbit.qa.automatron.pojo.accounting;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.enums.ParameterStyle;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -30,6 +31,7 @@ import static org.touchbit.qa.automatron.constant.I18N.I18N_1648168744616;
 @Getter
 @Accessors(chain = true, fluent = true)
 @ToString
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class LoginDTO {
 
     @Parameter(name = "login",

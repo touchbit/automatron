@@ -19,7 +19,7 @@ import io.swagger.v3.oas.annotations.media.ExampleObject;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import org.touchbit.qa.automatron.constant.APIExamples;
-import org.touchbit.qa.automatron.pojo.accounting.GetUserResponseDTO;
+import org.touchbit.qa.automatron.pojo.accounting.UserResponseDTO;
 import org.touchbit.qa.automatron.pojo.error.ErrorDTO;
 
 import java.lang.annotation.ElementType;
@@ -36,7 +36,7 @@ import static org.touchbit.qa.automatron.resource.spec.GetUserSpec.EXAMPLE_404;
 @Retention(RetentionPolicy.RUNTIME)
 @Operation(tags = ACCOUNTING_TAG, summary = I18N_1648688724365, responses = {
         @ApiResponse(responseCode = "200", description = I18N_1648688789502, content = {
-                @Content(schema = @Schema(implementation = GetUserResponseDTO.class))}),
+                @Content(schema = @Schema(implementation = UserResponseDTO.class))}),
         @ApiResponse(responseCode = "4xx", description = I18N_1648168086907, content = {
                 @Content(array =
                 @ArraySchema(schema =

@@ -14,10 +14,19 @@ package org.touchbit.qa.automatron.constant;
 
 import lombok.Getter;
 import lombok.experimental.Accessors;
+import lombok.extern.slf4j.Slf4j;
+import org.slf4j.MDC;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
 
 import static org.touchbit.qa.automatron.constant.Bug.BugType.*;
 import static org.touchbit.qa.automatron.constant.I18N.*;
+import static org.touchbit.qa.automatron.constant.ResourceConstants.RID;
 
+@Slf4j
 @Getter
 @Accessors(chain = true, fluent = true)
 public enum Bug {
@@ -28,8 +37,11 @@ public enum Bug {
     BUG_0004(4, IMPLEMENTATION, I18N_1648401705690, I18N_1648401737946),
     BUG_0005(5, IMPLEMENTATION, I18N_1648691005453, I18N_1648691079913),
     BUG_0006(6, IMPLEMENTATION, I18N_1648691290758, I18N_1648691345099),
+    BUG_0007(7, SECURITY, I18N_1648766329247, I18N_1648766458371),
+    BUG_0008(8, ARCHITECTURE, I18N_1648769955903, I18N_1648770063686),
     ;
 
+    private static final ConcurrentMap<String, List<Bug>> BUGS = new ConcurrentHashMap<>();
     private final int id;
     private final BugType type;
     private final String info;
@@ -46,9 +58,36 @@ public enum Bug {
         return String.valueOf(id);
     }
 
+    public static void register(final Bug bug) {
+        final String rid = MDC.get(RID);
+        if (rid == null || rid.isBlank()) {
+            log.warn("Unable to link bug to request. '{}' header not passed.", RID);
+            return;
+        }
+        BUGS.computeIfAbsent(rid, i -> new ArrayList<>()).add(bug);
+        log.warn("Bug registered: {}", bug.id());
+    }
+
+    public static List<Bug> takeRegistered() {
+        final String rid = MDC.get(RID);
+        log.trace("Get registered bugs for request=id: {}", rid);
+        try {
+            if (rid != null) {
+                final List<Bug> bugs = BUGS.get(rid);
+                if (bugs != null) {
+                    return bugs;
+                }
+            }
+            return new ArrayList<>();
+        } finally {
+            BUGS.remove(rid);
+        }
+    }
+
     public enum BugType {
         SPECIFICATION,
         IMPLEMENTATION,
+        ARCHITECTURE,
         SECURITY,
     }
 

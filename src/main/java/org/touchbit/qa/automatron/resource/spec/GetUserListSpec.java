@@ -19,7 +19,7 @@ import io.swagger.v3.oas.annotations.media.ExampleObject;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import org.touchbit.qa.automatron.constant.APIExamples;
-import org.touchbit.qa.automatron.pojo.accounting.GetUserResponseDTO;
+import org.touchbit.qa.automatron.pojo.accounting.UserResponseDTO;
 import org.touchbit.qa.automatron.pojo.error.ErrorDTO;
 
 import java.lang.annotation.ElementType;
@@ -37,7 +37,7 @@ import static org.touchbit.qa.automatron.resource.spec.GetUserListSpec.EXAMPLE_4
         @ApiResponse(responseCode = "200", description = I18N_1648684256974, content = {
                 @Content(array =
                 @ArraySchema(minItems = 0, uniqueItems = true, schema =
-                @Schema(implementation = GetUserResponseDTO.class)))}),
+                @Schema(implementation = UserResponseDTO.class)))}),
         @ApiResponse(responseCode = "4xx", description = I18N_1648168086907, content = {
                 @Content(array =
                 @ArraySchema(schema =

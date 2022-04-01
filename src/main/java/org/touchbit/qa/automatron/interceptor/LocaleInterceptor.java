@@ -14,6 +14,7 @@ package org.touchbit.qa.automatron.interceptor;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.servlet.HandlerInterceptor;
+import org.touchbit.qa.automatron.constant.Bug;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -33,7 +34,7 @@ public class LocaleInterceptor implements HandlerInterceptor {
         if (locale != null) {
             log.debug("Validate '{}' header value: '{}'", LOCALE, locale);
             if (!"ru".equalsIgnoreCase(locale) && !"en".equalsIgnoreCase(locale)) {
-                BugInterceptor.addBug(BUG_0002);
+                Bug.register(BUG_0002);
             }
         }
         return true;

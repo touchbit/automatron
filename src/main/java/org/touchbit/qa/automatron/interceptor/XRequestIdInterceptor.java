@@ -42,8 +42,6 @@ public class XRequestIdInterceptor implements HandlerInterceptor {
             }
             MDC.put(RID, rid);
             log.trace("'{}' was successfully added to the context.", RID);
-            response.addHeader(RID, rid);
-            log.trace("'{}' header successfully initialized in response servlet.", RID);
         }
         return true;
     }

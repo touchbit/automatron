@@ -14,6 +14,7 @@ package org.touchbit.qa.automatron.resource;
 
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.RestController;
 import org.touchbit.qa.automatron.constant.Bug;
 import org.touchbit.qa.automatron.pojo.bug.BugDTO;
@@ -40,18 +41,18 @@ public class BugApiController {
 
     @GetBugListSpec()
     @GetRequest(path = "/api/bugs")
-    public List<BugDTO> getBugsLIst() {
+    public Response<List<BugDTO>> getBugsLIst() {
         log.info("The method for getting the list of errors registered in the system has been called.");
-        final List<BugDTO> defects = Arrays.stream(Bug.values())
+        final List<BugDTO> responseBody = Arrays.stream(Bug.values())
                 .map(BugDTO::new)
                 .collect(Collectors.toList());
-        log.info("Sending a list of {} defects.", defects.size());
-        return defects;
+        log.info("Sending a list of {} defects.", responseBody.size());
+        return new Response<>(responseBody, HttpStatus.OK);
     }
 
     @GetBugSpec()
     @GetRequest(path = "/api/bugs/{id}", responseMediaType = TEXT_PLAIN_VALUE)
-    public String getBugById(@Valid GetBugPathParameters parameters) {
+    public Response<String> getBugById(@Valid GetBugPathParameters parameters) {
         log.info("Search for a defect with ID {}", parameters);
         if (parameters != null) {
             final Bug bug = Arrays.stream(Bug.values())
@@ -61,7 +62,7 @@ public class BugApiController {
                 throw AutomatronException.http404("/api/bugs/" + parameters.getId());
             }
             log.info("Defect found. Sending defect information.");
-            return new StringJoiner("\n")
+            final String responseBody = new StringJoiner("\n")
                     .add("ID: " + bug.id())
                     .add("Type: " + bug.type())
                     .add("Info: " + bug.info())
@@ -69,6 +70,7 @@ public class BugApiController {
                     .add(bug.description())
                     .add("\n\n")
                     .toString();
+            return new Response<>(responseBody, HttpStatus.OK);
         }
         throw AutomatronException.http404("/api/bugs/null");
     }

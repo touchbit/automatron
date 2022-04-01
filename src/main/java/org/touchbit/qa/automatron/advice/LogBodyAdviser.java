@@ -21,9 +21,8 @@ import org.springframework.http.converter.HttpMessageConverter;
 import org.springframework.http.server.ServerHttpRequest;
 import org.springframework.http.server.ServerHttpResponse;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
-import org.touchbit.qa.automatron.interceptor.BugInterceptor;
-import org.touchbit.qa.automatron.pojo.accounting.GetUserResponseDTO;
-import org.touchbit.qa.automatron.pojo.accounting.PostUserResponseDTO;
+import org.touchbit.qa.automatron.constant.Bug;
+import org.touchbit.qa.automatron.pojo.accounting.LoginRequestDTO;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.Type;
@@ -50,8 +49,8 @@ public class LogBodyAdviser implements BodyAdvice {
         final Method method = parameter.getMethod();
         if (method != null && restControllerClasses.contains(method.getDeclaringClass())) {
             log.debug("Request body:\n{}", body);
-            if (body instanceof PostUserResponseDTO user && user.password() != null) {
-                BugInterceptor.addBug(BUG_0001);
+            if (body instanceof LoginRequestDTO login && login.password() != null) {
+                Bug.register(BUG_0001);
             }
         }
         return body;
@@ -67,9 +66,6 @@ public class LogBodyAdviser implements BodyAdvice {
         final String path = request.getURI().toString();
         if (path.contains("/api/")) {
             log.debug("Response body:\n{}", body);
-            if (body instanceof GetUserResponseDTO userDTO && userDTO.additionalProperties().get("password") != null) {
-                BugInterceptor.addBug(BUG_0001);
-            }
         }
         return body;
     }
