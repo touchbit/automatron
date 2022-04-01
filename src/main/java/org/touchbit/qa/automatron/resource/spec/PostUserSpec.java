@@ -19,7 +19,7 @@ import io.swagger.v3.oas.annotations.media.ExampleObject;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.parameters.RequestBody;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import org.touchbit.qa.automatron.pojo.accounting.UserRequestDTO;
+import org.touchbit.qa.automatron.pojo.accounting.PostUserRequestDTO;
 import org.touchbit.qa.automatron.pojo.accounting.UserResponseDTO;
 import org.touchbit.qa.automatron.pojo.error.ErrorDTO;
 
@@ -37,7 +37,7 @@ import static org.touchbit.qa.automatron.resource.spec.PostUserSpec.*;
 @Retention(RetentionPolicy.RUNTIME)
 @Operation(tags = ACCOUNTING_TAG, summary = I18N_1648778601039, description = I18N_1648778643411, requestBody =
 @RequestBody(content = @Content(mediaType = APPLICATION_JSON_VALUE, schema =
-@Schema(implementation = UserRequestDTO.class))), responses = {
+@Schema(implementation = PostUserRequestDTO.class))), responses = {
         @ApiResponse(responseCode = "200", description = I18N_1648778918943, content = {
                 @Content(mediaType = APPLICATION_JSON_VALUE, schema =
                 @Schema(implementation = UserResponseDTO.class))}),

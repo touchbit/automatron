@@ -36,7 +36,7 @@ import static org.touchbit.qa.automatron.constant.I18N.I18N_1648168744616;
 @Builder
 @ToString
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class UserRequestDTO extends POJO {
+public class PostUserRequestDTO extends POJO {
 
     @JsonProperty("login")
     @Schema(description = I18N_1648168739660, example = "touchbit")

@@ -24,7 +24,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.touchbit.qa.automatron.db.entity.Session;
 import org.touchbit.qa.automatron.pojo.accounting.LoginRequestDTO;
 import org.touchbit.qa.automatron.pojo.accounting.LoginResponseDTO;
-import org.touchbit.qa.automatron.pojo.accounting.UserRequestDTO;
+import org.touchbit.qa.automatron.pojo.accounting.PostUserRequestDTO;
 import org.touchbit.qa.automatron.pojo.accounting.UserResponseDTO;
 import org.touchbit.qa.automatron.resource.mapping.GetRequest;
 import org.touchbit.qa.automatron.resource.mapping.PostRequest;
@@ -94,7 +94,7 @@ public class AccountingApiController {
     @PostUserSpec()
     @PostRequest(path = "/api/accounting/users/")
     public Response<UserResponseDTO> postUser(@RequestHeader HttpHeaders headers,
-                                              @RequestBody @Valid UserRequestDTO request) {
+                                              @RequestBody @Valid PostUserRequestDTO request) {
         log.info(" --> Add user request");
         final Session session = accountingService.authorizeAdmin(headers);
         final UserResponseDTO responseBody = accountingService.addNewUser(session, request);

@@ -26,7 +26,7 @@ import org.touchbit.qa.automatron.db.entity.User;
 import org.touchbit.qa.automatron.db.repository.SessionRepository;
 import org.touchbit.qa.automatron.db.repository.UserRepository;
 import org.touchbit.qa.automatron.pojo.accounting.LoginResponseDTO;
-import org.touchbit.qa.automatron.pojo.accounting.UserRequestDTO;
+import org.touchbit.qa.automatron.pojo.accounting.PostUserRequestDTO;
 import org.touchbit.qa.automatron.pojo.accounting.UserResponseDTO;
 import org.touchbit.qa.automatron.resource.param.GetUserListQuery;
 import org.touchbit.qa.automatron.resource.param.GetUserPath;
@@ -224,7 +224,7 @@ public class AccountingService {
         return session;
     }
 
-    public UserResponseDTO addNewUser(final Session session, UserRequestDTO request) {
+    public UserResponseDTO addNewUser(final Session session, PostUserRequestDTO request) {
         log.debug("Creating a new user in the system with a login: {}", request.login());
         final UserRole sessionRole = session.user().role();
         if (sessionRole.equals(MEMBER)) {
@@ -239,7 +239,7 @@ public class AccountingService {
         }
         if (userRepository.existsById(request.login())) {
             log.error("User with login '{}' already exists", request.login());
-            throw AutomatronException.http409(AutomatronUtils.errSource(request, UserRequestDTO::login, "login"));
+            throw AutomatronException.http409(AutomatronUtils.errSource(request, PostUserRequestDTO::login, "login"));
         }
         final User savedUser = saveUser(request);
         Bug.register(BUG_0007);
@@ -251,7 +251,7 @@ public class AccountingService {
         return result;
     }
 
-    private User saveUser(UserRequestDTO request) {
+    private User saveUser(PostUserRequestDTO request) {
         log.debug("DB: save user: {}", request.login());
         final User user = new User().login(request.login())
                 .password(request.password())
