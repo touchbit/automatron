@@ -42,8 +42,7 @@ import java.util.stream.Collectors;
 
 import static org.touchbit.qa.automatron.constant.Bug.*;
 import static org.touchbit.qa.automatron.constant.I18N.I18N_1648168178176;
-import static org.touchbit.qa.automatron.constant.UserRole.ADMIN;
-import static org.touchbit.qa.automatron.constant.UserRole.OWNER;
+import static org.touchbit.qa.automatron.constant.UserRole.*;
 import static org.touchbit.qa.automatron.util.AutomatronUtils.errSource;
 
 @Slf4j
@@ -215,17 +214,29 @@ public class AccountingService {
                 .build();
     }
 
-    public void authorizeAdmin(HttpHeaders headers) {
+    public Session authorizeAdmin(HttpHeaders headers) {
         final Session session = this.authorize(headers);
         final User user = session.user();
         final UserRole role = user.role();
         if (!ADMIN.equals(role) && !OWNER.equals(role)) {
             throw AutomatronException.http403(AutomatronUtils.errSource(user, role, "role"));
         }
+        return session;
     }
 
-    public UserResponseDTO addNewUser(UserRequestDTO request) {
+    public UserResponseDTO addNewUser(final Session session, UserRequestDTO request) {
         log.debug("Creating a new user in the system with a login: {}", request.login());
+        final UserRole sessionRole = session.user().role();
+        if (sessionRole.equals(MEMBER)) {
+            throw AutomatronException.http403("Authorized user role");
+        }
+        final UserRole userRole = request.role();
+        if (sessionRole.equals(ADMIN) && (ADMIN.equals(userRole) || OWNER.equals(userRole))) {
+            throw AutomatronException.http403("Authorized user role");
+        }
+        if (sessionRole.equals(OWNER) && OWNER.equals(userRole)) {
+            throw AutomatronException.http403("Authorized user role");
+        }
         if (userRepository.existsById(request.login())) {
             log.error("User with login '{}' already exists", request.login());
             throw AutomatronException.http409(AutomatronUtils.errSource(request, UserRequestDTO::login, "login"));

@@ -19,8 +19,8 @@ import io.swagger.v3.oas.annotations.media.ExampleObject;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.parameters.RequestBody;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import org.touchbit.qa.automatron.pojo.accounting.LoginRequestDTO;
-import org.touchbit.qa.automatron.pojo.accounting.LoginResponseDTO;
+import org.touchbit.qa.automatron.pojo.accounting.UserRequestDTO;
+import org.touchbit.qa.automatron.pojo.accounting.UserResponseDTO;
 import org.touchbit.qa.automatron.pojo.error.ErrorDTO;
 
 import java.lang.annotation.ElementType;
@@ -31,46 +31,45 @@ import java.lang.annotation.Target;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 import static org.touchbit.qa.automatron.constant.I18N.*;
 import static org.touchbit.qa.automatron.constant.ResourceConstants.*;
-import static org.touchbit.qa.automatron.resource.spec.LoginSpec.*;
+import static org.touchbit.qa.automatron.resource.spec.PostUserSpec.*;
 
 @Target({ElementType.METHOD})
 @Retention(RetentionPolicy.RUNTIME)
-@Operation(tags = ACCOUNTING_TAG, summary = I18N_1648168212897, requestBody =
+@Operation(tags = ACCOUNTING_TAG, summary = I18N_1648778601039, description = I18N_1648778643411, requestBody =
 @RequestBody(content = @Content(mediaType = APPLICATION_JSON_VALUE, schema =
-@Schema(implementation = LoginRequestDTO.class))), responses = {
-        @ApiResponse(responseCode = "200", description = I18N_1648168229890, content = {
+@Schema(implementation = UserRequestDTO.class))), responses = {
+        @ApiResponse(responseCode = "200", description = I18N_1648778918943, content = {
                 @Content(mediaType = APPLICATION_JSON_VALUE, schema =
-                @Schema(implementation = LoginResponseDTO.class))}),
+                @Schema(implementation = UserResponseDTO.class))}),
         @ApiResponse(responseCode = "4xx", description = I18N_1648168086907, content = {
                 @Content(mediaType = APPLICATION_JSON_VALUE, array =
                 @ArraySchema(schema =
                 @Schema(implementation = ErrorDTO.class)), examples = {
                         @ExampleObject(summary = EX_400_BAD_REQUEST_SUMMARY, value = EXAMPLE_400, name = I18N_1648168095253),
-                        @ExampleObject(summary = EX_401_UNAUTHORIZED_SUMMARY, value = EXAMPLE_401, name = I18N_1648168104107),
                         @ExampleObject(summary = EX_403_FORBIDDEN_SUMMARY, value = EXAMPLE_403, name = I18N_1648168125864),
+                        @ExampleObject(summary = EX_409_CONFLICT_SUMMARY, value = EXAMPLE_409, name = I18N_1648779001575),
                 })})})
-public @interface LoginSpec {
+public @interface PostUserSpec {
 
     String EXAMPLE_400 = """
             [{
               "type": "CONTRACT",
-              "source": "authentication.password",
+              "source": "UserRequestDTO.password",
               "reason": "must not be null"
-            }]
-            """;
-    String EXAMPLE_401 = """
-            [{
-              "type": "ACCESS",
-              "source": "login/password",
-              "reason": "I18N_1648168111078"
             }]
             """;
     String EXAMPLE_403 = """
             [{
               "type": "ACCESS",
-              "source": "User{status=BLOCKED}",
+              "source": "Authorized user role",
               "reason": "I18N_1648168132812"
             }]
             """;
-
+    String EXAMPLE_409 = """
+            [{
+              "type": "CONDITION",
+              "source": "UserRequestDTO{login=touchbit}",
+              "reason": "I18N_1648765587105"
+            }]
+            """;
 }

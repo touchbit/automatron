@@ -31,10 +31,7 @@ import org.touchbit.qa.automatron.resource.mapping.PostRequest;
 import org.touchbit.qa.automatron.resource.param.GetUserListQuery;
 import org.touchbit.qa.automatron.resource.param.GetUserPath;
 import org.touchbit.qa.automatron.resource.param.LogoutQueryParameters;
-import org.touchbit.qa.automatron.resource.spec.GetUserListSpec;
-import org.touchbit.qa.automatron.resource.spec.GetUserSpec;
-import org.touchbit.qa.automatron.resource.spec.LoginSpec;
-import org.touchbit.qa.automatron.resource.spec.LogoutSpec;
+import org.touchbit.qa.automatron.resource.spec.*;
 import org.touchbit.qa.automatron.service.AccountingService;
 
 import javax.validation.Valid;
@@ -52,7 +49,7 @@ public class AccountingApiController {
 
     private final AccountingService accountingService;
 
-    @LoginSpec()
+    @PostLoginSpec()
     @PostRequest(path = "/api/accounting/login")
     public Response<LoginResponseDTO> login(@RequestBody @Valid LoginRequestDTO request) {
         log.info(" --> User login request");
@@ -61,7 +58,7 @@ public class AccountingApiController {
         return new Response<>(responseBody, HttpStatus.OK);
     }
 
-    @LogoutSpec()
+    @GetLogoutSpec()
     @GetRequest(path = "/api/accounting/logout")
     public Response<Void> logout(@RequestHeader HttpHeaders headers,
                                  @Valid LogoutQueryParameters parameters) {
@@ -94,13 +91,13 @@ public class AccountingApiController {
         return new Response<>(responseBody, HttpStatus.OK);
     }
 
-    @GetUserSpec()
+    @PostUserSpec()
     @PostRequest(path = "/api/accounting/users/")
     public Response<UserResponseDTO> postUser(@RequestHeader HttpHeaders headers,
                                               @RequestBody @Valid UserRequestDTO request) {
         log.info(" --> Add user request");
-//        accountingService.authorizeAdmin(headers);
-        final UserResponseDTO responseBody = accountingService.addNewUser(request);
+        final Session session = accountingService.authorizeAdmin(headers);
+        final UserResponseDTO responseBody = accountingService.addNewUser(session, request);
         log.info(" <-- Completed successfully. Return user with login: {}", responseBody.login());
         return new Response<>(responseBody, HttpStatus.OK);
     }

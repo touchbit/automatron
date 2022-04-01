@@ -17,8 +17,10 @@ import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.ExampleObject;
 import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.parameters.RequestBody;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import org.touchbit.qa.automatron.constant.APIExamples;
+import org.touchbit.qa.automatron.pojo.accounting.LoginRequestDTO;
+import org.touchbit.qa.automatron.pojo.accounting.LoginResponseDTO;
 import org.touchbit.qa.automatron.pojo.error.ErrorDTO;
 
 import java.lang.annotation.ElementType;
@@ -29,26 +31,45 @@ import java.lang.annotation.Target;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 import static org.touchbit.qa.automatron.constant.I18N.*;
 import static org.touchbit.qa.automatron.constant.ResourceConstants.*;
-import static org.touchbit.qa.automatron.resource.spec.LogoutSpec.EXAMPLE_400;
+import static org.touchbit.qa.automatron.resource.spec.PostLoginSpec.*;
 
 @Target({ElementType.METHOD})
 @Retention(RetentionPolicy.RUNTIME)
-@Operation(tags = ACCOUNTING_TAG, summary = I18N_1648397948840, responses = {
-        @ApiResponse(responseCode = "204", description = I18N_1648397690214),
+@Operation(tags = ACCOUNTING_TAG, summary = I18N_1648168212897, requestBody =
+@RequestBody(content = @Content(mediaType = APPLICATION_JSON_VALUE, schema =
+@Schema(implementation = LoginRequestDTO.class))), responses = {
+        @ApiResponse(responseCode = "200", description = I18N_1648168229890, content = {
+                @Content(mediaType = APPLICATION_JSON_VALUE, schema =
+                @Schema(implementation = LoginResponseDTO.class))}),
         @ApiResponse(responseCode = "4xx", description = I18N_1648168086907, content = {
                 @Content(mediaType = APPLICATION_JSON_VALUE, array =
                 @ArraySchema(schema =
                 @Schema(implementation = ErrorDTO.class)), examples = {
                         @ExampleObject(summary = EX_400_BAD_REQUEST_SUMMARY, value = EXAMPLE_400, name = I18N_1648168095253),
-                        @ExampleObject(summary = EX_403_FORBIDDEN_SUMMARY, value = APIExamples.EX_CODE_403, name = I18N_1648168125864),
+                        @ExampleObject(summary = EX_401_UNAUTHORIZED_SUMMARY, value = EXAMPLE_401, name = I18N_1648168104107),
+                        @ExampleObject(summary = EX_403_FORBIDDEN_SUMMARY, value = EXAMPLE_403, name = I18N_1648168125864),
                 })})})
-public @interface LogoutSpec {
+public @interface PostLoginSpec {
 
     String EXAMPLE_400 = """
             [{
               "type": "CONTRACT",
-              "source": "Header.Authorization",
+              "source": "authentication.password",
               "reason": "must not be null"
+            }]
+            """;
+    String EXAMPLE_401 = """
+            [{
+              "type": "ACCESS",
+              "source": "login/password",
+              "reason": "I18N_1648168111078"
+            }]
+            """;
+    String EXAMPLE_403 = """
+            [{
+              "type": "ACCESS",
+              "source": "User{status=BLOCKED}",
+              "reason": "I18N_1648168132812"
             }]
             """;
 

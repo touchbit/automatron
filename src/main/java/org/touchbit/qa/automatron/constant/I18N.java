@@ -22,6 +22,10 @@ import java.util.stream.Collectors;
 
 public class I18N {
 
+    public static final String I18N_1648779001575 = "I18N_1648779001575";
+    public static final String I18N_1648778918943 = "I18N_1648778918943";
+    public static final String I18N_1648778643411 = "I18N_1648778643411";
+    public static final String I18N_1648778601039 = "I18N_1648778601039";
     public static final String I18N_1648770063686 = "I18N_1648770063686";
     public static final String I18N_1648769955903 = "I18N_1648769955903";
     public static final String I18N_1648766458371 = "I18N_1648766458371";
@@ -40,11 +44,8 @@ public class I18N {
     public static final String I18N_1648689343652 = "I18N_1648689343652";
     public static final String I18N_1648688789502 = "I18N_1648688789502";
     public static final String I18N_1648688724365 = "I18N_1648688724365";
-    public static final String I18N_1648685296628 = "I18N_1648685296628";
-    public static final String I18N_1648685056666 = "I18N_1648685056666";
     public static final String I18N_1648684256974 = "I18N_1648684256974";
     public static final String I18N_1648684060672 = "I18N_1648684060672";
-    public static final String I18N_1648678859481 = "I18N_1648678859481";
     public static final String I18N_1648678768714 = "I18N_1648678768714";
     public static final String I18N_1648673602540 = "I18N_1648673602540";
     public static final String I18N_1648673498876 = "I18N_1648673498876";
@@ -90,11 +91,12 @@ public class I18N {
     public static final String I18N_1648168178176 = "I18N_1648168178176";
 
     // ---------------------------- EXAMPLES ----------------------------
-    public static final String I18N_1648673246598 = "I18N_1648673246598";
+    @SuppressWarnings("unused")
     public static final String I18N_1648168186580 = "I18N_1648168186580";
+    @SuppressWarnings("unused")
     public static final String I18N_1648168193476 = "I18N_1648168193476";
+    @SuppressWarnings("unused")
     public static final String I18N_1648688495987 = "I18N_1648688495987";
-    public static final String I18N_1648168250730 = "I18N_1648168250730";
 
     public static List<String> getKeys() {
         return FieldUtils.getAllFieldsList(I18N.class).stream()
