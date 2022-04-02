@@ -21,6 +21,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RestController;
+import org.touchbit.qa.automatron.constant.Bug;
 import org.touchbit.qa.automatron.db.entity.Session;
 import org.touchbit.qa.automatron.pojo.accounting.login.LoginRequestDTO;
 import org.touchbit.qa.automatron.pojo.accounting.login.LoginResponseDTO;
@@ -39,6 +40,7 @@ import org.touchbit.qa.automatron.service.AccountingService;
 import javax.validation.Valid;
 import java.util.List;
 
+import static org.touchbit.qa.automatron.constant.Bug.BUG_0013;
 import static org.touchbit.qa.automatron.constant.I18N.I18N_1648168206689;
 import static org.touchbit.qa.automatron.constant.ResourceConstants.ACCOUNTING_TAG;
 
@@ -139,7 +141,7 @@ public class AccountingApiController {
         final Session session = accountingService.authorize(headers);
         final String login = parameters.getLogin();
         if (login == null || login.length() < 5 || login.length() > 25) {
-            // TODO bug
+            Bug.register(BUG_0013);
         }
         accountingService.deleteUser(session, parameters, queryParams.getMode());
         log.info(" <-- Completed successfully. Deleted user login: {}", login);
