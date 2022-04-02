@@ -93,14 +93,21 @@ public class OpenApiConfig {
 
     private OperationCustomizer addSecurityItem() {
         return (Operation operation, HandlerMethod handlerMethod) -> {
-//            if (operation.getParameters() != null) {
-//                operation.getParameters().removeIf(p ->
-//                        HEADER.toString().equals(p.getIn()) &&
-//                        SECURITY_SCHEME_HEADER.equalsIgnoreCase(p.getName()));
-//            }
             if (getOperationPaths(handlerMethod).stream().anyMatch(path -> path.contains("/api/bugs") ||
                                                                            path.contains("/api/accounting/login"))) {
                 return operation;
+            }
+            if (configService.isGlobalAuthorizationHeaderEnabled()) {
+                List<Parameter> parameters = operation.getParameters();
+                if (parameters == null) {
+                    parameters = new ArrayList<>();
+                }
+                parameters.add(new Parameter()
+                        .in(HEADER.toString())
+                        .name(SECURITY_SCHEME_HEADER)
+                        .description(I18N_1648880914205)
+                        .example("Bearer b6017ba4-79ef-4dc1-bd9a-6d039406a662"));
+                operation.setParameters(parameters);
             }
             return operation.addSecurityItem(new SecurityRequirement().addList(SECURITY_SCHEME_KEY));
         };

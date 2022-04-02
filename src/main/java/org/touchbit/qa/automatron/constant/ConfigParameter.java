@@ -26,6 +26,7 @@ public enum ConfigParameter {
     ENABLE_DEFAULT_5_XX_RESPONSE(Boolean.TRUE.toString(), SWITCH, Set.of(Boolean.TRUE.toString(), Boolean.FALSE.toString())),
     ENABLE_DEFAULT_LOCALE_HEADER(Boolean.TRUE.toString(), SWITCH, Set.of(Boolean.TRUE.toString(), Boolean.FALSE.toString())),
     ENABLE_DEFAULT_REQUEST_ID_HEADER(Boolean.TRUE.toString(), SWITCH, Set.of(Boolean.TRUE.toString(), Boolean.FALSE.toString())),
+    ENABLE_DEFAULT_AUTHORIZATION_HEADER(Boolean.TRUE.toString(), SWITCH, Set.of(Boolean.TRUE.toString(), Boolean.FALSE.toString())),
     DEFAULT_LANGUAGE("EN", SWITCH, Set.of("RU", "EN")),
     ;
 

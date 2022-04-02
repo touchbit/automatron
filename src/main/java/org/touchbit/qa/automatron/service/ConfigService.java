@@ -84,4 +84,15 @@ public record ConfigService(ConfigurationRepository repository) {
         return result;
     }
 
+    public boolean isGlobalAuthorizationHeaderEnabled() {
+        final Config config = repository.findById(ConfigParameter.ENABLE_DEFAULT_AUTHORIZATION_HEADER).orElse(null);
+        final boolean result;
+        if (config != null) {
+            result = Boolean.parseBoolean(config.value());
+        } else {
+            result = Boolean.parseBoolean(ConfigParameter.ENABLE_DEFAULT_AUTHORIZATION_HEADER.getDefaultValue());
+        }
+        return result;
+    }
+
 }
