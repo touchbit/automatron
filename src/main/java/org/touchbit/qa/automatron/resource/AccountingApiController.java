@@ -130,12 +130,12 @@ public class AccountingApiController {
         return new Response<>(responseBody, HttpStatus.OK);
     }
 
-    //    @PatchUserSpec()
+    @DeleteUserSpec()
     @DeleteRequest(path = "/api/accounting/users/{login}")
     public Response<Void> deleteUser(@RequestHeader HttpHeaders headers,
                                      UserLoginPath parameters, // bug
                                      @Valid DeleteUserQuery queryParams) {
-        log.info(" --> Replace user request");
+        log.info(" --> Delete user request");
         final Session session = accountingService.authorize(headers);
         final String login = parameters.getLogin();
         if (login == null || login.length() < 5 || login.length() > 25) {
