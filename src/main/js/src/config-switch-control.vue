@@ -16,8 +16,8 @@
       <button
           v-for="switchOption in this.configMap.parameterValues"
           :key="switchOption"
-          class="button config-switch-control__level"
           :class="cssClass(switchOption)"
+          class="button config-switch-control__level"
           v-text="getLabel(switchOption)"
           @click.stop="select(switchOption)"
       />

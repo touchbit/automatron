@@ -59,10 +59,6 @@ public enum Bug {
         this.description = description;
     }
 
-    public String stringId() {
-        return String.valueOf(id);
-    }
-
     public static void register(final Bug bug) {
         final String rid = MDC.get(RID);
         if (rid == null || rid.isBlank()) {
@@ -87,6 +83,10 @@ public enum Bug {
         } finally {
             BUGS.remove(rid);
         }
+    }
+
+    public String stringId() {
+        return String.valueOf(id);
     }
 
     public enum BugType {

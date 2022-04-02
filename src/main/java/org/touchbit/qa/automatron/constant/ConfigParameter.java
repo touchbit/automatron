@@ -15,7 +15,6 @@ package org.touchbit.qa.automatron.constant;
 import lombok.Getter;
 
 import java.util.Arrays;
-import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -27,7 +26,7 @@ public enum ConfigParameter {
     ENABLE_DEFAULT_5_XX_RESPONSE(Boolean.TRUE.toString(), SWITCH, Set.of(Boolean.TRUE.toString(), Boolean.FALSE.toString())),
     ENABLE_DEFAULT_LOCALE_HEADER(Boolean.TRUE.toString(), SWITCH, Set.of(Boolean.TRUE.toString(), Boolean.FALSE.toString())),
     ENABLE_DEFAULT_REQUEST_ID_HEADER(Boolean.TRUE.toString(), SWITCH, Set.of(Boolean.TRUE.toString(), Boolean.FALSE.toString())),
-    DEFAULT_LANGUAGE("RU", SWITCH, Set.of("RU", "EN")),
+    DEFAULT_LANGUAGE("EN", SWITCH, Set.of("RU", "EN")),
     ;
 
     private final String defaultValue;

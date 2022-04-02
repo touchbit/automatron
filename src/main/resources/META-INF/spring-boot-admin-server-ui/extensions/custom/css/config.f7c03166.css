@@ -1,4 +1,22 @@
-.config-switch-control__level--inherited{opacity:.5}.config-switch-control__level--inherited:hover{opacity:1}
+/*
+ * Copyright (c) 2022 Shaburov Oleg
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+ * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
+ * OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
+ * IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR
+ * ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
+ * TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
+ * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+ */
+
+.config-switch-control__level--inherited {
+    opacity: .5
+}
+
+.config-switch-control__level--inherited:hover {
+    opacity: 1
+}
 
 /*!
  * Copyright 2014-2020 the original author or authors.
@@ -14,4 +32,32 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- */.details-header{margin-bottom:1.5rem;display:-webkit-box;display:-ms-flexbox;display:flex;-webkit-box-orient:vertical;-webkit-box-direction:normal;-ms-flex-direction:column;flex-direction:column;-webkit-box-align:center;-ms-flex-align:center;align-items:center}.details-header__urls{width:100%;text-align:center}.config__header{background-color:#fff;z-index:10;padding:.5em 1em}.config__toggle-scope{width:10em}
+ */
+.details-header {
+    margin-bottom: 1.5rem;
+    display: -webkit-box;
+    display: -ms-flexbox;
+    display: flex;
+    -webkit-box-orient: vertical;
+    -webkit-box-direction: normal;
+    -ms-flex-direction: column;
+    flex-direction: column;
+    -webkit-box-align: center;
+    -ms-flex-align: center;
+    align-items: center
+}
+
+.details-header__urls {
+    width: 100%;
+    text-align: center
+}
+
+.config__header {
+    background-color: #fff;
+    z-index: 10;
+    padding: .5em 1em
+}
+
+.config__toggle-scope {
+    width: 10em
+}

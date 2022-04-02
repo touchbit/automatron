@@ -5,7 +5,7 @@ The following resources are available:
 - [/doc](current_host_port/doc) - service documentation (swagger)
 - [/api](current_host_port/api) - API to be tested
 - [/h2](current_host_port/h2) - database UI Console
-- [/admin](current_host_port/admin) - admin panel for configuring the application
+- [/admin](current_host_port/admin/wallboard) - admin panel for configuring the application
 
 To access the database and the admin panel, a password is **not required**.
 

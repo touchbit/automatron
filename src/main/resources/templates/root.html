@@ -1,19 +1,35 @@
+<!--
+  ~ Copyright (c) 2022 Shaburov Oleg
+  ~
+  ~ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+  ~ EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
+  ~ OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
+  ~ IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR
+  ~ ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
+  ~ TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
+  ~ SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+  -->
+
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <title>Automatron</title>
-    <link rel="stylesheet" type="text/css" href="./swagger-ui/swagger-ui.css">
+    <!--suppress HtmlUnknownTarget -->
+    <link href="./swagger-ui/swagger-ui.css" rel="stylesheet" type="text/css">
     <style>
         html {
             box-sizing: border-box;
+            /*noinspection CssInvalidPropertyValue*/
             overflow: -moz-scrollbars-vertical;
             overflow-y: scroll;
         }
+
         *,
         *:before,
         *:after {
             box-sizing: inherit;
         }
+
         body {
             margin: 0;
             background: #fafafa;
@@ -28,7 +44,7 @@
             <div class="info">
                 <hgroup class="main">
                     <h2 class="title">Automatron<span>
-                        <sup><a th:text="${lang}" th:href="${lang_href}"></a></sup>
+                        <sup><a th:href="${lang_href}" th:text="${lang}"></a></sup>
                     </span>
                     </h2>
                 </hgroup>

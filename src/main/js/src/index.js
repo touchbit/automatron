@@ -14,36 +14,36 @@ import config from './config';
 import configEndpoint from './config-endpoint';
 
 SBA.use({
-  install({viewRegistry}) {
-    viewRegistry.addView({
-      name: 'config',  //<1>
-      path: '/config', //<2>
-      component: config, //<3>
-      label: 'Configuration', //<4>
-      order: 1000,
-    });
-  }
+    install({viewRegistry}) {
+        viewRegistry.addView({
+            name: 'config',  //<1>
+            path: '/config', //<2>
+            component: config, //<3>
+            label: 'Configuration', //<4>
+            order: 1000,
+        });
+    }
 });
 
 SBA.use({
-  install({viewRegistry, vueI18n}) {
-    viewRegistry.addView({
-      name: 'instances/config',
-      parent: 'instances', // <1>
-      path: 'config',
-      component: configEndpoint,
-      label: 'Configuration',
-      group: 'config', // <2>
-      order: 1000,
-      isEnabled: ({instance}) => instance.hasEndpoint('config') // <3>
-    });
+    install({viewRegistry, vueI18n}) {
+        viewRegistry.addView({
+            name: 'instances/config',
+            parent: 'instances', // <1>
+            path: 'config',
+            component: configEndpoint,
+            label: 'Configuration',
+            group: 'config', // <2>
+            order: 1000,
+            isEnabled: ({instance}) => instance.hasEndpoint('config') // <3>
+        });
 
-    vueI18n.mergeLocaleMessage('en', { // <4>
-      sidebar: {
-        custom : {
-          title : 'Config Extension'
-        }
-      }
-    });
-  }
+        vueI18n.mergeLocaleMessage('en', { // <4>
+            sidebar: {
+                custom: {
+                    title: 'Config Extension'
+                }
+            }
+        });
+    }
 });
