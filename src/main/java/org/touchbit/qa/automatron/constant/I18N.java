@@ -22,6 +22,7 @@ import java.util.stream.Collectors;
 
 public class I18N {
 
+    public static final String I18N_1648869878121 = "I18N_1648869878121";
     public static final String I18N_1648865056908 = "I18N_1648865056908";
     public static final String I18N_1648863454853 = "I18N_1648863454853";
     public static final String I18N_1648863377531 = "I18N_1648863377531";
@@ -108,6 +109,8 @@ public class I18N {
     public static final String I18N_1648168193476 = "I18N_1648168193476";
     @SuppressWarnings("unused")
     public static final String I18N_1648688495987 = "I18N_1648688495987";
+    @SuppressWarnings("unused")
+    public static final String I18N_1648870070924 = "I18N_1648870070924";
 
     public static List<String> getKeys() {
         return FieldUtils.getAllFieldsList(I18N.class).stream()

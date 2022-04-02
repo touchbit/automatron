@@ -25,9 +25,11 @@ import org.touchbit.qa.automatron.db.entity.Session;
 import org.touchbit.qa.automatron.pojo.accounting.login.LoginRequestDTO;
 import org.touchbit.qa.automatron.pojo.accounting.login.LoginResponseDTO;
 import org.touchbit.qa.automatron.pojo.accounting.user.CreateUserRequestDTO;
+import org.touchbit.qa.automatron.pojo.accounting.user.PatchUserRequestDTO;
 import org.touchbit.qa.automatron.pojo.accounting.user.PutUserRequestDTO;
 import org.touchbit.qa.automatron.pojo.accounting.user.UserResponseDTO;
 import org.touchbit.qa.automatron.resource.mapping.GetRequest;
+import org.touchbit.qa.automatron.resource.mapping.PatchRequest;
 import org.touchbit.qa.automatron.resource.mapping.PostRequest;
 import org.touchbit.qa.automatron.resource.mapping.PutRequest;
 import org.touchbit.qa.automatron.resource.param.GetUserListQuery;
@@ -113,6 +115,19 @@ public class AccountingApiController {
         final Session session = accountingService.authorize(headers);
         request.login(parameters.getLogin());
         final UserResponseDTO responseBody = accountingService.putUser(session, request);
+        log.info(" <-- Completed successfully. Return user with login: {}", responseBody.login());
+        return new Response<>(responseBody, HttpStatus.OK);
+    }
+
+    @PatchUserSpec()
+    @PatchRequest(path = "/api/accounting/users/{login}")
+    public Response<UserResponseDTO> patchUser(@RequestHeader HttpHeaders headers,
+                                               @Valid UserLoginPath parameters,
+                                               @RequestBody @Valid PatchUserRequestDTO request) {
+        log.info(" --> Replace user request");
+        final Session session = accountingService.authorize(headers);
+        request.login(parameters.getLogin());
+        final UserResponseDTO responseBody = accountingService.patchUser(session, request);
         log.info(" <-- Completed successfully. Return user with login: {}", responseBody.login());
         return new Response<>(responseBody, HttpStatus.OK);
     }

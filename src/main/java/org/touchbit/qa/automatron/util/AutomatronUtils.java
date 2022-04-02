@@ -19,6 +19,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Locale;
 import java.util.Set;
+import java.util.function.BiConsumer;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -66,6 +67,12 @@ public class AutomatronUtils {
             return Class.forName(name);
         } catch (ClassNotFoundException e) {
             throw new RuntimeException("Unexpected class name loaded: " + name, e);
+        }
+    }
+
+    public static <T, R> void doIfNotNull(T target, BiConsumer<T, R> consumer, R value) {
+        if (value != null) {
+            consumer.accept(target, value);
         }
     }
 

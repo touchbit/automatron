@@ -27,6 +27,7 @@ import org.touchbit.qa.automatron.db.repository.SessionRepository;
 import org.touchbit.qa.automatron.db.repository.UserRepository;
 import org.touchbit.qa.automatron.pojo.accounting.login.LoginResponseDTO;
 import org.touchbit.qa.automatron.pojo.accounting.user.CreateUserRequestDTO;
+import org.touchbit.qa.automatron.pojo.accounting.user.PatchUserRequestDTO;
 import org.touchbit.qa.automatron.pojo.accounting.user.PutUserRequestDTO;
 import org.touchbit.qa.automatron.pojo.accounting.user.UserResponseDTO;
 import org.touchbit.qa.automatron.resource.param.GetUserListQuery;
@@ -239,18 +240,8 @@ public class AccountingService {
         return userToGetUserResponseDTO(savedUser);
     }
 
-    private boolean isNotUpdatable(UserRole changerRole, UserRole targetRole) {
-        if (changerRole.equals(MEMBER)) {
-            return true;
-        }
-        if (changerRole.equals(ADMIN) && (ADMIN.equals(targetRole) || OWNER.equals(targetRole))) {
-            return true;
-        }
-        return changerRole.equals(OWNER) && OWNER.equals(targetRole);
-    }
-
     public UserResponseDTO putUser(Session session, PutUserRequestDTO request) {
-        log.debug("Creating a new user in the system with a login: {}", request.login());
+        log.debug("Update user in the system with a login: {}", request.login());
         final User sessionUser = session.user();
         final UserRole changerRole = sessionUser.role();
         final UserRole targetRole = request.role();
@@ -281,6 +272,58 @@ public class AccountingService {
         userDAO.role(request.role());
         final User result = dbSaveUser(userDAO);
         return userToGetUserResponseDTO(result);
+    }
+
+    public UserResponseDTO patchUser(Session session, PatchUserRequestDTO request) {
+        log.debug("Update a new user in the system with a login: {}", request.login());
+        final User sessionUser = session.user();
+        final UserRole changerRole = sessionUser.role();
+        final UserRole targetRole = request.role();
+        final boolean isSelfChange = sessionUser.login().equals(request.login());
+        log.debug("Session user: {login: {}, role: {}}", sessionUser.login(), changerRole);
+        log.debug("Updated user: {login: {}, role: {}}", request.login(), targetRole);
+        final boolean isCanUpdateUser;
+        try {
+            isCanUpdateUser = changerRole.canChangeUserRoleTo(targetRole, isSelfChange);
+        } catch (NullPointerException e) {
+            // TODO bug
+            throw e;
+        }
+        log.debug("Is self update: {}", isSelfChange);
+        log.debug("Is can update user: {}", isCanUpdateUser);
+        if (!isCanUpdateUser) {
+            final String source = errSource(session, changerRole, "role");
+            throw AutomatronException.http403InsufficientRights(source);
+        }
+        if (!userRepository.existsById(request.login())) {
+            log.error("User with login '{}' not exists", request.login());
+            throw AutomatronException.http404(AutomatronUtils.errSource(request, PatchUserRequestDTO::login, "login"));
+        }
+        final User userDAO = dbGetByLogin(request.login());
+        final UserRole currentRole = userDAO.role();
+        if (!isSelfChange && isNotUpdatable(changerRole, currentRole)) {
+            final String source = errSource(session, changerRole, "role");
+            throw AutomatronException.http403InsufficientRights(source);
+        }
+        AutomatronUtils.doIfNotNull(userDAO, User::status, request.status());
+        AutomatronUtils.doIfNotNull(userDAO, User::role, request.role());
+        final User result = dbSaveUser(userDAO);
+        final UserResponseDTO userResponseDTO = userToGetUserResponseDTO(result);
+        if (sessionUser.login().equals(userResponseDTO.login())) {
+            userResponseDTO.password(result.password());
+            // TODO bug
+        }
+        return userResponseDTO;
+    }
+
+    private boolean isNotUpdatable(UserRole changerRole, UserRole targetRole) {
+        if (changerRole.equals(MEMBER)) {
+            return true;
+        }
+        if (changerRole.equals(ADMIN) && (ADMIN.equals(targetRole) || OWNER.equals(targetRole))) {
+            return true;
+        }
+        return changerRole.equals(OWNER) && OWNER.equals(targetRole);
     }
 
     private User dbGetByLogin(String login) {
