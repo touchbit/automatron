@@ -46,12 +46,16 @@ public class AutomatronException extends RuntimeException {
         return new AutomatronException(UNAUTHORIZED, ACCESS, source, I18N_1648168111078);
     }
 
+    public static AutomatronException http403(String source, String reason) {
+        return new AutomatronException(FORBIDDEN, ACCESS, source, reason);
+    }
+
     public static AutomatronException http403AccessDenied(String source) {
-        return new AutomatronException(FORBIDDEN, ACCESS, source, I18N_1648168132812);
+        return http403(source, I18N_1648168132812);
     }
 
     public static AutomatronException http403InsufficientRights(String source) {
-        return new AutomatronException(FORBIDDEN, ACCESS, source, I18N_1648787155513);
+        return http403(source, I18N_1648787155513);
     }
 
     public static AutomatronException http404(String source) {

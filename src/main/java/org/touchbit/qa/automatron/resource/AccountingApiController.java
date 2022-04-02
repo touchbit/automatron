@@ -28,10 +28,8 @@ import org.touchbit.qa.automatron.pojo.accounting.user.CreateUserRequestDTO;
 import org.touchbit.qa.automatron.pojo.accounting.user.PatchUserRequestDTO;
 import org.touchbit.qa.automatron.pojo.accounting.user.PutUserRequestDTO;
 import org.touchbit.qa.automatron.pojo.accounting.user.UserResponseDTO;
-import org.touchbit.qa.automatron.resource.mapping.GetRequest;
-import org.touchbit.qa.automatron.resource.mapping.PatchRequest;
-import org.touchbit.qa.automatron.resource.mapping.PostRequest;
-import org.touchbit.qa.automatron.resource.mapping.PutRequest;
+import org.touchbit.qa.automatron.resource.mapping.*;
+import org.touchbit.qa.automatron.resource.param.DeleteUserQuery;
 import org.touchbit.qa.automatron.resource.param.GetUserListQuery;
 import org.touchbit.qa.automatron.resource.param.LogoutQueryParameters;
 import org.touchbit.qa.automatron.resource.param.UserLoginPath;
@@ -130,6 +128,22 @@ public class AccountingApiController {
         final UserResponseDTO responseBody = accountingService.patchUser(session, request);
         log.info(" <-- Completed successfully. Return user with login: {}", responseBody.login());
         return new Response<>(responseBody, HttpStatus.OK);
+    }
+
+    //    @PatchUserSpec()
+    @DeleteRequest(path = "/api/accounting/users/{login}")
+    public Response<Void> deleteUser(@RequestHeader HttpHeaders headers,
+                                     UserLoginPath parameters, // bug
+                                     @Valid DeleteUserQuery queryParams) {
+        log.info(" --> Replace user request");
+        final Session session = accountingService.authorize(headers);
+        final String login = parameters.getLogin();
+        if (login == null || login.length() < 5 || login.length() > 25) {
+            // TODO bug
+        }
+        accountingService.deleteUser(session, parameters, queryParams.getMode());
+        log.info(" <-- Completed successfully. Deleted user login: {}", login);
+        return new Response<>(null, HttpStatus.NO_CONTENT);
     }
 
 }

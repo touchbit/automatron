@@ -14,12 +14,12 @@ package org.touchbit.qa.automatron.constant;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 
-import static org.touchbit.qa.automatron.constant.I18N.I18N_1648678768714;
+import static org.touchbit.qa.automatron.constant.I18N.I18N_1648875211094;
 
-@Schema(description = I18N_1648678768714, example = "PRIMARY")
-public enum PhoneType {
+@Schema(description = I18N_1648875211094, example = "MARK", defaultValue = "MARK")
+public enum DeleteMode {
 
-    PRIMARY,
-    RECOVERY,
+    MARK,
+    PERMANENTLY,
 
 }

@@ -93,13 +93,13 @@ public class OpenApiConfig {
 
     private OperationCustomizer addSecurityItem() {
         return (Operation operation, HandlerMethod handlerMethod) -> {
-            if (operation.getParameters() != null) {
-                operation.getParameters().removeIf(p ->
-                        HEADER.toString().equals(p.getIn()) &&
-                        SECURITY_SCHEME_HEADER.equalsIgnoreCase(p.getName()));
-            }
-            if (getOperationPaths(handlerMethod).stream()
-                    .anyMatch(path -> path.contains("/api/bugs") || path.contains("/api/accounting/login"))) {
+//            if (operation.getParameters() != null) {
+//                operation.getParameters().removeIf(p ->
+//                        HEADER.toString().equals(p.getIn()) &&
+//                        SECURITY_SCHEME_HEADER.equalsIgnoreCase(p.getName()));
+//            }
+            if (getOperationPaths(handlerMethod).stream().anyMatch(path -> path.contains("/api/bugs") ||
+                                                                           path.contains("/api/accounting/login"))) {
                 return operation;
             }
             return operation.addSecurityItem(new SecurityRequirement().addList(SECURITY_SCHEME_KEY));

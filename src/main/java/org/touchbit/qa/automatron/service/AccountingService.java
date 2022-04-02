@@ -17,10 +17,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpHeaders;
 import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Service;
-import org.touchbit.qa.automatron.constant.Bug;
-import org.touchbit.qa.automatron.constant.LogoutMode;
-import org.touchbit.qa.automatron.constant.UserRole;
-import org.touchbit.qa.automatron.constant.UserStatus;
+import org.touchbit.qa.automatron.constant.*;
 import org.touchbit.qa.automatron.db.entity.Session;
 import org.touchbit.qa.automatron.db.entity.User;
 import org.touchbit.qa.automatron.db.repository.SessionRepository;
@@ -43,8 +40,11 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 
 import static org.touchbit.qa.automatron.constant.Bug.*;
+import static org.touchbit.qa.automatron.constant.DeleteMode.PERMANENTLY;
 import static org.touchbit.qa.automatron.constant.I18N.I18N_1648168178176;
+import static org.touchbit.qa.automatron.constant.I18N.I18N_1648878108525;
 import static org.touchbit.qa.automatron.constant.UserRole.*;
+import static org.touchbit.qa.automatron.constant.UserStatus.DELETED;
 import static org.touchbit.qa.automatron.util.AutomatronUtils.errSource;
 
 @Slf4j
@@ -68,8 +68,8 @@ public class AccountingService {
             log.error("Incorrect password received for login '{}'", login);
             throw AutomatronException.http401(source401);
         }
-        if (user.status().equals(UserStatus.DELETED)) {
-            log.error("Authentication is denied. The user status: {}", UserStatus.DELETED);
+        if (user.status().equals(DELETED)) {
+            log.error("Authentication is denied. The user status: {}", DELETED);
             throw AutomatronException.http403AccessDenied(errSource(user, User::status, "status"));
         }
         if (user.status().equals(UserStatus.BLOCKED)) {
@@ -275,7 +275,7 @@ public class AccountingService {
     }
 
     public UserResponseDTO patchUser(Session session, PatchUserRequestDTO request) {
-        log.debug("Update a new user in the system with a login: {}", request.login());
+        log.debug("Update user in the system with a login: {}", request.login());
         final User sessionUser = session.user();
         final UserRole changerRole = sessionUser.role();
         final UserRole targetRole = request.role();
@@ -352,6 +352,56 @@ public class AccountingService {
             }
             throw e;
         }
+    }
+
+    public void deleteUser(Session session, UserLoginPath path, DeleteMode mode) {
+        log.debug("Update user in the system with a login: {}", path.getLogin());
+        final User sessionUser = session.user();
+        final UserRole changerRole = sessionUser.role();
+        if (!userRepository.existsByLogin(path.getLogin())) {
+            return;
+        }
+        final User userDAO = dbGetByLogin(path.getLogin());
+        final UserRole targetRole = userDAO.role();
+        final boolean isSelfChange = sessionUser.login().equals(path.getLogin());
+        log.debug("Session user: {login: {}, role: {}}", sessionUser.login(), changerRole);
+        log.debug("Updated user: {login: {}, role: {}}", path.getLogin(), targetRole);
+        final boolean isCanUpdateUser;
+        try {
+            isCanUpdateUser = changerRole.canChangeUserRoleTo(targetRole, isSelfChange);
+        } catch (NullPointerException e) {
+            Bug.register(BUG_0011);
+            throw e;
+        }
+        log.debug("Is self update: {}", isSelfChange);
+        log.debug("Is can update user: {}", isCanUpdateUser);
+        if (!isCanUpdateUser) {
+            final String source = errSource(session, changerRole, "role");
+            throw AutomatronException.http403InsufficientRights(source);
+        }
+        if (!userRepository.existsById(path.getLogin())) {
+            log.error("User with login '{}' not exists", path.getLogin());
+            throw AutomatronException.http404(AutomatronUtils.errSource(path, UserLoginPath::getLogin, "login"));
+        }
+        if (!isSelfChange && isNotUpdatable(changerRole, targetRole)) {
+            final String source = errSource(session, changerRole, "role");
+            throw AutomatronException.http403InsufficientRights(source);
+        }
+        if (PERMANENTLY.equals(mode)) {
+            if (isSelfChange) {
+                throw AutomatronException.http403("Rights restrictions", I18N_1648878108525);
+            }
+            dbDeleteUser(userDAO);
+        } else {
+            userDAO.status(DELETED);
+            dbSaveUser(userDAO);
+        }
+    }
+
+    private void dbDeleteUser(final User userDAO) {
+        log.debug("DB: Delete user with login: {}", userDAO.login());
+        dbDeleteSessionByUser(userDAO);
+        userRepository.delete(userDAO);
     }
 
 }
