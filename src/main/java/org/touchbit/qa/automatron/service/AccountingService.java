@@ -286,7 +286,7 @@ public class AccountingService {
         try {
             isCanUpdateUser = changerRole.canChangeUserRoleTo(targetRole, isSelfChange);
         } catch (NullPointerException e) {
-            // TODO bug
+            Bug.register(BUG_0011);
             throw e;
         }
         log.debug("Is self update: {}", isSelfChange);
@@ -311,7 +311,7 @@ public class AccountingService {
         final UserResponseDTO userResponseDTO = userToGetUserResponseDTO(result);
         if (sessionUser.login().equals(userResponseDTO.login())) {
             userResponseDTO.password(result.password());
-            // TODO bug
+            Bug.register(BUG_0012);
         }
         return userResponseDTO;
     }
