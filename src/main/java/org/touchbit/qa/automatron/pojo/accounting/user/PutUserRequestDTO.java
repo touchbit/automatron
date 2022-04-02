@@ -27,7 +27,6 @@ import org.touchbit.qa.automatron.pojo.POJO;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
-import static org.touchbit.qa.automatron.constant.I18N.I18N_1648168739660;
 import static org.touchbit.qa.automatron.constant.I18N.I18N_1648168744616;
 
 @Getter
@@ -36,20 +35,18 @@ import static org.touchbit.qa.automatron.constant.I18N.I18N_1648168744616;
 @Builder
 @ToString
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class UpdateUserRequestDTO extends POJO {
+public class PutUserRequestDTO extends POJO {
 
-    @JsonProperty("login")
-    @Schema(description = I18N_1648168739660, example = "touchbit")
-    private @NotNull @Size(min = 2, max = 20) String login;
+    private String login;
 
     @JsonProperty("password")
     @Schema(description = I18N_1648168744616, example = "touchbit", hidden = true) // bug
     private @Size(min = 5, max = 36) String password;
 
     @JsonProperty("status")
-    private UserStatus status;
+    private @NotNull UserStatus status;
 
     @JsonProperty("role")
-    private UserRole role;
+    private @NotNull UserRole role;
 
 }

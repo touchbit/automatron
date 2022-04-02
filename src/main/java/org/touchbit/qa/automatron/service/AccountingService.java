@@ -27,11 +27,11 @@ import org.touchbit.qa.automatron.db.repository.SessionRepository;
 import org.touchbit.qa.automatron.db.repository.UserRepository;
 import org.touchbit.qa.automatron.pojo.accounting.login.LoginResponseDTO;
 import org.touchbit.qa.automatron.pojo.accounting.user.CreateUserRequestDTO;
-import org.touchbit.qa.automatron.pojo.accounting.user.UpdateUserRequestDTO;
+import org.touchbit.qa.automatron.pojo.accounting.user.PutUserRequestDTO;
 import org.touchbit.qa.automatron.pojo.accounting.user.UserResponseDTO;
 import org.touchbit.qa.automatron.resource.param.GetUserListQuery;
-import org.touchbit.qa.automatron.resource.param.GetUserPath;
 import org.touchbit.qa.automatron.resource.param.LogoutQueryParameters;
+import org.touchbit.qa.automatron.resource.param.UserLoginPath;
 import org.touchbit.qa.automatron.util.AutomatronException;
 import org.touchbit.qa.automatron.util.AutomatronUtils;
 
@@ -191,13 +191,10 @@ public class AccountingService {
 
     private List<User> dbFindAllByFilter(GetUserListQuery filter) {
         log.debug("DB: Search users by filter: {}", filter);
-        // TODO Bug
-        // the password must be stored encrypted
-        // the password should under no circumstances be returned to the user
         return userRepository.findAllByFilter(filter.getLogin(), filter.getStatus(), filter.getRole());
     }
 
-    public UserResponseDTO getUser(GetUserPath pathParameters) {
+    public UserResponseDTO getUser(UserLoginPath pathParameters) {
         final User user = dbFindUserByLogin(pathParameters.getLogin());
         if (user == null) {
             Bug.register(BUG_0005);
@@ -252,7 +249,7 @@ public class AccountingService {
         return changerRole.equals(OWNER) && OWNER.equals(targetRole);
     }
 
-    public UserResponseDTO putUser(Session session, UpdateUserRequestDTO request) {
+    public UserResponseDTO putUser(Session session, PutUserRequestDTO request) {
         log.debug("Creating a new user in the system with a login: {}", request.login());
         final User sessionUser = session.user();
         final UserRole changerRole = sessionUser.role();
@@ -269,7 +266,7 @@ public class AccountingService {
         }
         if (!userRepository.existsById(request.login())) {
             log.error("User with login '{}' not exists", request.login());
-            throw AutomatronException.http404(AutomatronUtils.errSource(request, UpdateUserRequestDTO::login, "login"));
+            throw AutomatronException.http404(AutomatronUtils.errSource(request, PutUserRequestDTO::login, "login"));
         }
         final User userDAO = dbGetByLogin(request.login());
         final UserRole currentRole = userDAO.role();

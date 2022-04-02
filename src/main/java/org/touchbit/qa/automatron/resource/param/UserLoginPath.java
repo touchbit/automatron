@@ -20,6 +20,7 @@ import lombok.ToString;
 import org.springdoc.api.annotations.ParameterObject;
 import org.touchbit.qa.automatron.annotation.PathPOJO;
 
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 import static org.touchbit.qa.automatron.constant.I18N.I18N_1648168739660;
@@ -29,10 +30,11 @@ import static org.touchbit.qa.automatron.constant.I18N.I18N_1648168739660;
 @ToString
 @PathPOJO
 @ParameterObject
-public class GetUserPath {
+public class UserLoginPath {
 
     @Parameter(name = "login", in = ParameterIn.PATH, description = I18N_1648168739660)
     @Size(min = 5, max = 25)
+    @NotNull
     private String login;
 
 }

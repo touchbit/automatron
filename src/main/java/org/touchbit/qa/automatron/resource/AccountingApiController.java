@@ -25,14 +25,14 @@ import org.touchbit.qa.automatron.db.entity.Session;
 import org.touchbit.qa.automatron.pojo.accounting.login.LoginRequestDTO;
 import org.touchbit.qa.automatron.pojo.accounting.login.LoginResponseDTO;
 import org.touchbit.qa.automatron.pojo.accounting.user.CreateUserRequestDTO;
-import org.touchbit.qa.automatron.pojo.accounting.user.UpdateUserRequestDTO;
+import org.touchbit.qa.automatron.pojo.accounting.user.PutUserRequestDTO;
 import org.touchbit.qa.automatron.pojo.accounting.user.UserResponseDTO;
 import org.touchbit.qa.automatron.resource.mapping.GetRequest;
 import org.touchbit.qa.automatron.resource.mapping.PostRequest;
 import org.touchbit.qa.automatron.resource.mapping.PutRequest;
 import org.touchbit.qa.automatron.resource.param.GetUserListQuery;
-import org.touchbit.qa.automatron.resource.param.GetUserPath;
 import org.touchbit.qa.automatron.resource.param.LogoutQueryParameters;
+import org.touchbit.qa.automatron.resource.param.UserLoginPath;
 import org.touchbit.qa.automatron.resource.spec.*;
 import org.touchbit.qa.automatron.service.AccountingService;
 
@@ -85,7 +85,7 @@ public class AccountingApiController {
     @GetUserSpec()
     @GetRequest(path = "/api/accounting/users/{login}")
     public Response<UserResponseDTO> getUser(@RequestHeader HttpHeaders headers,
-                                             @Valid GetUserPath parameters) {
+                                             @Valid UserLoginPath parameters) {
         log.info(" --> Get user by login: {}", parameters.getLogin());
         accountingService.authorize(headers);
         final UserResponseDTO responseBody = accountingService.getUser(parameters);
@@ -104,12 +104,14 @@ public class AccountingApiController {
         return new Response<>(responseBody, HttpStatus.OK);
     }
 
-    //    @PostUserSpec()
-    @PutRequest(path = "/api/accounting/users")
+    @PutUserSpec()
+    @PutRequest(path = "/api/accounting/users/{login}")
     public Response<UserResponseDTO> putUser(@RequestHeader HttpHeaders headers,
-                                             @RequestBody @Valid UpdateUserRequestDTO request) {
+                                             @Valid UserLoginPath parameters,
+                                             @RequestBody @Valid PutUserRequestDTO request) {
         log.info(" --> Replace user request");
         final Session session = accountingService.authorize(headers);
+        request.login(parameters.getLogin());
         final UserResponseDTO responseBody = accountingService.putUser(session, request);
         log.info(" <-- Completed successfully. Return user with login: {}", responseBody.login());
         return new Response<>(responseBody, HttpStatus.OK);
