@@ -40,32 +40,24 @@ docker rm -f -v 6f1fa2a978dd
 
 ### Админка
 
-#### Конфигурация сервиса
-
-В админке вы можете выставить язык по умолчанию.
-
 <details>
-<summary>Так же есть возможность управлять отображением общих блоков в Swagger документации.</summary>
+<summary>Задать язык по умолчанию.</summary>
 
-![](./admin_conf_example.png)
+![](./admin_conf_lang.gif)
 
 </details>
 
 <details>
-<summary>Как это делается</summary>
+<summary>Показать/скрыть общие блоки в Swagger документации.</summary>
 
-![](./admin_conf_example.gif)
+![](./admin_conf_common_blocks_visible.gif)
 
 </details>
 
-#### Изменение уровня логирования
-
-В админке можно поменять уровень логирования сервиса и его компонентов. Это может пригодиться при ловле багов.
-
 <details>
-<summary>Как это делается</summary>
+<summary>Изменить уровень логирования.</summary>
 
-![](./admin_log_level.gif)
+![](./admin_conf_log_level.gif)
 
 </details>
 

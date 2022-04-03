@@ -15,7 +15,12 @@
     <section class="section">
       <div class="details-header">
         <h1 v-if="instance" class="title">Automatron configuration</h1>
+        <div class="details-header__urls">
+          <a href="http://localhost:8080/" class="button is-small "><span>Home</span></a>
+          <a href="http://localhost:8080/doc" class="button is-small "><span>Swagger</span></a>
+          <a href="http://localhost:8080/h2" class="button is-small "><span>DB UI console</span></a></div>
       </div>
+      <hr>
       <table class="table is-hoverable is-fullwidth">
         <thead>
         <tr>

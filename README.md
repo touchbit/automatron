@@ -82,7 +82,7 @@ In the admin panel, you can change the logging level of the service and its comp
 <details>
 <summary>How is it done</summary>
 
-![](./src/main/resources/static/admin_log_level.gif?raw=true)
+![](./src/main/resources/static/admin_conf_log_level.gif?raw=true)
 
 </details>
 

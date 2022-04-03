@@ -27,9 +27,9 @@ import java.lang.annotation.Target;
 
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 import static org.touchbit.qa.automatron.constant.I18N.*;
-import static org.touchbit.qa.automatron.constant.ResourceConstants.ACCOUNTING_TAG;
-import static org.touchbit.qa.automatron.constant.ResourceConstants.EX_400_BAD_REQUEST_SUMMARY;
+import static org.touchbit.qa.automatron.constant.ResourceConstants.*;
 import static org.touchbit.qa.automatron.resource.spec.DeleteUserSpec.EXAMPLE_400;
+import static org.touchbit.qa.automatron.resource.spec.DeleteUserSpec.EXAMPLE_404;
 
 @Target({ElementType.METHOD})
 @Retention(RetentionPolicy.RUNTIME)
@@ -40,6 +40,7 @@ import static org.touchbit.qa.automatron.resource.spec.DeleteUserSpec.EXAMPLE_40
                 @ArraySchema(schema =
                 @Schema(implementation = ErrorDTO.class)), examples = {
                         @ExampleObject(summary = EX_400_BAD_REQUEST_SUMMARY, value = EXAMPLE_400, name = I18N_1648168095253),
+                        @ExampleObject(summary = EX_404_ENTITY_NOT_FOUND_SUMMARY, value = EXAMPLE_404, name = I18N_1648689343652),
                 })})})
 public @interface DeleteUserSpec {
 
@@ -48,6 +49,13 @@ public @interface DeleteUserSpec {
               "type": "CONTRACT",
               "source": "Path.login",
               "reason": "I18N_1648870070924"
+            }]
+            """;
+    String EXAMPLE_404 = """
+            [{
+              "type": "CONDITION",
+              "source": "login",
+              "reason": "I18N_1648688495987"
             }]
             """;
 

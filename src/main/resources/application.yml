@@ -5,7 +5,8 @@ management:
   endpoints:
     web:
       exposure:
-        include: [ loggers,health,info,metrics,config,mappings ]
+        include: [ loggers,health,config ]
+#        include: [ loggers,health,info,metrics,config,mappings ]
 
 spring:
   application:

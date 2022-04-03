@@ -359,7 +359,9 @@ public class AccountingService {
         final User sessionUser = session.user();
         final UserRole changerRole = sessionUser.role();
         if (!userRepository.existsByLogin(path.getLogin())) {
-            return;
+            log.error("User with login '{}' not exists", path.getLogin());
+            final String source = errSource(path, UserLoginPath::getLogin, "login");
+            throw AutomatronException.http404(source);
         }
         final User userDAO = dbGetByLogin(path.getLogin());
         final UserRole targetRole = userDAO.role();
@@ -378,10 +380,6 @@ public class AccountingService {
         if (!isCanUpdateUser) {
             final String source = errSource(session, changerRole, "role");
             throw AutomatronException.http403InsufficientRights(source);
-        }
-        if (!userRepository.existsById(path.getLogin())) {
-            log.error("User with login '{}' not exists", path.getLogin());
-            throw AutomatronException.http404(AutomatronUtils.errSource(path, UserLoginPath::getLogin, "login"));
         }
         if (!isSelfChange && isNotUpdatable(changerRole, targetRole)) {
             final String source = errSource(session, changerRole, "role");
