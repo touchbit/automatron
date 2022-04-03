@@ -41,28 +41,28 @@ docker-compose up # run automatron
 ## Examples
 
 <details>
-<summary>Root page</summary>
+<summary><u>Root page ⇲</u></summary>
 
 ![](https://raw.githubusercontent.com/touchbit/automatron/main/.doc/root_page_example.png)
 
 </details>
 
 <details>
-<summary>Swagger doc</summary>
+<summary><u>Swagger doc ⇲</u></summary>
 
 ![](https://raw.githubusercontent.com/touchbit/automatron/main/.doc/swagger_page_example.png)
 
 </details>
 
 <details>
-<summary>DB UI Console</summary>
+<summary><u>DB UI Console ⇲</u></summary>
 
 ![](https://raw.githubusercontent.com/touchbit/automatron/main/.doc/h2_db_console_page_example.png)
 
 </details>
 
 <details>
-<summary>Admin UI</summary>
+<summary><u>Admin UI ⇲</u></summary>
 
 ![](https://raw.githubusercontent.com/touchbit/automatron/main/.doc/admin_page_example.png)
 
