@@ -8,9 +8,9 @@ After launch, the following resources will be available:
 
 - `/` - start page with basic information about the service
 - `/doc` - service documentation (swagger)
-- `/api` - API to be tested
-- `/h2` - database UI Console
 - `/admin` - admin panel for configuring the application
+- `/h2` - database UI Console
+- `/api` - API to be tested
 
 To access the database and the admin panel, a password is **not required**.
 
@@ -66,7 +66,7 @@ After launch, the `./h2` folder with the service database will be created.
 In addition to the [UI console](current_host_port/h2), you can connect to the database via tcp `jdbc:h2:tcp://localhost:9092/./h2/automatron;USER=admin;PASSWORD=;`
 
 If you somehow broke the service with incorrect data in the database, then delete the `./h2` folder and restart the service. When the service starts, the database will be re-created.   
-If you started the service using docker, then delete the container and start again.   
+If you started the service using docker, then delete the container and start again.
 
 ```bash
 docker container ls -a -f ancestor=touchbit/automatron
@@ -75,18 +75,36 @@ docker container ls -a -f ancestor=touchbit/automatron
 docker rm -f -v 6f1fa2a978dd
 ```
 
-### Admin
-
-In the admin panel, you can change the logging level of the service and its components. This can come in handy when catching bugs.
+### Admin panel
 
 <details>
-<summary>How is it done</summary>
+<summary>Set default language.</summary>
 
-![](./src/main/resources/static/admin_conf_log_level.gif?raw=true)
+![](https://raw.githubusercontent.com/touchbit/automatron/main/src/main/resources/static/admin_conf_lang.gif)
 
 </details>
 
----
+<details>
+<summary>Show/hide common blocks in the Swagger documentation.</summary>
+
+![](https://raw.githubusercontent.com/touchbit/automatron/main/src/main/resources/static/admin_conf_common_blocks_visible.gif)
+
+</details>
+
+<details>
+<summary>Change logging level.</summary>
+
+![](https://raw.githubusercontent.com/touchbit/automatron/main/src/main/resources/static/admin_conf_log_level.gif)
+
+</details>
+
+### Links
+
+- [Author of this miracle](https://shaburov.github.io/)
+- [Telegram group](https://t.me/automatron_qa)
+- [GitHub repository](https://github.com/touchbit/automatron)
+- [DockerHub repository](https://hub.docker.com/r/touchbit/automatron)
+
 ---
 
 Copyright © 2022 [Shaburov Oleg](https://shaburov.github.io/)   
