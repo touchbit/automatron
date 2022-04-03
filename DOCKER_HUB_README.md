@@ -38,18 +38,32 @@ docker-compose up # run automatron
 # press Cmd+С to stop execution
 ```
 
-## Usage
+## Examples
 
-The service is available by default on port 8080.  
-The service database is available by default on port 9092.   
-After starting the docker container, the following will be available:   
-- Swagger documentation is available at:
-    - http://localhost:8080/
-    - http://localhost:8080/swagger-ui/index.html
-- Database:
-    - http://localhost:8080/h2 - UI console (`admin` no password required)
-    - `jdbc:h2:tcp://localhost:9092/./h2/automatron;USER=admin;PASSWORD=;` jdbc connection 
+<details>
+<summary>Root page</summary>
 
-## Example
+![](https://raw.githubusercontent.com/touchbit/automatron/main/.doc/root_page_example.png)
 
-![](https://raw.githubusercontent.com/touchbit/automatron/main/.doc/swaggerExample.png)
+</details>
+
+<details>
+<summary>Swagger doc</summary>
+
+![](https://raw.githubusercontent.com/touchbit/automatron/main/.doc/swagger_page_example.png)
+
+</details>
+
+<details>
+<summary>DB UI Console</summary>
+
+![](https://raw.githubusercontent.com/touchbit/automatron/main/.doc/h2_db_console_page_example.png)
+
+</details>
+
+<details>
+<summary>Admin UI</summary>
+
+![](https://raw.githubusercontent.com/touchbit/automatron/main/.doc/admin_page_example.png)
+
+</details>
