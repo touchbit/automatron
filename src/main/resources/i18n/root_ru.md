@@ -61,7 +61,13 @@ docker rm -f -v 6f1fa2a978dd
 
 </details>
 
----
+### Ссылки
+
+- [Автор сего чуда](https://shaburov.github.io/)
+- [Группа в телеграмм](https://t.me/automatron_qa)
+- [GitHub репозиторий](https://github.com/touchbit/automatron)
+- [DockerHub репозиторий](https://hub.docker.com/r/touchbit/automatron)
+
 ---
 
 Copyright © 2022 [Shaburov Oleg](https://shaburov.github.io/)

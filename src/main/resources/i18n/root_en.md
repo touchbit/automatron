@@ -60,7 +60,13 @@ docker rm -f -v 6f1fa2a978dd
 
 </details>
 
----
+### Links
+
+- [Author of this miracle](https://shaburov.github.io/)
+- [Telegram group](https://t.me/automatron_qa)
+- [GitHub repository](https://github.com/touchbit/automatron)
+- [DockerHub repository](https://hub.docker.com/r/touchbit/automatron)
+
 ---
 
 Copyright © 2022 [Shaburov Oleg](https://shaburov.github.io/)
