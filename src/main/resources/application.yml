@@ -6,7 +6,7 @@ management:
     web:
       exposure:
         include: [ loggers,health,config ]
-#        include: [ loggers,health,info,metrics,config,mappings ]
+#        include: '*'
 
 spring:
   application:

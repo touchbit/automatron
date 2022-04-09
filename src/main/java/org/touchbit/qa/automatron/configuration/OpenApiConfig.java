@@ -23,8 +23,13 @@ import io.swagger.v3.oas.models.security.SecurityScheme;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springdoc.core.GroupedOpenApi;
+import org.springdoc.core.SwaggerUiConfigParameters;
+import org.springdoc.core.SwaggerUiConfigProperties;
+import org.springdoc.core.SwaggerUiOAuthProperties;
 import org.springdoc.core.customizers.OpenApiCustomiser;
 import org.springdoc.core.customizers.OperationCustomizer;
+import org.springdoc.webmvc.ui.SwaggerIndexTransformer;
+import org.springdoc.webmvc.ui.SwaggerWelcomeCommon;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.DependsOn;
@@ -66,6 +71,14 @@ public class OpenApiConfig {
     public GroupedOpenApi initEnglishOpenApiDefinition(final String appVersion) {
         log.info("Initializing english openapi definition.");
         return initOpenApiDefinition("English", appVersion);
+    }
+
+    @Bean
+    public SwaggerIndexTransformer swaggerIndexTransformer(SwaggerUiConfigProperties sUiConfig,
+                                                           SwaggerUiOAuthProperties sUiOAuthProperties,
+                                                           SwaggerUiConfigParameters sUiConfigParameters,
+                                                           SwaggerWelcomeCommon sWelcomeCommon) {
+        return new SwaggerCodeBlockTransformer(sUiConfig, sUiOAuthProperties, sUiConfigParameters, sWelcomeCommon);
     }
 
     private GroupedOpenApi initOpenApiDefinition(String group, String appVersion) {
