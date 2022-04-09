@@ -15,14 +15,13 @@ package org.touchbit.qa.automatron.resource;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RestController;
 import org.touchbit.qa.automatron.constant.Bug;
 import org.touchbit.qa.automatron.db.entity.Session;
+import org.touchbit.qa.automatron.http.AutomatronHeaders;
 import org.touchbit.qa.automatron.pojo.accounting.login.LoginRequestDTO;
 import org.touchbit.qa.automatron.pojo.accounting.login.LoginResponseDTO;
 import org.touchbit.qa.automatron.pojo.accounting.user.CreateUserRequestDTO;
@@ -64,7 +63,7 @@ public class AccountingApiController {
 
     @GetLogoutSpec()
     @GetRequest(path = "/api/accounting/logout")
-    public Response<Void> logout(@RequestHeader HttpHeaders headers,
+    public Response<Void> logout(AutomatronHeaders headers,
                                  @Valid LogoutQueryParameters parameters) {
         log.info(" --> User logout request");
         final Session session = accountingService.authorize(headers);
@@ -75,7 +74,7 @@ public class AccountingApiController {
 
     @GetUserListSpec()
     @GetRequest(path = "/api/accounting/users")
-    public Response<List<UserResponseDTO>> getUserList(@RequestHeader HttpHeaders headers,
+    public Response<List<UserResponseDTO>> getUserList(AutomatronHeaders headers,
                                                        @Valid GetUserListQuery search) {
         log.info(" --> Get users by filter");
         accountingService.authorize(headers);
@@ -86,7 +85,7 @@ public class AccountingApiController {
 
     @GetUserSpec()
     @GetRequest(path = "/api/accounting/users/{login}")
-    public Response<UserResponseDTO> getUser(@RequestHeader HttpHeaders headers,
+    public Response<UserResponseDTO> getUser(AutomatronHeaders headers,
                                              @Valid UserLoginPath parameters) {
         log.info(" --> Get user by login: {}", parameters.getLogin());
         accountingService.authorize(headers);
@@ -97,7 +96,7 @@ public class AccountingApiController {
 
     @PostUserSpec()
     @PostRequest(path = "/api/accounting/users")
-    public Response<UserResponseDTO> postUser(@RequestHeader HttpHeaders headers,
+    public Response<UserResponseDTO> postUser(AutomatronHeaders headers,
                                               @RequestBody @Valid CreateUserRequestDTO request) {
         log.info(" --> Add user request");
         final Session session = accountingService.authorizeAdmin(headers);
@@ -108,7 +107,7 @@ public class AccountingApiController {
 
     @PutUserSpec()
     @PutRequest(path = "/api/accounting/users/{login}")
-    public Response<UserResponseDTO> putUser(@RequestHeader HttpHeaders headers,
+    public Response<UserResponseDTO> putUser(AutomatronHeaders headers,
                                              @Valid UserLoginPath parameters,
                                              @RequestBody @Valid PutUserRequestDTO request) {
         log.info(" --> Replace user request");
@@ -121,7 +120,7 @@ public class AccountingApiController {
 
     @PatchUserSpec()
     @PatchRequest(path = "/api/accounting/users/{login}")
-    public Response<UserResponseDTO> patchUser(@RequestHeader HttpHeaders headers,
+    public Response<UserResponseDTO> patchUser(AutomatronHeaders headers,
                                                @Valid UserLoginPath parameters,
                                                @RequestBody @Valid PatchUserRequestDTO request) {
         log.info(" --> Replace user request");
@@ -134,7 +133,7 @@ public class AccountingApiController {
 
     @DeleteUserSpec()
     @DeleteRequest(path = "/api/accounting/users/{login}")
-    public Response<Void> deleteUser(@RequestHeader HttpHeaders headers,
+    public Response<Void> deleteUser(AutomatronHeaders headers,
                                      UserLoginPath parameters, // bug
                                      @Valid DeleteUserQuery queryParams) {
         log.info(" --> Delete user request");

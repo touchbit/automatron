@@ -24,14 +24,17 @@ import org.springframework.context.support.ResourceBundleMessageSource;
 import org.springframework.core.type.filter.AnnotationTypeFilter;
 import org.springframework.format.FormatterRegistry;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.method.support.HandlerMethodArgumentResolver;
 import org.springframework.web.servlet.LocaleResolver;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import org.springframework.web.servlet.i18n.FixedLocaleResolver;
+import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter;
 import org.touchbit.qa.automatron.Application;
 import org.touchbit.qa.automatron.annotation.PathPOJO;
 import org.touchbit.qa.automatron.annotation.QueryPOJO;
 import org.touchbit.qa.automatron.constant.Bug;
+import org.touchbit.qa.automatron.http.AutomatronHeadersResolver;
 import org.touchbit.qa.automatron.interceptor.LocaleInterceptor;
 import org.touchbit.qa.automatron.interceptor.XRequestIdInterceptor;
 import org.touchbit.qa.automatron.util.AutomatronUtils;
@@ -55,6 +58,17 @@ public class WebMvcConfig implements WebMvcConfigurer {
     @Override
     public void addFormatters(FormatterRegistry registry) {
         registry.addConverterFactory(new UpperCaseSourceEnumConverterFactory());
+    }
+
+    @Bean
+    public Object transformRequestMappingHandlerAdapter(RequestMappingHandlerAdapter adapter) {
+        final List<HandlerMethodArgumentResolver> commonArgumentResolvers = adapter.getArgumentResolvers();
+        final List<HandlerMethodArgumentResolver> newArgumentResolvers = new ArrayList<>();
+        newArgumentResolvers.add(new AutomatronHeadersResolver());
+        if (commonArgumentResolvers != null)
+            newArgumentResolvers.addAll(commonArgumentResolvers);
+        adapter.setArgumentResolvers(newArgumentResolvers);
+        return new Object();
     }
 
     @Bean("appVersion")

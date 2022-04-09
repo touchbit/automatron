@@ -14,7 +14,6 @@ package org.touchbit.qa.automatron.service;
 
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpHeaders;
 import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Service;
 import org.touchbit.qa.automatron.constant.*;
@@ -22,6 +21,7 @@ import org.touchbit.qa.automatron.db.entity.Session;
 import org.touchbit.qa.automatron.db.entity.User;
 import org.touchbit.qa.automatron.db.repository.SessionRepository;
 import org.touchbit.qa.automatron.db.repository.UserRepository;
+import org.touchbit.qa.automatron.http.AutomatronHeaders;
 import org.touchbit.qa.automatron.pojo.accounting.login.LoginResponseDTO;
 import org.touchbit.qa.automatron.pojo.accounting.user.CreateUserRequestDTO;
 import org.touchbit.qa.automatron.pojo.accounting.user.PatchUserRequestDTO;
@@ -110,24 +110,17 @@ public class AccountingService {
         return user;
     }
 
-    public Session authorize(HttpHeaders headers) {
+    public Session authorize(AutomatronHeaders headers) {
         log.debug("Authorization");
-        final List<String> authorization = headers.get("Authorization");
-        if (authorization == null || authorization.isEmpty()) {
-            throw AutomatronException.http403AccessDenied("Header.Authorization");
+        final String token = headers.getBearerAuthorization();
+        if (token != null) {
+            final Session session = dbFindSessionByAccessToken(token);
+            if (session != null) {
+                log.debug("Session found. User: {}", session.user().login());
+                return session;
+            }
         }
-        final Session session = authorization.stream()
-                .map(String::toLowerCase)
-                .map(t -> t.replace("bearer ", ""))
-                .map(this::dbFindSessionByAccessToken)
-                .filter(Objects::nonNull)
-                .findFirst()
-                .orElse(null);
-        if (session == null) {
-            throw AutomatronException.http403AccessDenied("Header.Authorization");
-        }
-        log.debug("Session found. User: {}", session.user().login());
-        return session;
+        throw AutomatronException.http403AccessDenied("Header.Authorization");
     }
 
     public void logout(Session session, LogoutQueryParameters logoutQueryParameters) {
@@ -213,7 +206,7 @@ public class AccountingService {
                 .build();
     }
 
-    public Session authorizeAdmin(HttpHeaders headers) {
+    public Session authorizeAdmin(AutomatronHeaders headers) {
         final Session session = this.authorize(headers);
         final User user = session.user();
         final UserRole role = user.role();
